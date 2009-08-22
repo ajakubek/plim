@@ -59,7 +59,9 @@ int cApplication::OnKeyClicked( const int key ) {
 		return 0;
 	}
 
-	if ( OnTerminalSizeChanged() ) {}
+	if ( OnTerminalSizeChanged() ) {
+		return 1;
+	}
 
 	return OnKeyEvent( key );
 }

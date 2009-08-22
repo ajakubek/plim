@@ -39,7 +39,7 @@ void cBox::Update(void) {
 			case left: {
 				childWindow->SetLeft( m_lastLeftPos );
 				childWindow->SetTop( m_lastTopPos );
-				childWindow->SetHeight( m_lastBottomPos - clientWindow->GetRawTop() );
+				childWindow->SetHeight( m_lastBottomPos - m_lastTopPos );
 				
 				m_lastLeftPos += childWindow->GetWidth()  ;
 
@@ -50,7 +50,7 @@ void cBox::Update(void) {
 
 				childWindow->SetLeft ( clientWindow->GetWidth() - childWindow->GetWidth() );
 				childWindow->SetTop( m_lastTopPos  );
-				childWindow->SetHeight ( m_lastBottomPos - clientWindow->GetRawTop() );
+				childWindow->SetHeight ( m_lastBottomPos - m_lastTopPos );
 
 				m_lastRightPos -= childWindow->GetWidth() ;
 
@@ -59,7 +59,7 @@ void cBox::Update(void) {
 
 			case top: {
 				childWindow->SetLeft( 0 );
-				childWindow->SetTop( m_lastTopPos + clientWindow->GetRawTop() );
+				childWindow->SetTop( m_lastTopPos );
 				childWindow->SetWidth( clientWindow->GetWidth() );
 
 				m_lastTopPos += childWindow->GetHeight() ;

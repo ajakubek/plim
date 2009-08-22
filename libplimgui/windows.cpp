@@ -21,7 +21,8 @@ cCursesWindow::cCursesWindow(cApplication* app, int left, int top, int height, i
 	m_windowAlign(none),
 	m_windowFirst(NULL),
 	m_windowLast(NULL),
-	m_colorPair(0) {
+	m_colorPair(0),
+	m_sizeChanged(1) {
 
 	if (m_appInstance) {
 		
@@ -32,7 +33,9 @@ cCursesWindow::cCursesWindow(cApplication* app, int left, int top, int height, i
 
 			m_windowHandle = ::subwin(m_windowParent->GetWindowHandle(), height, width, m_windowParent->GetTop() + top, m_windowParent->GetLeft() + left);
 			leaveok(m_windowHandle, TRUE);
-
+			if (!m_windowHandle) {
+				printw("Error winhan");
+			}
 			m_windowParent->NeedUpdate();
 		}
 
@@ -95,10 +98,10 @@ void cCursesWindow::RecreateWindow(void) {
 	child = GetFirstWindow();
 	lastChild = GetLastWindow();
 
-
 	while ( child ) {
-
-		child->RecreateWindow();
+	
+		if (child->IsSizeChanged())
+			child->RecreateWindow();
 
 		if (child == lastChild)
 			break; /* RecreateWindow done. */
@@ -112,6 +115,10 @@ void cCursesWindow::RecreateWindow(void) {
 		m_windowHandle = ::subwin(m_windowParent->GetWindowHandle(), m_height, m_width, GetTop(), GetLeft());
 	else
 		m_windowHandle = ::newwin(GetHeight(), GetWidth(), GetTop(), GetLeft());
+
+	if (!m_windowHandle) {
+		printw("Error in window handle creation");
+	}
 
 	leaveok(m_windowHandle, TRUE);
 }
@@ -171,9 +178,6 @@ void cCursesWindow::PartialUpdate(void) {
 	if (!m_needPartialUpdate)
 		return;
 
-	if (!m_windowParent) {
-		Erase();
-	}
 
 	if (m_colorPair) {
 		Erase();

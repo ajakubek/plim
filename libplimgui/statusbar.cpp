@@ -3,7 +3,7 @@
 namespace NSWindows {
 
 cStatusWindow::cStatusWindow(cApplication* app, cCursesWindow* parent)
-:	cCursesWindow(app, 1, 1, 1, parent->GetWidth(), parent) {
+:	cCursesWindow(app, 0, 0, 1, parent->GetWidth() + 10, parent) {
 	
 	init_pair(1, COLOR_WHITE, COLOR_BLUE );
 
