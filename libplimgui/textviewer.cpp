@@ -9,7 +9,7 @@ cTextWindow::cTextWindow(cApplication* app, cCursesWindow* parent)
 	SetFocus( FALSE );
 	m_lineBuffer = new cTreeNodes();
 }
-
+ 
 cTextWindow::~cTextWindow(void) {
 
 	if (m_lineBuffer)
