@@ -20,7 +20,8 @@ cCursesWindow::cCursesWindow(cApplication* app, int left, int top, int height, i
 	m_windowData(NULL),
 	m_windowAlign(none),
 	m_windowFirst(NULL),
-	m_windowLast(NULL) {
+	m_windowLast(NULL),
+	m_colorPair(0) {
 
 	if (m_appInstance) {
 		
@@ -46,6 +47,11 @@ cCursesWindow::cCursesWindow(cApplication* app, int left, int top, int height, i
 
 		NeedUpdate();
 	}
+
+	init_pair(2, COLOR_WHITE, COLOR_RED );
+
+	wattron(GetWindowHandle(), COLOR_PAIR(2));
+
 }
 
 /* Constructor used for spawning a fake root window */
@@ -61,7 +67,8 @@ cCursesWindow::cCursesWindow(cApplication* app)
 	m_needUpdate(FALSE),
 	m_needPartialUpdate(FALSE),
 	m_windowFirst(NULL),
-	m_windowLast(NULL) {
+	m_windowLast(NULL),
+	m_colorPair(0) {
 
 	if (m_appInstance) {
 		SetWindowHandle( m_appInstance->GetWindowHandle() );
@@ -79,6 +86,34 @@ cCursesWindow::~cCursesWindow(void) {
 	if (m_windowHandle) {
 		::delwin(m_windowHandle);
 	}
+}
+
+void cCursesWindow::RecreateWindow(void) {
+	cCursesWindow* child;
+	cCursesWindow* lastChild;
+
+	child = GetFirstWindow();
+	lastChild = GetLastWindow();
+
+
+	while ( child ) {
+
+		child->RecreateWindow();
+
+		if (child == lastChild)
+			break; /* RecreateWindow done. */
+		child = (cCursesWindow*) m_appInstance->GetNext( child );
+	}
+
+	if (m_windowHandle)
+		::delwin(m_windowHandle);
+
+	if (m_windowParent)
+		m_windowHandle = ::subwin(m_windowParent->GetWindowHandle(), m_height, m_width, GetTop(), GetLeft());
+	else
+		m_windowHandle = ::newwin(GetHeight(), GetWidth(), GetTop(), GetLeft());
+
+	leaveok(m_windowHandle, TRUE);
 }
 
 void cCursesWindow::Erase(void) {
@@ -110,42 +145,12 @@ void cCursesWindow::Update(void) {
 	}
 	
 	if ( m_windowParent ) { /* Update the sizes only if the window is a child */
-		if (!m_windowHandle) {
-			/*	if the derwin failed with the given coords than try to recreate the window 
-			*/
-			m_windowHandle = ::subwin(m_windowParent->GetWindowHandle(), m_height, m_width, GetTop(), GetLeft());
-			leaveok(m_windowHandle, TRUE);
-		}
-	
-		
-		
-		if (m_windowHandle) {
-			/* Check for overlapping windows */
-			
+		RecreateWindow();
 
-			/* Do first a resize, cause it shouldnt report a err even if it overlaps */
-			if (::wresize( m_windowHandle, m_height, m_width) == ERR) {
-				printw("%d, %d - %d\n", m_height, m_width, m_windowParent->GetWidth());
-				//DEBUG("wresize error");
-			}
-			if (::mvwin( m_windowHandle, GetTop(), GetLeft()) == ERR) {
-				//DEBUG("mvwin error");
-			}
-		}
+		if (m_windowHandle) {}
 	}
 
-	/* Update child windows *
-	item = m_windowFirst;
-
-	while (item) {
-		data = GetWindow(item);
-		
-		if (data)
-			data->Update();
-
-		item = item->next;
-	} */
-
+	/* Update child windows */
 	data = GetFirstWindow();
 
 	while ( data ) {
@@ -165,6 +170,11 @@ void cCursesWindow::PartialUpdate(void) {
 
 	if (!m_windowParent) {
 		Erase();
+	}
+
+	if (m_colorPair) {
+		Erase();
+		::wbkgd(GetWindowHandle(), COLOR_PAIR(m_colorPair));
 	}
 
 	/* let it handle by the doupdate from curses */
@@ -206,5 +216,6 @@ int cCursesWindow::OnKeyPressed( const int key ) {
 int cCursesWindow::OnResize(void) {
 	return 0;
 }
+
 
 };

@@ -46,6 +46,9 @@ public:
 	cCursesWindow(cApplication* app, int left, int top, int height, int width, cCursesWindow* parent);
 	cCursesWindow(cApplication* app);
 	virtual ~cCursesWindow();
+	/*	Recreate window
+	*/
+	void RecreateWindow(void);
 	/*	Erase the window content 
 		@return none 
 	*/
@@ -90,6 +93,7 @@ public:
 		@param visibility bool val
 	*/
 	void SetVisible(int visible) { if (m_isVisible != visible) { m_isVisible = visible; } };
+	void SetColorPair(int pair) { m_colorPair = pair; };
 	/*	Get the parent window
 		@return cCursesWindow
 	*/
@@ -216,6 +220,7 @@ private:
 	align m_windowAlign;
 	/*!	pointer to cBox */
 	void* m_boxPtr;
+	int m_colorPair;
 };
 
 };

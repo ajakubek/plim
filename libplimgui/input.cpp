@@ -72,6 +72,7 @@ int cInputWindow::OnKeyPressed( const int key ) {
 int cInputWindow::OnResize(void) {
 	if (CalcSize()) {
 		UpdateSize();
+
 	}
 	return 0;
 }
@@ -88,10 +89,12 @@ int cInputWindow::CalcSize(void) {
 }
 
 void cInputWindow::UpdateSize(void) {
-	if (IsChild())
+	if (IsChild()) {
 		GetParentWindow()->NeedUpdate();
-	else
-		NeedUpdate();
+	}
+
+	NeedPartialUpdate();
+
 }
 
 };
