@@ -22,28 +22,25 @@
 
 namespace NSApplication {
 
-cKeyboardDescriptor::cKeyboardDescriptor(void)
-:	cDescriptor(TRUE, FALSE, FALSE, NULL) {
+cKeyboard::cKeyboard(void) {
 
 }
 
-cKeyboardDescriptor::~cKeyboardDescriptor(void) {
+cKeyboard::~cKeyboard(void) {
 
 }
 
-void cKeyboardDescriptor::SetupDescriptor(void) {
+int cKeyboard::CheckKeyClicked(void) {
+	int key;
 
+	if ((key = getch()) != ERR) {
+		return OnKeyClicked( key );
+	}
+
+	return 0;
 }
 
-void cKeyboardDescriptor::SelectDescriptor(void) {
-
-}
-
-void cKeyboardDescriptor::IssetDescriptor(void) {
-
-}
-
-int cKeyboardDescriptor::GetDescriptor(void) {
+int cKeyboard::OnKeyClicked( const int key ) {
 	return 0;
 }
 

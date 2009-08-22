@@ -7,10 +7,13 @@ using namespace NSWindows;
 
 cApplication::cApplication(int argc, char** argv)
 :	cTreeNodes(),
+	cKeyboard(),
 	m_rootWindow(initscr()),
 	m_termWidth(getmaxx(stdscr)), 
 	m_termHeight(getmaxy(stdscr)) {
 	
+	m_descriptors = new cTreeNodes();
+
 	if (m_rootWindow) {
 		/* No need for tcsetattr */
 		noecho();
@@ -19,6 +22,7 @@ cApplication::cApplication(int argc, char** argv)
 		keypad(m_rootWindow, TRUE);
 		leaveok(m_rootWindow, TRUE);
 		nodelay(m_rootWindow, TRUE);
+		timeout(0);
 
 		if (has_colors()) {
 			start_color();
@@ -32,97 +36,86 @@ cApplication::cApplication(int argc, char** argv)
 
 cApplication::~cApplication() {
 	/* if you forget something to freeup */
-	
+	delete m_descriptors;
+
 	if ( m_rootWindow )
 		endwin();
 }
 
 int cApplication::Loop(void) {
 	int retCode;
-	
-	fcntl(0, F_SETFL, fcntl(0, F_GETFL) | O_NONBLOCK);
 
 	while (!(retCode = LoopMsg())) {
 		PostLoopMsg();
 	}
 
-	fcntl(0, F_SETFL, fcntl(0, F_GETFL) & ~O_NONBLOCK);
-
 	return retCode;
 }
 
-int cApplication::OnKeyPressed( const int key ) {
+int cApplication::OnKeyClicked( const int key ) {
 	/* Handle all windows, and put the key to the focused one */
 	if (key == 0x09) {
 		return 0;
 	}
 
-	return 0;
+	if ( OnTerminalSizeChanged() ) {}
+
+	return OnKeyEvent( key );
 }
 
-/* TODO: nonblocking input, test case for now */
 int cApplication::LoopMsg(void) {
-	int keyPressed;
-	int selectRet;
-	int keyPressRet;
 	struct timeval val;
-	fd_set rfds;
+	fd_set rfds, wfds, efds;
+	int fmaxd, selectRet;
 	cCursesWindow* data;
+	cDescriptor* descriptor;
 
 	if (!m_rootWindow)
 		return -1;
 
-	val.tv_sec = 0;
-	val.tv_usec = 1000;
+	fmaxd = 0;
 
-	/* This key handling routine will be overrided with cKeyboardDescriptor */
+	/* Default timeout */
+	val.tv_sec = 1;
+	val.tv_usec = 0;
+
+	/* Check if there is somthing to input in the ui */
+	if ( CheckKeyClicked() > 0 ) {
+		val.tv_sec = 0;
+		/* Go for it */
+	}
 
 	/* Clear all descriptors */
 	FD_ZERO(&rfds);
-	/* Set all descriptors */
-	FD_SET(0, &rfds);
+	FD_ZERO(&wfds);
+	FD_ZERO(&efds);
 
-	/* Select */
-	selectRet = select(1, &rfds, NULL, NULL, &val);
+	descriptor = GetFirstDescriptor();
 
-	if ( selectRet == -1 ) {
-		/* Check for resize */
+	while (descriptor) {
+		descriptor->SetupDescriptor();
 
-		keyPressed = wgetch( m_rootWindow );
+		if ( fmaxd < descriptor->GetDescriptor() ) 
+			fmaxd = descriptor->GetDescriptor();
 
-#ifdef KEY_RESIZE
-		if ( keyPressed == KEY_RESIZE ) {
-			OnTerminalSizeChanged();
-		} else
-#endif
-		if ( OnTerminalSizeChanged() ) {
-		}
+		descriptor = descriptor->GetNextNode();
+	}
 
-		return 0;
-	} else if ( selectRet ) {
-		if (FD_ISSET(0, &rfds)) {
-			for (;;) {
-				keyPressed = wgetch( m_rootWindow );
-
-				if ( keyPressed == ERR ) {
-					return 0; /* move on */
-				}
-
-				if (keyPressed < 0)	
-					break;
-
-				/* Handle key input */
-				keyPressRet = OnKeyPressed( keyPressed );
-
-				if ( keyPressRet < 0 ) {
-					return -1; /* Bye */
-				} else {
-					LaunchKeyEvents(keyPressed);
-				}
+	if ( fmaxd > 0 ) {
+		/* Select */
+		selectRet = select(fmaxd + 1, &rfds, NULL, NULL, &val);
+	
+		if ( selectRet == -1 ) {
+		
+		} else if ( selectRet ) {
+			descriptor = GetFirstDescriptor();
+	
+			while (descriptor) {
+				descriptor->IssetDescriptor();
+				descriptor = descriptor->GetNextNode();
 			}
 			
 		}
-		
 	}
 
 	/* Do all paint and size methods on the end */
@@ -178,19 +171,19 @@ void cApplication::PartialUpdateWindows(void) {
 	} while (data);
 }
 
-void cApplication::LaunchKeyEvents(int key) {
+int cApplication::OnKeyEvent( const int key ) {
 	cCursesWindow* data = (cCursesWindow*) GetFirstWindow();
 
 	do {
 		if (data && data->IsFocused()) {
-			data->OnKeyPressed( key );
-			break;
+			return data->OnKeyPressed( key );
 		}
 
 		data = (cCursesWindow*) GetNext(data);
 
 	} while (data);
 
+	return 0;
 }
 
 void cApplication::LaunchResizeEvents(void) {

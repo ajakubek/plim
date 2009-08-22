@@ -31,9 +31,12 @@
 #include <sys/socket.h>
 #include <fcntl.h>
 #include <termios.h>
+#include <math.h>
 
 #include "base.h"
 #include "treenodes.h"
+#include "descriptor.h"
+#include "keyboard.h"
 
 namespace NSApplication {
 
@@ -42,7 +45,8 @@ using namespace NSTree;
 /*	ncurses base application class, with cTreeNodes we can group our windows and inspect it in nice way
 	@author: IC0ffeeCup
 */
-class cApplication: public cTreeNodes {
+/* TODO: add signals */
+class cApplication: public cTreeNodes, public cKeyboard {
 public:
 	/*	base construction for the main application
 		@param argc argument count
@@ -54,11 +58,6 @@ public:
 		@return application exit code
 	*/
 	int Loop(void);
-	/*	Launch a keypress event 
-		@param key, int
-		@return int, if -1 than break Loop
-	*/
-	virtual int OnKeyPressed( const int key );
 	/*	Get the first window 
 		@return cCursesWindow
 	*/
@@ -67,6 +66,10 @@ public:
 		@return cCursesWindow
 	*/
 	cTreeNode* GetLastWindow(void) { return GetLastNode(); };
+
+	cDescriptor* GetFirstDescriptor(void) { return (cDescriptor*) m_descriptors->GetFirstNode(); };
+	cDescriptor* GetLastDescriptor(void) { return (cDescriptor*) m_descriptors->GetLastNode(); };
+
 	/*	get the terminal lines 
 		@return number of lines in terminal window
 	*/
@@ -82,13 +85,18 @@ public:
 	/* Terminal resize event */
 	virtual int OnTerminalSizeChanged(void);
 protected:
+	/*	Launch a keypress event 
+		@param key, int
+		@return int, if -1 than break Loop
+	*/
+	int OnKeyClicked( const int key );
 	/* base loop msg for processing all the msg */
 	virtual int LoopMsg(void);
 	/* Runned just after the LoopMsg in Loop */
 	virtual void PostLoopMsg(void) { /* Dummy */ };
 private:
 	void PartialUpdateWindows(void);
-	void LaunchKeyEvents(int key);
+	int OnKeyEvent( const int key );
 	void LaunchResizeEvents(void);
 	void FreeIterator(void);
 	/*!root window ie. initscr() from ncurses*/
@@ -97,6 +105,8 @@ private:
 	int m_termWidth;
 	/*!terminal height*/
 	int m_termHeight;
+	/*!descriptors*/
+	cTreeNodes* m_descriptors;
 };
 
 };

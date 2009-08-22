@@ -66,7 +66,7 @@ int cInputWindow::OnKeyPressed( const int key ) {
 
 	NeedPartialUpdate();
 
-	return 0;
+	return 1;
 }
 
 int cInputWindow::OnResize(void) {

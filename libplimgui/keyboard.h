@@ -22,18 +22,21 @@
 #define __PLIM_KEYBOARD_H__
 
 #include "stdafx.h"
-#include "descriptor.h"
 
 namespace NSApplication {
 
-class cKeyboardDescriptor: public cDescriptor {
+/* We have non blocking ncurses, so we do not need a descriptor for the keyboard */
+/* TODO: Add some buffer */
+/* TODO: Add keybindings */
+class cKeyboard {
 public:
-	cKeyboardDescriptor(void);
-	~cKeyboardDescriptor(void);
-	void SetupDescriptor(void);
-	void SelectDescriptor(void);
-	void IssetDescriptor(void);
-	int GetDescriptor(void);
+	cKeyboard(void);
+	~cKeyboard(void);
+	int CheckKeyClicked(void);
+protected:
+	virtual int OnKeyClicked( const int key );
+private:
+	int m_primitiveKeyBuffer; /* TODO: Change it, test purpose */
 };
 
 };
