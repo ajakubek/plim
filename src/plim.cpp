@@ -30,34 +30,46 @@
 #include <libplimgui/windows.h>
 #include <libplimgui/input.h>
 #include <libplimgui/statusbar.h>
+#include <libplimgui/textviewer.h>
 
 using namespace NSApplication;
 using namespace NSWindows;
 
+cApplication* app;
+cTextWindow* window;
+cCursesWindow* root;
+cInputWindow* inputWindow;
+cStatusWindow* statusWindowTop;
+cStatusWindow* statusWindowBottom;
+
+void OnEnterInput(const char* buffer) {
+	if (window) {
+		window->NewLine( buffer, 0 );
+	}
+}
+
 /* Temporary code! 
 	For creating a new app, inheriting cApplication will be needed to handle app events */
 int main(int argc, char** argv) {
-	cApplication* app;
-	cCursesWindow* window;
-	cCursesWindow* root;
-	cInputWindow* inputWindow;
-	cStatusWindow* statusWindowTop;
-	cStatusWindow* statusWindowBottom;
 
 	app = new cApplication(argc, argv);
+
 	root = new cCursesWindow(app, 0, 0, 0, 0, NULL);
+
+	statusWindowTop = new cStatusWindow(app, root);
+	statusWindowTop->SetWindowAlign(top);
 
 	inputWindow = new cInputWindow(app, root);
 	inputWindow->SetWindowAlign(bottom);
 
 	statusWindowBottom = new cStatusWindow(app, root);
 	statusWindowBottom->SetWindowAlign(bottom);
-
-	statusWindowTop = new cStatusWindow(app, root);
-	statusWindowTop->SetWindowAlign(top);
-
-	window = new cCursesWindow(app, 1, 1, 2, 2, root);
+ 
+	window = new cTextWindow(app, root);
 	window->SetWindowAlign(client);
+	window->SetColorPair(2);
+ 
+	inputWindow->OnEnter.connect( &OnEnterInput );
 
 	switch( app->Loop() ) {
 		default:

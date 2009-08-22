@@ -35,7 +35,7 @@ int cInputWindow::OnKeyPressed( const int key ) {
 	char localBuff[2] = { key, 0 };
 	int m_newHeight;
 
-	/* TODO: Add key bindings */
+	/* TODO: Add key bindings, IMPORTANT */
 
 	switch ( key ) {
 		case 127:
@@ -47,8 +47,16 @@ int cInputWindow::OnKeyPressed( const int key ) {
 			break;
 		}
 
-		case 0x09:
+		case 0x09: {
+			break;
+		}
 		case 0x0A: {
+			if ( m_buffer->GetLength() > 0 ) {
+				OnEnter( m_buffer->GetBuffer() );
+				m_buffer->Clean();
+				m_cursorPos = 0;
+				/* TODO: Cursor navigation */
+			}
 			break;
 		}
 

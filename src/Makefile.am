@@ -6,7 +6,7 @@ INCLUDES = -I$(top_srcdir)/. $(all_includes)
 
 # the library search path.
 plim_LDFLAGS = $(all_libraries) 
-plim_LDADD = $(top_builddir)/libplimgui/libplimgui.a
+plim_LDADD = $(top_builddir)/libplimgui/libplimgui.a -lsigc-2.0
 AM_CFLAGS = -I../
-AM_CXXFLAGS = -I../
+AM_CXXFLAGS = -I../ `pkg-config --cflags --libs sigc++-2.0`
 METASOURCES = AUTO

@@ -184,10 +184,10 @@ public:
 		@param key, int
 		@return int, if -1 than break Loop
 	*/
-	virtual int OnKeyPressed( const int key ); /* TODO: Need to change args ie. implement keybindings, add some buffer */
-	virtual int OnResize(void);
 	cCursesWindow* GetNextNode(void) { return (cCursesWindow*) cTreeNode::GetNextNode(); };
 	cCursesWindow* GetPrevNode(void) { return (cCursesWindow*) cTreeNode::GetPrevNode(); };
+	virtual int OnKeyPressed( const int key ); /* TODO: Need to change args ie. implement keybindings, add some buffer */
+	virtual int OnResize(void);
 protected:
 
 private:

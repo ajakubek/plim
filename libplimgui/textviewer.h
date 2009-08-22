@@ -25,21 +25,31 @@
 #include "application.h"
 #include "windows.h"
 #include "strings.h"
+#include "treenodes.h"
 
 namespace NSWindows {
 
 using namespace NSApplication;
 using namespace NSString;
 
+class cTextLine: public cTreeNode, public cString {
+public:
+	cTextLine(cTreeNodes* nodes, cTreeNode* node, const char* str, unsigned int uid);
+	virtual ~cTextLine(void);
+};
+
 /* TODO: Implement lines display with formating, probally on the next commit */
 class cTextWindow: public cCursesWindow {
 public:
 	cTextWindow(cApplication* app, cCursesWindow* parent);
 	virtual ~cTextWindow(void);
+	cTextLine* NewLine(const char* buffer, unsigned int uid);
+
 	void PartialUpdate(void);
 private:
 	/*! Lines */
-
+	cTreeNodes* m_lineBuffer;
+	cTreeNode* m_lineTop;
 };
 
 };

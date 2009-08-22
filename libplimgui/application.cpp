@@ -47,6 +47,7 @@ int cApplication::Loop(void) {
 	int retCode;
 
 	while (!(retCode = LoopMsg())) {
+		OnPostLoop();
 		PostLoopMsg();
 	}
 
@@ -62,6 +63,8 @@ int cApplication::OnKeyClicked( const int key ) {
 	if ( OnTerminalSizeChanged() ) {
 		return 1;
 	}
+
+	OnKeyPress( key );
 
 	return OnKeyEvent( key );
 }
@@ -153,6 +156,8 @@ int cApplication::OnTerminalSizeChanged(void) {
 	if ( m_termWidth != getmaxx(stdscr) || m_termHeight != getmaxy(stdscr) ) {
 		m_termWidth = getmaxx(stdscr);
 		m_termHeight = getmaxy(stdscr);
+
+		OnResize(m_termWidth, m_termHeight);
 
 		/* Update just the first window wich should be the root window */
 		data = (cCursesWindow*) GetFirstWindow( );

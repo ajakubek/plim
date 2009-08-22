@@ -57,8 +57,8 @@ am_libplimgui_a_OBJECTS = application.$(OBJEXT) base.$(OBJEXT) \
 	box.$(OBJEXT) descriptor.$(OBJEXT) input.$(OBJEXT) \
 	keybindings.$(OBJEXT) keyboard.$(OBJEXT) pallete.$(OBJEXT) \
 	statusbar.$(OBJEXT) stdafx.$(OBJEXT) strings.$(OBJEXT) \
-	textviewer.$(OBJEXT) treenode.$(OBJEXT) treenodes.$(OBJEXT) \
-	windows.$(OBJEXT)
+	textline.$(OBJEXT) textviewer.$(OBJEXT) treenode.$(OBJEXT) \
+	treenodes.$(OBJEXT) windows.$(OBJEXT)
 libplimgui_a_OBJECTS = $(am_libplimgui_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -165,7 +165,6 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AC_PROG_LIBTOOL = ranlib
 RANLIB = ranlib
-INCLUDES = 
 METASOURCES = AUTO
 noinst_HEADERS = application.h base.h box.h descriptor.h input.h statusbar.h \
 	strings.h textviewer.h windows.h
@@ -173,9 +172,10 @@ noinst_HEADERS = application.h base.h box.h descriptor.h input.h statusbar.h \
 lib_LIBRARIES = libplimgui.a
 libplimgui_a_SOURCES = application.cpp base.cpp box.cpp descriptor.cpp \
 	input.cpp keybindings.cpp keyboard.cpp pallete.cpp statusbar.cpp stdafx.cpp \
-	strings.cpp textviewer.cpp treenode.cpp treenodes.cpp windows.cpp
+	strings.cpp textline.cpp textviewer.cpp treenode.cpp treenodes.cpp windows.cpp
 
 _SOURCES = cKeyboardDescriptor.h keybindings.h keyboard.h pallete.h
+AM_CXXFLAGS = `pkg-config --cflags sigc++-2.0`
 all: all-am
 
 .SUFFIXES:
@@ -260,6 +260,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/statusbar.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stdafx.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strings.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/textline.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/textviewer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/treenode.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/treenodes.Po@am__quote@

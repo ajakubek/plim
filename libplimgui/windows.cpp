@@ -51,10 +51,6 @@ cCursesWindow::cCursesWindow(cApplication* app, int left, int top, int height, i
 		NeedUpdate();
 	}
 
-	init_pair(2, COLOR_WHITE, COLOR_RED );
-
-	wattron(GetWindowHandle(), COLOR_PAIR(2));
-
 }
 
 /* Constructor used for spawning a fake root window */
@@ -178,12 +174,6 @@ void cCursesWindow::PartialUpdate(void) {
 	if (!m_needPartialUpdate)
 		return;
 
-
-	if (m_colorPair) {
-		Erase();
-		::wbkgd(GetWindowHandle(), COLOR_PAIR(m_colorPair));
-	}
-
 	/* let it handle by the doupdate from curses */
 	::wnoutrefresh(m_windowHandle);
 
@@ -201,19 +191,21 @@ int cCursesWindow::Print(cString* string, int start) {
 	x = 0;
 	i = 0;
 
+	wmove(GetWindowHandle(), ret, x );
+
 	for (; i < string->GetLength(); i++ ) {
 
 		if ( x > GetWidth() ) {
 			x = 0;
 			ret += 1;
 		}
-
-		mvwinsch( m_windowHandle, ret, x, string->GetChar(i));
-		x++;
 		
+		wmove( m_windowHandle, ret, x );
+		waddch( m_windowHandle, string->GetChar(i));
+		x++;
 	}
-
-	return ret;
+	
+	return ret - start + 1;
 }
 
 int cCursesWindow::OnKeyPressed( const int key ) {

@@ -1,0 +1,3 @@
+pallete.o: pallete.cpp pallete.h
+
+pallete.h:

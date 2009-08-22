@@ -22,6 +22,8 @@
 #define __PLIM_INPUT_H__
 
 #include <ncurses.h>
+#include <sigc++/signal.h>
+
 #include "application.h"
 #include "windows.h"
 #include "strings.h"
@@ -39,6 +41,9 @@ public:
 	void PartialUpdate(void);
 	int OnKeyPressed( const int key );
 	int OnResize(void);
+	
+	/* Signals */
+	sigc::signal <void, const char*> OnEnter;
 protected:
 	int CalcSize(void);
 	void UpdateSize(void);

@@ -31,7 +31,8 @@
 #include <sys/socket.h>
 #include <fcntl.h>
 #include <termios.h>
-#include <math.h>
+
+#include <sigc++/signal.h>
 
 #include "base.h"
 #include "treenodes.h"
@@ -84,6 +85,11 @@ public:
 	WINDOW* GetWindowHandle(void) { return m_rootWindow; };
 	/* Terminal resize event */
 	virtual int OnTerminalSizeChanged(void);
+
+	/* Signals */
+	sigc::signal<void, const int> OnKeyPress;
+	sigc::signal<void, int, int> OnResize;
+	sigc::signal<void> OnPostLoop;
 protected:
 	/*	Launch a keypress event 
 		@param key, int

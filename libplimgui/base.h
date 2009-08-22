@@ -26,7 +26,7 @@ namespace NSApplication {
 /*	dummy class waiting for its role, probally will be used in human-read-logs memory inspection
 	TODO: Add some GUID generation for class instance comparing
 */
-class cBase {
+class cBase { 
 public:
 	cBase(void);
 	virtual ~cBase(void);
