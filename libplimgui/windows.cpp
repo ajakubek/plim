@@ -145,7 +145,10 @@ void cCursesWindow::Update(void) {
 	}
 	
 	if ( m_windowParent ) { /* Update the sizes only if the window is a child */
-		RecreateWindow();
+		if ( IsSizeChanged() ) {
+			RecreateWindow();
+			m_sizeChanged = 0;
+		}
 
 		if (m_windowHandle) {}
 	}

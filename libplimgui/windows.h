@@ -154,16 +154,16 @@ public:
 	int GetHeight(void) { if (!m_windowParent) return getmaxy(m_windowHandle); return m_height; };
 	/*	Set the x of the window 
 	*/
-	void SetLeft(int left) { m_xPos = left; };
+	void SetLeft(int left) { m_sizeChanged = m_xPos != left; m_xPos = left; };
 	/*	Set the y of the window 
 	*/
-	void SetTop(int top) { m_yPos = top;  };
+	void SetTop(int top) { m_sizeChanged = m_yPos != top; m_yPos = top;  };
 	/* Set the width of the window 
 	*/
-	void SetWidth(int width) { m_width = width; };
+	void SetWidth(int width) { m_sizeChanged = m_width != width; m_width = width; };
 	/* Set the height of the window 
 	*/
-	void SetHeight(int height) { m_height = height; };
+	void SetHeight(int height) { m_sizeChanged = m_height != height; m_height = height; };
 	/* Set dims 
 	*/
 	void SetDimension(int left, int top, int width, int height) { 
@@ -171,6 +171,8 @@ public:
 		SetWidth(width); SetHeight(height);
 		/* The NeedUpdate should be called by the cableguy */
 	}
+	/* If the size changed */
+	int IsSizeChanged(void) { return m_sizeChanged; }
 	/*	If the window is a child 
 	*/
 	int IsChild(void) { return m_windowParent != NULL; };
@@ -210,6 +212,7 @@ private:
 	int m_needUpdate;
 	/*! Force the window to repaint */
 	int m_needPartialUpdate;
+	int m_sizeChanged;
 	/*! First sub window */
 	cCursesWindow* m_windowFirst;
 	/*! Last sub window */

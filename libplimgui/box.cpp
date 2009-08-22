@@ -80,8 +80,8 @@ void cBox::Update(void) {
 			case client: {
 				childWindow->SetLeft( m_lastLeftPos);
 				childWindow->SetTop ( m_lastTopPos );
-				childWindow->SetWidth( m_lastRightPos - m_lastLeftPos - 1);
-				childWindow->SetHeight( m_lastBottomPos - m_lastTopPos - 1);
+				childWindow->SetWidth( m_lastRightPos - m_lastLeftPos);
+				childWindow->SetHeight( m_lastBottomPos - m_lastTopPos);
 				break;
 			}
 
