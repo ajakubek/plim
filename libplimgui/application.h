@@ -107,6 +107,8 @@ private:
 	int m_termHeight;
 	/*!descriptors*/
 	cTreeNodes* m_descriptors;
+	/*!timeout*/
+	long m_timeout;
 };
 
 };

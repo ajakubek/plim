@@ -10,7 +10,8 @@ cApplication::cApplication(int argc, char** argv)
 	cKeyboard(),
 	m_rootWindow(initscr()),
 	m_termWidth(getmaxx(stdscr)), 
-	m_termHeight(getmaxy(stdscr)) {
+	m_termHeight(getmaxy(stdscr)),
+	m_timeout(0) {
 	
 	m_descriptors = new cTreeNodes();
 
@@ -74,13 +75,23 @@ int cApplication::LoopMsg(void) {
 		return -1;
 
 	fmaxd = 0;
-
-	/* Default timeout */
+	
 	val.tv_sec = 1;
-	val.tv_usec = 0;
+
+	/* Default timeout, primitive. */	
+	if ( m_timeout < 1000000 ) {
+		val.tv_sec = 0;
+		val.tv_usec = m_timeout;
+		m_timeout += 1000;
+	}
+	else {
+		val.tv_sec = 1;
+		val.tv_usec = 0;
+	}
 
 	/* Check if there is somthing to input in the ui */
 	if ( CheckKeyClicked() > 0 ) {
+		m_timeout = 0;
 		val.tv_sec = 0;
 		/* Go for it */
 	}
@@ -101,21 +112,20 @@ int cApplication::LoopMsg(void) {
 		descriptor = descriptor->GetNextNode();
 	}
 
-	if ( fmaxd > 0 ) {
-		/* Select */
-		selectRet = select(fmaxd + 1, &rfds, NULL, NULL, &val);
-	
-		if ( selectRet == -1 ) {
+
+	/* Select */
+	selectRet = select(fmaxd + 1, &rfds, &wfds, &efds, &val);
+
+	if ( selectRet == -1 ) {
 		
-		} else if ( selectRet ) {
-			descriptor = GetFirstDescriptor();
-	
-			while (descriptor) {
-				descriptor->IssetDescriptor();
-				descriptor = descriptor->GetNextNode();
-			}
-			
+	} else if ( selectRet ) {
+		descriptor = GetFirstDescriptor();
+
+		while (descriptor) {
+			descriptor->IssetDescriptor();
+			descriptor = descriptor->GetNextNode();
 		}
+		
 	}
 
 	/* Do all paint and size methods on the end */
