@@ -1,3 +1,0 @@
-keybindings.o: keybindings.cpp keybindings.h
-
-keybindings.h:
