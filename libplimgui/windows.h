@@ -76,6 +76,11 @@ public:
 		@return number of lines used
 	*/
 	int Print(cString* string, int start); /* TODO: Add some overloaded Print and formating */
+	/*	Calculate text lines 
+		@param cString
+		@return number of lines
+	*/
+	int CalculatePrint(cString* string);
 	/*	Accessors */
 	/*	Get the focus of the window
 		@return window has focus either not 

@@ -200,12 +200,23 @@ int cCursesWindow::Print(cString* string, int start) {
 			ret += 1;
 		}
 		
+		if ( ret > GetHeight() - 1 )
+			break;
+
 		wmove( m_windowHandle, ret, x );
 		waddch( m_windowHandle, string->GetChar(i));
+
 		x++;
 	}
 	
 	return ret - start + 1;
+}
+
+int cCursesWindow::CalculatePrint(cString* string) {
+	if (string)
+		return (int) (string->GetLength() / GetWidth()) + 1;
+	else
+		return 0;
 }
 
 int cCursesWindow::OnKeyPressed( const int key ) {

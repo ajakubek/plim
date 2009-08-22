@@ -4,7 +4,8 @@ namespace NSWindows {
 
 cTextWindow::cTextWindow(cApplication* app, cCursesWindow* parent)
 :	cCursesWindow(app, 1, 1, 1, parent->GetWidth(), parent),
-	m_lineTop(NULL) {
+	m_lineTop(NULL),
+	m_linesDrawed(0) {
 	SetFocus( FALSE );
 	m_lineBuffer = new cTreeNodes();
 }
@@ -28,9 +29,59 @@ cTextLine* cTextWindow::NewLine(const char* buffer, unsigned int uid) {
 
 	line = new cTextLine( m_lineBuffer, NULL, bufferOut.GetBuffer(), 0 );
 
+	if ( m_linesDrawed >= GetHeight() ) {
+		ScrollDown( CalculatePrint( line ) );
+	}
+
 	NeedPartialUpdate();
 
 	return line;
+}
+
+void cTextWindow::ScrollDown(int count) {
+	cTextLine* line;
+
+	if (!count)
+		return;
+
+	line = (cTextLine*) m_lineTop;
+
+	while ( line ) {
+
+		if ( !count ) {
+			m_lineTop = line;
+			break;
+		}
+
+		count--;
+
+		line = (cTextLine*) m_lineBuffer->GetNext( line );
+	}
+
+	NeedPartialUpdate();
+}
+
+void cTextWindow::ScrollUp(int count) {
+	cTextLine* line;
+
+	if (!count)
+		return;
+	
+	line = (cTextLine*) m_lineTop;
+
+	while ( line ) {
+
+		if ( !count ) {
+			m_lineTop = line;
+			break;
+		}
+
+		count--;
+
+		line = (cTextLine*) m_lineBuffer->GetPrev( line );
+	}
+
+	NeedPartialUpdate( );
 }
 
 void cTextWindow::PartialUpdate(void) {
@@ -47,14 +98,17 @@ void cTextWindow::PartialUpdate(void) {
 	Erase();
 
 	line = (cTextLine* ) m_lineTop;
-	mtdy = GetHeight() - 1;
+	mtdy = GetHeight();
 	atdy = 0;
 
 	while ( line ) {
+
 		atdy += Print( line, atdy );
 
 		if (atdy > mtdy )
 			break;
+
+		m_linesDrawed = atdy;
 
 		line = (cTextLine*) m_lineBuffer->GetNext(line);
 	}

@@ -65,7 +65,7 @@ public:
 	virtual cTreeNode* GetNext(cTreeNode* node);
 	virtual cTreeNode* GetPrev(cTreeNode* node);
 protected:
-
+	
 private:
 	cTreeNode* m_nodeFirst;
 	cTreeNode* m_nodeLast;

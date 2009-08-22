@@ -44,12 +44,15 @@ public:
 	cTextWindow(cApplication* app, cCursesWindow* parent);
 	virtual ~cTextWindow(void);
 	cTextLine* NewLine(const char* buffer, unsigned int uid);
-
+	void ScrollDown(int count);
+	void ScrollUp(int count);
 	void PartialUpdate(void);
 private:
 	/*! Lines */
 	cTreeNodes* m_lineBuffer;
 	cTreeNode* m_lineTop;
+	/*! Line count*/
+	int m_linesDrawed;
 };
 
 };
