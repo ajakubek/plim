@@ -40,7 +40,7 @@ public:
 
 /* TODO: Implement lines display with formating, probally on the next commit */
 class cTextWindow: public cCursesWindow {
-public:
+public: 
 	cTextWindow(cApplication* app, cCursesWindow* parent);
 	virtual ~cTextWindow(void);
 	cTextLine* NewLine(const char* buffer, unsigned int uid);
