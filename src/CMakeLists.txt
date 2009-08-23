@@ -19,7 +19,10 @@ ADD_EXECUTABLE(plim plim.cpp)
 
 # this should be removed (GUI should be loaded dynamically)
 LINK_DIRECTORIES(libplimgui)
-TARGET_LINK_LIBRARIES(plim plimgui ${CURSES_LIBRARIES} ${LIBSIGCXX2_LIBRARIES})
+
+TARGET_LINK_LIBRARIES(plim
+	plimgui						# remove this dependency later
+	${LIBSIGCXX2_LIBRARIES})
 
 # install main plim executable
 INSTALL(TARGETS plim

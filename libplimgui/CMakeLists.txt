@@ -25,6 +25,11 @@ ADD_LIBRARY(plimgui SHARED
 			treenode.cpp
 			windows.cpp)
 
+# link with curses and libsigc++2
+TARGET_LINK_LIBRARIES(plimgui
+			${CURSES_LIBRARIES}
+			${LIBSIGCXX2_LIBRARIES})
+
 # install GUI plugin
 INSTALL(TARGETS plimgui
 		LIBRARY DESTINATION lib)
