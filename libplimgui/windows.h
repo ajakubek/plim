@@ -49,24 +49,24 @@ public:
 	/*	Recreate window
 	*/
 	void RecreateWindow(void);
-	/*	Erase the window content 
-		@return none 
+	/*	Erase the window content
+		@return none
 	*/
 	void Erase(void);
 	/*	Clear the window
 		@return none
 	*/
 	void Clear(void);
-	/*	Mark the window for update 
+	/*	Mark the window for update
 	*/
 	void NeedUpdate(void);
-	/*	Mark the window for repaint 
+	/*	Mark the window for repaint
 	*/
 	void NeedPartialUpdate(void);
-	/*	Update the window sizes and repaint 
+	/*	Update the window sizes and repaint
 	*/
 	virtual void Update(void);
-	/*	Make a partial update without updating the sizes 
+	/*	Make a partial update without updating the sizes
 	*/
 	virtual void PartialUpdate(void);
 	/*	Print text in window
@@ -76,21 +76,22 @@ public:
 		@return number of lines used
 	*/
 	int Print(cString* string, int start); /* TODO: Add some overloaded Print and formating */
-	/*	Calculate text lines 
+	int Print(cString* string, int x, int y); /* TODO: Add some overloaded Print and formating */
+	/*	Calculate text lines
 		@param cString
 		@return number of lines
 	*/
 	int CalculatePrint(cString* string);
 	/*	Accessors */
 	/*	Get the focus of the window
-		@return window has focus either not 
+		@return window has focus either not
 	*/
 	int IsFocused(void) { return m_hasFocus; };
 	/*	Set the window focus, all input will be redirected to this window
 		@param focus bool val
 	*/
 	void SetFocus(int focus) { if (m_hasFocus != focus) { m_hasFocus = focus; /* TODO: some event */ } };
-	/*	Get the visibility of the window 
+	/*	Get the visibility of the window
 		@return visibility bool val
 	*/
 	int IsVisible(void) { return m_isVisible; };
@@ -107,15 +108,15 @@ public:
 		@return WINDOW structure
 	*/
 	WINDOW* GetParentWindowHandle(void) { if (!m_windowParent) return NULL; return m_windowParent->GetWindowHandle(); };
-	/*	Get the window handle 
+	/*	Get the window handle
 		@return WINDOW structure
 	*/
 	WINDOW* GetWindowHandle(void) { return m_windowHandle; };
-	/*	Set the window handle, used for a fake root window mostly 
+	/*	Set the window handle, used for a fake root window mostly
 		@param windowHandle, a curses WINDOW structure
 	*/
 	void SetWindowHandle(WINDOW* windowHandle) { m_windowHandle = windowHandle; };
-	/*	Get the first window 
+	/*	Get the first window
 		@return cCursesWindow
 	*/
 	cCursesWindow* GetFirstWindow(void) { return (cCursesWindow*) GetFirstNode(); }
@@ -123,8 +124,8 @@ public:
 		@return cCursesWindow
 	*/
 	cCursesWindow* GetLastWindow(void) { return (cCursesWindow*) GetLastNode(); }
-	/*	Set the window data 
-		@param void* 
+	/*	Set the window data
+		@param void*
 	*/
 	void SetWindowData(void* data) { m_windowData = data; };
 	/*	Get the window data
@@ -139,53 +140,53 @@ public:
 		@return align
 	*/
 	align GetWindowAlign(void) { return m_windowAlign; };
-	/*	Get x raw of the window 
+	/*	Get x raw of the window
 	*/
 	int GetRawLeft(void) {  return m_xPos; }
-	/*	Get x of the window 
+	/*	Get x of the window
 	*/
 	int GetLeft(void) { if (!m_windowParent) return 0; return m_xPos + m_windowParent->GetLeft() ; };
 	/*	Get y raw of the window
 	*/
 	int GetRawTop(void) {  return m_yPos; }
-	/*	Get y of the window 
+	/*	Get y of the window
 	*/
 	int GetTop(void) { if (!m_windowParent) return 0; return m_yPos + m_windowParent->GetTop(); };
-	/*	Get width of the window 
+	/*	Get width of the window
 	*/
 	int GetWidth(void) { if (!m_windowParent) return getmaxx(m_windowHandle) ; return m_width; };
-	/*	Get height of the window 
+	/*	Get height of the window
 	*/
 	int GetHeight(void) { if (!m_windowParent) return getmaxy(m_windowHandle); return m_height; };
-	/*	Set the x of the window 
+	/*	Set the x of the window
 	*/
 	void SetLeft(int left) { m_sizeChanged = m_xPos != left; m_xPos = left; };
-	/*	Set the y of the window 
+	/*	Set the y of the window
 	*/
 	void SetTop(int top) { m_sizeChanged = m_yPos != top; m_yPos = top;  };
-	/* Set the width of the window 
+	/* Set the width of the window
 	*/
 	void SetWidth(int width) { m_sizeChanged = m_width != width; m_width = width; };
-	/* Set the height of the window 
+	/* Set the height of the window
 	*/
 	void SetHeight(int height) { m_sizeChanged = m_height != height; m_height = height; };
-	/* Set dims 
+	/* Set dims
 	*/
-	void SetDimension(int left, int top, int width, int height) { 
+	void SetDimension(int left, int top, int width, int height) {
 		SetLeft(left); SetTop(top);
 		SetWidth(width); SetHeight(height);
 		/* The NeedUpdate should be called by the cableguy */
 	}
 	/* If the size changed */
 	int IsSizeChanged(void) { return m_sizeChanged; }
-	/*	If the window is a child 
+	/*	If the window is a child
 	*/
 	int IsChild(void) { return m_windowParent != NULL; };
 	/*	If the window needs update */
 	int IsUpdateNeccesary(void) { return m_needUpdate; };
 	/*	If the window needs partial update */
 	int IsPartialNeccesary(void) { return m_needPartialUpdate; };
-	/*	Launch a keypress event 
+	/*	Launch a keypress event
 		@param key, int
 		@return int, if -1 than break Loop
 	*/

@@ -25,7 +25,7 @@ cCursesWindow::cCursesWindow(cApplication* app, int left, int top, int height, i
 	m_sizeChanged(1) {
 
 	if (m_appInstance) {
-		
+
 		if (!m_windowParent) {
 			m_windowHandle = ::newwin(height, width, top, left);
 		} else {
@@ -95,7 +95,7 @@ void cCursesWindow::RecreateWindow(void) {
 	lastChild = GetLastWindow();
 
 	while ( child ) {
-	
+
 		if (child->IsSizeChanged())
 			child->RecreateWindow();
 
@@ -146,7 +146,7 @@ void cCursesWindow::Update(void) {
 		/* recalculating is done. */
 		box->Update();
 	}
-	
+
 	if ( m_windowParent ) { /* Update the sizes only if the window is a child */
 		if ( IsSizeChanged() ) {
 			RecreateWindow();
@@ -184,7 +184,7 @@ int cCursesWindow::Print(cString* string, int start) {
 	int ret = start;
 	int x;
 	int i;
-	
+
 	if (!string || !string->GetLength() || start < 0 || start > GetHeight() )
 		return 0;
 
@@ -199,7 +199,7 @@ int cCursesWindow::Print(cString* string, int start) {
 			x = 0;
 			ret += 1;
 		}
-		
+
 		if ( ret > GetHeight() - 1 )
 			break;
 
@@ -208,8 +208,39 @@ int cCursesWindow::Print(cString* string, int start) {
 
 		x++;
 	}
-	
+
 	return ret - start + 1;
+}
+
+int cCursesWindow::Print(cString* string, int x, int y) {
+	int ret = y;
+	int i;
+
+	if (!string || !string->GetLength() || y < 0 || y > GetHeight() )
+		return 0;
+
+	i = 0;
+
+	wmove(GetWindowHandle(), ret, x );
+
+	for (; i < string->GetLength(); i++ ) {
+
+		if ( x > GetWidth() ) {
+			x = 0;
+			ret += 1;
+		}
+
+		if ( ret > GetHeight() - 1 )
+			break;
+
+		wmove( m_windowHandle, ret, x );
+		waddch( m_windowHandle, string->GetChar(i));
+
+		x++;
+	}
+
+	return ret - y + 1;
+
 }
 
 int cCursesWindow::CalculatePrint(cString* string) {

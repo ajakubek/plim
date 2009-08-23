@@ -7,7 +7,7 @@ cInputWindow::cInputWindow(cApplication* app, cCursesWindow* parent)
 	m_cursorPos(0) {
 	m_buffer = new cString();
 	SetFocus( TRUE );
-
+	SetPrefixPrompt( "[input-change-it] " );
 }
 
 cInputWindow::~cInputWindow(void) {
@@ -19,13 +19,20 @@ cInputWindow::~cInputWindow(void) {
 void cInputWindow::PartialUpdate(void) {
 	if (!IsPartialNeccesary())
 		return;
-	
+
 	Erase();
-	
+
+	Print( &m_prefixBuffer, 0, 0 );
+
+	if ( !m_cursorPos ) {
+		::wmove( GetWindowHandle(), 0, m_prefixBuffer.GetLength() + 1);
+	}
+
 	//::box(m_windowHandle, ACS_VLINE, ACS_HLINE);
 	if (m_buffer->GetBuffer()) {
 		//::wprintw(GetWindowHandle(), "%s", m_buffer->GetBuffer());
-		Print( m_buffer, 0 );
+		Print( m_buffer, m_prefixBuffer.GetLength(), 0 );
+
 	}
 
 	cCursesWindow::PartialUpdate();
@@ -34,9 +41,12 @@ void cInputWindow::PartialUpdate(void) {
 int cInputWindow::OnKeyPressed( const int key ) {
 	char localBuff[2] = { key, 0 };
 	int m_newHeight;
+	char xxx[1024];
+
+	sprintf(&xxx[0], "Key - %c (%x)", key, key );
 
 	/* TODO: Add key bindings, IMPORTANT */
-
+	OnEnter( (char*) &xxx[0] );
 	switch ( key ) {
 		case 127:
 		case KEY_BACKSPACE: {
@@ -86,7 +96,7 @@ int cInputWindow::OnResize(void) {
 }
 
 int cInputWindow::CalcSize(void) {
-	int m_newHeight = (int) (m_buffer->GetLength() / GetWidth()) + 1;
+	int m_newHeight = (int) ((m_prefixBuffer.GetLength() + m_buffer->GetLength()) / GetWidth()) + 1;
 
 	if (GetHeight() != m_newHeight) {
 		SetHeight( m_newHeight );

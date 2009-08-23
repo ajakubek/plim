@@ -9,7 +9,7 @@ cTextWindow::cTextWindow(cApplication* app, cCursesWindow* parent)
 	SetFocus( FALSE );
 	m_lineBuffer = new cTreeNodes();
 }
- 
+
 cTextWindow::~cTextWindow(void) {
 
 	if (m_lineBuffer)
@@ -84,6 +84,19 @@ void cTextWindow::ScrollUp(int count) {
 	NeedPartialUpdate( );
 }
 
+void cTextWindow::PageUp(void) {
+	ScrollUp( GetHeight() );
+}
+
+void cTextWindow::PageDown(void) {
+	ScrollDown( GetHeight() );
+}
+
+int cTextWindow::OnResize(void) {
+	Pin();
+	return 0;
+}
+
 void cTextWindow::PartialUpdate(void) {
 	cTextLine* line;
 	int mtdy, atdy;
@@ -116,5 +129,12 @@ void cTextWindow::PartialUpdate(void) {
 	cCursesWindow::PartialUpdate();
 }
 
+void cTextWindow::Pin(void) {
+	int dif = GetHeight() - m_linesDrawed;
+
+	if ( dif ) {
+		ScrollUp( dif );
+	}
+}
 
 };

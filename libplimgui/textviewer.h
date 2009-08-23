@@ -45,8 +45,13 @@ public:
 	virtual ~cTextWindow(void);
 	cTextLine* NewLine(const char* buffer, unsigned int uid);
 	void ScrollDown(int count);
-	void ScrollUp(int count); 
+	void ScrollUp(int count);
+	void PageUp(void);
+	void PageDown(void);
+	int OnResize(void);
 	void PartialUpdate(void);
+protected:
+	void Pin(void);
 private:
 	/*! Lines */
 	cTreeNodes* m_lineBuffer;

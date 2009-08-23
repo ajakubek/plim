@@ -38,16 +38,23 @@ class cInputWindow: public cCursesWindow {
 public:
 	cInputWindow(cApplication* app, cCursesWindow* parent);
 	virtual ~cInputWindow(void);
+
+	/* Accessors */
+	void SetPrefixPrompt(const char* prompt) { m_prefixBuffer.Copy( prompt ); };
+	const char* GetPrefixPrompt(void) { return m_prefixBuffer.GetBuffer(); };
+
+	/* Internal */
 	void PartialUpdate(void);
 	int OnKeyPressed( const int key );
 	int OnResize(void);
-	
+
 	/* Signals */
 	sigc::signal <void, const char*> OnEnter;
 protected:
 	int CalcSize(void);
 	void UpdateSize(void);
 private:
+	cString m_prefixBuffer;
 	cString* m_buffer;
 	int m_cursorPos;
 };
