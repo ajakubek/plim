@@ -1,6 +1,8 @@
 .deps
 Makefile
+build
 config.log
 config.status
+dist
 *.o
 *.a
