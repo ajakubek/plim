@@ -70,7 +70,7 @@ private:
 	cTreeNode* m_nodeFirst;
 	cTreeNode* m_nodeLast;
 };
-
+ 
 };
 
 #endif

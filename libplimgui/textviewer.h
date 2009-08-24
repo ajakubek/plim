@@ -59,7 +59,7 @@ public:
 protected:
 	int OnCppKeyword(cCursesWindow* window, cPlimToken* token, PlimAttrs* attrs);
 	void Pin(void);
-private:
+private: 
 	/*! Lines */
 	cTreeNodes* m_lineBuffer;
 	cTreeNode* m_lineTop;

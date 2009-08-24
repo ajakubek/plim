@@ -39,7 +39,7 @@ int cKeyboard::CheckKeyClicked(void) {
 
 	return 0;
 }
-
+ 
 int cKeyboard::OnKeyClicked( const int key ) {
 	return 0;
 }

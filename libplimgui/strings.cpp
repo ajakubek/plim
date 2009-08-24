@@ -170,7 +170,7 @@ int cString::GetLength(void)
 }
 
 const char* cString::GetBuffer(int index, int* range)
-{
+{ 
 	if (index <= m_length)
 	{
 		if (range)	*range = m_length - index;

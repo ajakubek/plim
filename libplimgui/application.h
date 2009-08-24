@@ -88,7 +88,7 @@ public:
 	int GetColorPair(int fg, int bg) { return m_colors->GetPair(fg, bg); };
 	/*	get the root window handle
 		@return ncurses WINDOW struct
-	*/
+	*/ 
 	WINDOW* GetWindowHandle(void) { return m_rootWindow; };
 	/* Terminal resize event */
 	virtual int OnTerminalSizeChanged(void);

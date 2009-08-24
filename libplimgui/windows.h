@@ -66,7 +66,7 @@ typedef struct _CallbackPtr {
 	TODO: Add hide and show capabilities ie. newwin,subwin,delwin
 	TODO: Suspend any drawings etc. when window is hidden (delwin)
 	@author: IC0ffeeCup
-*/
+*/ 
 class cCursesWindow: public cTreeNode {
 public:
 	/* pos are relative to parent window */

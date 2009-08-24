@@ -20,10 +20,10 @@ void cStatusWindow::PartialUpdate(void) {
 		return;
 	
 	Erase();
-
+ 
 	::wbkgd(GetWindowHandle(), COLOR_PAIR(1));
 	//::box(m_windowHandle, ACS_VLINE, ACS_HLINE);
-	::wprintw(GetWindowHandle(), " UTF-8 | Handbook: http://tiny.pl/2cbz | Dokumentacja: http://tiny.pl/2cb3 | [00:37:50] <mkay> WOLÊ 10-letniego Niemca <-- pedo!");
+	::wprintw(GetWindowHandle(), " UTF-8 | Handbook: http://tiny.pl/2cbz | Dokumentacja: http://tiny.pl/2cb3 | [00:37:50] <mkay> WOLï¿½ 10-letniego Niemca <-- pedo!");
 	
 	
 	cCursesWindow::PartialUpdate();

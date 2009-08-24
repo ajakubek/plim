@@ -50,7 +50,7 @@ public:
 	int GetFlags(int index, int* flags, int* colors);
 	int IsSpecial(int index) { return GetChar(index) < 32; };
 protected:
-
+ 
 private:
 };
 

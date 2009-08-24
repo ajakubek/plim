@@ -46,7 +46,7 @@ int cPallete::GetPair(int fg, int bg) {
 			return ret;
 		}
 		color = color->GetNextNode();
-	}
+	} 
 
 	return -1;
 }

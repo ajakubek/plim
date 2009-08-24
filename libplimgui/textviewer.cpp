@@ -197,7 +197,7 @@ int cTextWindow::OnCppKeyword(cCursesWindow* window, cPlimToken* token, PlimAttr
 void cTextWindow::Pin(void) {
 	int dif = GetHeight() - m_linesDrawed;
 
-	if ( dif ) {
+	if ( dif ) { 
 		ScrollUp( dif + 1 );
 	}
 }

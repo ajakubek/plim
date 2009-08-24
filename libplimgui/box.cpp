@@ -11,7 +11,7 @@ cBox::~cBox(void) {
 	if (m_windowInstance) {
 		/* dummy */
 	}
-}
+} 
 
 void cBox::Update(void) {
 	cCursesWindow* clientWindow = m_windowInstance;
