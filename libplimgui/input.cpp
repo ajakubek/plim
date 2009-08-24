@@ -66,7 +66,7 @@ int cInputWindow::OnKeyPressed( const int key ) {
 			}
 			break;
 		}
-
+ 
 		default: {
 			m_buffer.Cat( (char* ) &localBuff );
 			m_cursorPos++;

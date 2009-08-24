@@ -39,7 +39,7 @@ cApplication::cApplication(int argc, char** argv)
 
 	}
 }
-
+ 
 cApplication::~cApplication() {
 	/* if you forget something to freeup */
 	noraw();

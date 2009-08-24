@@ -69,7 +69,7 @@ cTreeNode* cTreeNodes::RemoveNode(cTreeNode* node, int del) {
 		
 	}
 	else {
-		if ( GetFirstNode() == node )
+		if ( GetFirstNode() == node ) 
 			SetFirstNode( node->GetNextNode() );
 
 		if ( GetLastNode() == node )

@@ -48,7 +48,7 @@ public:
 	void PartialUpdate(void);
 	int OnKeyPressed( const int key );
 	int OnResize(void);
-
+ 
 	/* Signals */
 	sigc::signal <void, const char*> OnEnter;
 protected:

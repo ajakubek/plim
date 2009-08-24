@@ -35,7 +35,7 @@ cHashNodes::~cHashNodes(void)
 {
 	ResizeNodes( 0 );
 }
-
+ 
 cHashNode* cHashNodes::Add(const char* identifier, const int len, void* data)
 {
 	cHashNode* node;

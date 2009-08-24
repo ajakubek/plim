@@ -12,4 +12,4 @@ cBase::~cBase(void) {
 	/* dummy */
 }
 
-};
+}; 

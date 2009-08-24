@@ -48,7 +48,7 @@ private:
 	int m_len;
 	void* m_data;
 };
-
+ 
 class cHashNodes
 {
 public:

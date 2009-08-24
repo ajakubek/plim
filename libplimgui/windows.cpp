@@ -394,7 +394,7 @@ int cCursesWindow::PrintLexer(cPlimLexer* lexer, int x, int y) {
 				x++;
 			}
 		}
-
+ 
 		token = token->GetNextNode();
 	}
 

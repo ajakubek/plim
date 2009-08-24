@@ -51,7 +51,7 @@ int cCursesString::GetFlags(int index, int* flags, int* colors) {
 			case ATTR_COLOR: {
 				*colors = 1;
 				break;
-			}
+			} 
 
 			case ATTR_RESET: {
 				*flags = ATTR_RESET;

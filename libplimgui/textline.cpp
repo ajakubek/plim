@@ -28,7 +28,7 @@ cTextLine::cTextLine(cTreeNodes* nodes, cTreeNode* node, const char* str, unsign
 }
 
 cTextLine::~cTextLine(void) {
-
+ 
 }
 
 };

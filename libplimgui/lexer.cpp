@@ -594,7 +594,7 @@ int cPlimLexer::ScriptSymbolParse(const char *src, int len, int* newPos, TokenFl
 
 				break;
 			}
-
+ 
 			case L':':
 			{
 				case_flags = PLIM_L_CASE_FLAGS_SYMBOLS;

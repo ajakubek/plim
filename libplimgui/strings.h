@@ -56,7 +56,7 @@ private:
 	int m_allocated;
 	char* m_stringBuffer;
 };
-
+ 
 };
 
 #endif
