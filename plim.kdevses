@@ -3,118 +3,118 @@
 <KDevPrjSession>
  <DocsAndViews NumberOfDocuments="38" >
   <Doc0 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/src/plim.cpp" >
-   <View0 Encoding="" line="123" Type="Source" />
+   <View0 Encoding="" Type="Source" />
   </Doc0>
   <Doc1 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/application.h" >
-   <View0 Encoding="" line="87" Type="Source" />
+   <View0 Encoding="" line="90" Type="Source" />
   </Doc1>
   <Doc2 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/base.h" >
-   <View0 Encoding="" line="0" Type="Source" />
+   <View0 Encoding="" line="3" Type="Source" />
   </Doc2>
   <Doc3 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/base.cpp" >
-   <View0 Encoding="" line="0" Type="Source" />
+   <View0 Encoding="" line="14" Type="Source" />
   </Doc3>
   <Doc4 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/application.cpp" >
-   <View0 Encoding="" line="26" Type="Source" />
+   <View0 Encoding="" line="41" Type="Source" />
   </Doc4>
   <Doc5 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/input.cpp" >
-   <View0 Encoding="" line="56" Type="Source" />
+   <View0 Encoding="" line="68" Type="Source" />
   </Doc5>
   <Doc6 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/windows.h" >
-   <View0 Encoding="" line="54" Type="Source" />
+   <View0 Encoding="" line="68" Type="Source" />
   </Doc6>
   <Doc7 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/box.h" >
-   <View0 Encoding="" line="0" Type="Source" />
+   <View0 Encoding="" line="19" Type="Source" />
   </Doc7>
   <Doc8 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/statusbar.h" >
    <View0 Encoding="" line="40" Type="Source" />
   </Doc8>
   <Doc9 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/textviewer.h" >
-   <View0 Encoding="" line="44" Type="Source" />
+   <View0 Encoding="" line="61" Type="Source" />
   </Doc9>
   <Doc10 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/descriptor.h" >
-   <View0 Encoding="" line="0" Type="Source" />
+   <View0 Encoding="" line="19" Type="Source" />
   </Doc10>
   <Doc11 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/treenodes.h" >
-   <View0 Encoding="" line="55" Type="Source" />
+   <View0 Encoding="" line="72" Type="Source" />
   </Doc11>
   <Doc12 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/treenodes.cpp" >
-   <View0 Encoding="" line="56" Type="Source" />
+   <View0 Encoding="" line="71" Type="Source" />
   </Doc12>
   <Doc13 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/treenode.cpp" >
-   <View0 Encoding="" line="88" Type="Source" />
+   <View0 Encoding="" line="103" Type="Source" />
   </Doc13>
   <Doc14 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/box.cpp" >
-   <View0 Encoding="" line="0" Type="Source" />
+   <View0 Encoding="" line="13" Type="Source" />
   </Doc14>
   <Doc15 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/windows.cpp" >
-   <View0 Encoding="" line="382" Type="Source" />
+   <View0 Encoding="" line="390" Type="Source" />
   </Doc15>
   <Doc16 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/input.h" >
-   <View0 Encoding="" line="38" Type="Source" />
+   <View0 Encoding="" line="50" Type="Source" />
   </Doc16>
   <Doc17 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/textviewer.cpp" >
-   <View0 Encoding="" line="197" Type="Source" />
+   <View0 Encoding="" line="199" Type="Source" />
   </Doc17>
   <Doc18 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/keyboard.h" >
-   <View0 Encoding="" line="4" Type="Source" />
+   <View0 Encoding="" line="19" Type="Source" />
   </Doc18>
   <Doc19 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/keyboard.cpp" >
-   <View0 Encoding="" line="29" Type="Source" />
+   <View0 Encoding="" line="41" Type="Source" />
   </Doc19>
   <Doc20 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/pallete.h" >
-   <View0 Encoding="" line="46" Type="Source" />
+   <View0 Encoding="" line="58" Type="Source" />
   </Doc20>
   <Doc21 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/pallete.cpp" >
-   <View0 Encoding="" line="46" Type="Source" />
+   <View0 Encoding="" line="48" Type="Source" />
   </Doc21>
   <Doc22 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/keybindings.h" >
-   <View0 Encoding="" line="0" Type="Source" />
+   <View0 Encoding="" line="19" Type="Source" />
   </Doc22>
   <Doc23 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/keybindings.cpp" >
-   <View0 Encoding="" line="0" Type="Source" />
+   <View0 Encoding="" line="19" Type="Source" />
   </Doc23>
   <Doc24 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/strings.h" >
-   <View0 Encoding="" line="40" Type="Source" />
+   <View0 Encoding="" line="58" Type="Source" />
   </Doc24>
   <Doc25 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/strings.cpp" >
-   <View0 Encoding="" line="155" Type="Source" />
+   <View0 Encoding="" line="172" Type="Source" />
   </Doc25>
   <Doc26 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/descriptor.cpp" >
-   <View0 Encoding="" line="0" Type="Source" />
+   <View0 Encoding="" line="13" Type="Source" />
   </Doc26>
   <Doc27 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/statusbar.cpp" >
-   <View0 Encoding="" line="6" Type="Source" />
+   <View0 Encoding="" line="22" Type="Source" />
   </Doc27>
   <Doc28 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/textline.cpp" >
-   <View0 Encoding="" line="29" Type="Source" />
+   <View0 Encoding="" line="30" Type="Source" />
   </Doc28>
   <Doc29 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/cursesstring.h" >
-   <View0 Encoding="" line="33" Type="Source" />
+   <View0 Encoding="" line="52" Type="Source" />
   </Doc29>
   <Doc30 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/cursesstring.cpp" >
-   <View0 Encoding="" line="40" Type="Source" />
+   <View0 Encoding="" line="53" Type="Source" />
   </Doc30>
   <Doc31 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/lexer.h" >
-   <View0 Encoding="" line="84" Type="Source" />
+   <View0 Encoding="" line="99" Type="Source" />
   </Doc31>
   <Doc32 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/lexer.cpp" >
-   <View0 Encoding="" line="579" Type="Source" />
+   <View0 Encoding="" line="596" Type="Source" />
   </Doc32>
   <Doc33 NumberOfViews="1" URL="file:///home/ic0ffeecup/Documents/Microsoft%20Visual%20C%2B%2B%20Library/Adara/Adara/Adara/cEveLexer.cpp" >
-   <View0 Encoding="" line="146" Type="Source" />
+   <View0 Encoding="" Type="Source" />
   </Doc33>
   <Doc34 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/hashnodes.h" >
-   <View0 Encoding="" line="42" Type="Source" />
+   <View0 Encoding="" line="50" Type="Source" />
   </Doc34>
   <Doc35 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/hashnodes.cpp" >
-   <View0 Encoding="" line="23" Type="Source" />
+   <View0 Encoding="" line="37" Type="Source" />
   </Doc35>
-  <Doc36 NumberOfViews="1" URL="file:///home/ic0ffeecup/Documents/Microsoft%20Visual%20C%2B%2B%20Library/Adara/Adara/Adara/cEventList.cpp" >
-   <View0 Encoding="UTF-8" line="0" Type="Source" />
+  <Doc36 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/stdafx.h" >
+   <View0 Encoding="" line="21" Type="Source" />
   </Doc36>
-  <Doc37 NumberOfViews="1" URL="file:///home/ic0ffeecup/Documents/Microsoft%20Visual%20C%2B%2B%20Library/Adara/Adara/Adara/cEventList.h" >
-   <View0 Encoding="UTF-8" line="25" Type="Source" />
+  <Doc37 NumberOfViews="1" URL="file:///home/ic0ffeecup/Projects/plim/libplimgui/stdafx.cpp" >
+   <View0 Encoding="" line="19" Type="Source" />
   </Doc37>
  </DocsAndViews>
  <pluginList>
