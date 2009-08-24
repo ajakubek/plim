@@ -58,9 +58,9 @@ public:
 	cTreeNodes(void);
 	virtual ~cTreeNodes(void);
 	void SetFirstNode(cTreeNode* node);
-	cTreeNode* GetFirstNode(void);
+	virtual cTreeNode* GetFirstNode(void);
 	void SetLastNode(cTreeNode* node);
-	cTreeNode* GetLastNode(void);
+	virtual cTreeNode* GetLastNode(void);
 	cTreeNode* RemoveNode(cTreeNode* node, int del = 0);
 	virtual cTreeNode* GetNext(cTreeNode* node);
 	virtual cTreeNode* GetPrev(cTreeNode* node);

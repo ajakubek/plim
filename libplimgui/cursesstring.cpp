@@ -18,37 +18,75 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "pallete.h"
+#include "cursesstring.h"
 
-namespace NSApplication {
+namespace NSString {
 
-cPallete::cPallete(void)
-:	cTreeNodes() {
-	/* Initialize the default colors, need some tuneup */
-	for (int i = 1; i < 64; i++ )
-		new cColor( this, i, (int) (i / 8), i % 7);
+cCursesString::cCursesString(void)
+:	cString() {
+
 }
 
-cPallete::~cPallete(void) {
+cCursesString::cCursesString(const char* str)
+:	cString() {
+	Copy(str);
 }
 
-int cPallete::GetPair(int fg, int bg) {
-	cColor* color;
-	int ret;
+cCursesString::~cCursesString(void) {
 
-	color = GetFirstNode();
+}
 
-	while (color) {
-		
-		if ((ret = color->IsPair(fg, bg)) > -1)
+int cCursesString::GetFlags(int index, int* flags, int* colors) {
+	char ch = GetChar(index);
+
+	*colors = 0;
+
+	if ( IsSpecial(index) ) {
+		switch (ch)
 		{
+			case ATTR_BOLD: {
+				*flags |= A_BOLD;
+				break;
+			}
+			case ATTR_COLOR: {
+				*colors = 1;
+				break;
+			}
 
-			return ret;
+			case ATTR_RESET: {
+				*flags = ATTR_RESET;
+				break;
+			}
+
+			case ATTR_FIXED: {
+				/* dunno */
+				break;
+			}
+
+			case ATTR_REVERSE:
+			case ATTR_REVERSE2: {
+				*flags |= A_REVERSE;
+				break;
+			}
+
+			case ATTR_ITALIC: {
+				/* Dunno, ncurses doesnt support italic stuff */
+				break;
+			}
+
+			case ATTR_UNDERLINE2:
+			case ATTR_UNDERLINE: {
+				*flags |= A_UNDERLINE;
+				break;
+			}
+
+			default:
+				break;
 		}
-		color = color->GetNextNode();
+
 	}
 
-	return -1;
+	return 0;
 }
 
 };

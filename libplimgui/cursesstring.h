@@ -18,37 +18,42 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "pallete.h"
+#ifndef __PLIM_CURSESSTRING_H__
+#define __PLIM_CURSESSTRING_H__
 
-namespace NSApplication {
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <ncurses.h>
 
-cPallete::cPallete(void)
-:	cTreeNodes() {
-	/* Initialize the default colors, need some tuneup */
-	for (int i = 1; i < 64; i++ )
-		new cColor( this, i, (int) (i / 8), i % 7);
-}
+#include "strings.h"
 
-cPallete::~cPallete(void) {
-}
+namespace NSString
+{
 
-int cPallete::GetPair(int fg, int bg) {
-	cColor* color;
-	int ret;
+#define ATTR_BOLD			0x02
+#define ATTR_COLOR		0x03
+#define ATTR_RESET		0x0F
+#define ATTR_FIXED		0x11
+#define ATTR_REVERSE		0x12
+#define ATTR_REVERSE2	0x16
+#define ATTR_ITALIC		0x1D
+#define ATTR_UNDERLINE	0x1F
+#define ATTR_UNDERLINE2	0x15
 
-	color = GetFirstNode();
+class cCursesString: public cString
+{
+public:
+	cCursesString(void);
+	cCursesString(const char* str);
+	virtual ~cCursesString(void);
+	int GetFlags(int index, int* flags, int* colors);
+	int IsSpecial(int index) { return GetChar(index) < 32; };
+protected:
 
-	while (color) {
-		
-		if ((ret = color->IsPair(fg, bg)) > -1)
-		{
-
-			return ret;
-		}
-		color = color->GetNextNode();
-	}
-
-	return -1;
-}
+private:
+};
 
 };
+
+#endif

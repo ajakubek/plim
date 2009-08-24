@@ -27,6 +27,7 @@
 #include "application.h"
 #include "windows.h"
 #include "strings.h"
+#include "lexer.h"
 
 namespace NSWindows {
 
@@ -54,9 +55,10 @@ protected:
 	int CalcSize(void);
 	void UpdateSize(void);
 private:
-	cString m_prefixBuffer;
-	cString* m_buffer;
+	cCursesString m_prefixBuffer;
+	cCursesString m_buffer;
 	int m_cursorPos;
+	cPlimLexer lexer;
 };
 
 };

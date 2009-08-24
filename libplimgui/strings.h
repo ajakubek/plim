@@ -36,7 +36,10 @@ public:
 	cString(void);
 	virtual ~cString(void);
 	int Copy(const char* source);
+	int Copy(const char* source, int len);
+	int Copy(cString* string) { return Copy(string->GetBuffer()); };
 	int Cat(const char* source);
+	int Cat(cString* string) { return Cat(string->GetBuffer()); };
 	int Delete(int index, int range, char* out);
 	int Insert(int index, const char* source);
 	int Insert(int index, char source);
@@ -45,6 +48,7 @@ public:
 	const char GetChar(int index);
 	int GetLength(void);
 	const char* GetBuffer(int index, int* range);
+
 protected:
 	
 private:

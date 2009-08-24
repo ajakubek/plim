@@ -22,7 +22,8 @@ cCursesWindow::cCursesWindow(cApplication* app, int left, int top, int height, i
 	m_windowFirst(NULL),
 	m_windowLast(NULL),
 	m_colorPair(0),
-	m_sizeChanged(1) {
+	m_sizeChanged(1),
+	m_formatNodes(NULL) {
 
 	if (m_appInstance) {
 
@@ -67,7 +68,8 @@ cCursesWindow::cCursesWindow(cApplication* app)
 	m_needPartialUpdate(FALSE),
 	m_windowFirst(NULL),
 	m_windowLast(NULL),
-	m_colorPair(0) {
+	m_colorPair(0),
+	m_formatNodes(NULL) {
 
 	if (m_appInstance) {
 		SetWindowHandle( m_appInstance->GetWindowHandle() );
@@ -82,6 +84,11 @@ cCursesWindow::~cCursesWindow(void) {
 		m_boxPtr = NULL;
 	}
 
+	if (m_formatNodes) {
+		/* Note, if you share some format nodes between windows you should in the
+			window that do the share zero the pointer so it prevents deleting it */
+		delete m_formatNodes;
+	}
 	if (m_windowHandle) {
 		::delwin(m_windowHandle);
 	}
@@ -175,6 +182,9 @@ void cCursesWindow::PartialUpdate(void) {
 		return;
 
 	/* let it handle by the doupdate from curses */
+	if (!m_windowParent)
+		return;
+
 	::wnoutrefresh(m_windowHandle);
 
 	m_needPartialUpdate = FALSE;
@@ -194,6 +204,7 @@ int cCursesWindow::Print(cString* string, int start) {
 	wmove(GetWindowHandle(), ret, x );
 
 	for (; i < string->GetLength(); i++ ) {
+		
 
 		if ( x > GetWidth() ) {
 			x = 0;
@@ -224,7 +235,6 @@ int cCursesWindow::Print(cString* string, int x, int y) {
 	wmove(GetWindowHandle(), ret, x );
 
 	for (; i < string->GetLength(); i++ ) {
-
 		if ( x > GetWidth() ) {
 			x = 0;
 			ret += 1;
@@ -240,14 +250,311 @@ int cCursesWindow::Print(cString* string, int x, int y) {
 	}
 
 	return ret - y + 1;
+}
 
+/* Lazy, after the lexer is here this will be probally removed! */
+int cCursesWindow::PrintFormated(cCursesString* string, int x, int y) {
+	int yy = y;
+	int i;
+	int flags;
+	int useColors;
+	int val;
+
+	if (!string || !string->GetLength() || y < 0 || y > GetHeight() )
+		return 0;
+
+	i = 0;
+	flags = 0;
+	useColors = 0;
+
+	wmove( GetWindowHandle(), yy, x );
+	wattrset( GetWindowHandle(), 0 );
+
+	for (; i < string->GetLength(); i++ ) {
+		if ( x > GetWidth() ) {
+			x = 0;
+			yy += 1;
+		}
+
+		if ( yy > GetHeight() - 1 )
+			break;
+
+		string->GetFlags(i, &flags, &useColors);
+
+		if ( useColors ) {
+			/* ignore the end */
+			char x[2] = { 0, 0 };
+			/* Just an test case for getting the pair, should be moved somewhere and changed */
+			int firstCol;
+			int secondCol;
+
+			x[0] = string->GetChar(i + 1);			
+			firstCol = atoi((char*) &x[0]);
+
+			x[0] = string->GetChar(i + 2);
+			secondCol = atoi((char*) &x[0]);
+			
+			wattron(m_windowHandle, COLOR_PAIR(m_appInstance->GetColorPair(firstCol, secondCol)));
+			
+		}
+
+		if ( flags == ATTR_RESET ) {
+			wattrset( m_windowHandle, 0 );
+			flags = 0;
+		}
+
+		if (!string->IsSpecial(i)) {
+			wmove( m_windowHandle, yy, x );
+			waddch( m_windowHandle, string->GetChar(i) | flags);
+			x++;
+		}
+
+	}
+
+	return yy - y + 1;
+}
+
+int cCursesWindow::PrintLexer(cPlimLexer* lexer, int x, int y) {
+	int yy = y;
+	int i;
+	cPlimToken* token;
+	CallbackPtr* ptr;
+	PlimAttrs attrs;
+
+	if (!lexer) return 0;
+
+	bzero( &attrs, sizeof(PlimAttrs) );
+	attrs.wrap = 1;
+	attrs.flags = 0;
+	attrs.display = 1;
+
+	wattrset( m_windowHandle, 0 );
+
+	token = lexer->GetFirstNode();
+
+	while ( token ) {
+
+		if (HandleSpecChars(token, &attrs)) {
+			
+		}
+		else {
+			ptr = GetFormattingCallback( token->GetBuffer() );
+
+			if ( ptr ) {
+				if ( (this->*(ptr->callback)) ( this, token, &attrs ) == -1 ) {
+					bzero( &attrs, sizeof(PlimAttrs) );
+					attrs.wrap = 1;
+					attrs.display = 1;
+				} else {
+					attrs.formcount = 1;
+				}
+			}
+		}
+
+		if (attrs.reset) {
+			wattrset( m_windowHandle, 0 );
+			attrs.flags = 0;
+			attrs.usecolor = 0;
+			attrs.reset = 0;
+			attrs.formcount = 0;
+		}
+
+		if (attrs.usecolor) {
+			attrs.flags |= COLOR_PAIR(m_appInstance->GetColorPair(attrs.fg, attrs.bg));
+		}
+
+		/* Assign some attrs and display the whole word */
+		if (attrs.display) {
+			wmove( m_windowHandle, yy, x );
+
+			for (i = 0; i < token->GetLength(); i++ ) {
+				if (attrs.skipcount) {
+					attrs.skipcount--;
+					continue;
+				}
+
+				if ( attrs.wrap && x > GetWidth() ) {
+					x = 0;
+					yy += 1;
+				}
+
+				if ( yy > GetHeight() - 1 )
+					break;
+
+				wmove( m_windowHandle, yy, x );
+				waddch( m_windowHandle, token->GetChar(i) | attrs.flags);
+
+				if ( attrs.formcount > -1) {
+					attrs.formcount--;
+					if (!attrs.formcount) {
+						 attrs.reset = 1;
+					}
+				}
+
+				x++;
+			}
+		}
+
+		token = token->GetNextNode();
+	}
+
+	return yy - y + 1;
+}
+
+int cCursesWindow::HandleSpecChars(cPlimToken* token, PlimAttrs* attrs) {
+	cPlimToken* plim;
+	int skipcount = 1;
+
+	if (token->GetTokenCase() != PLIM_L_CASE_FLAGS_CURSES)
+		return 0;
+
+	switch (token->GetTokenExCase())
+	{
+		case ATTR_COLOR: {
+			plim = token->GetNextNode();
+
+			if (plim) {
+				if ( plim->GetTokenCase() == PLIM_L_DIGIT_INTEGER) {
+					attrs->fg = atoi(plim->GetBuffer());
+					skipcount++;
+				} else {
+					attrs->fg = 0;
+				}
+
+				plim = plim->GetNextNode();
+
+				if (plim) {
+					if (plim->GetTokenCase() == PLIM_L_CASE_FLAGS_SYMBOLS && plim->GetTokenExCase() == PLIM_L_SYMBOL_COMMA) {
+						skipcount++;
+						plim = plim->GetNextNode();
+						if (plim) {
+							if (plim->GetTokenCase() == PLIM_L_DIGIT_INTEGER) {
+								attrs->bg = atoi(plim->GetBuffer());
+								skipcount++;
+							} else {
+								attrs->bg = 0;
+							}
+						}
+					} else {
+						attrs->bg = 0;
+					}
+				} else {
+					attrs->bg = 0;
+				}
+				
+			}
+
+			attrs->usecolor = 1;
+
+			break;
+		}
+
+		case ATTR_BOLD: {
+			attrs->flags |= A_BOLD;
+			break;
+		}
+
+		case ATTR_RESET: {
+			attrs->reset = 1; /* Reset whole thing */
+		}
+
+		case ATTR_FIXED: {
+			/* dunno */
+			break;
+		}
+
+		case ATTR_REVERSE:
+		case ATTR_REVERSE2: {
+			attrs->flags |= A_REVERSE;
+			break;
+		}
+
+		case ATTR_ITALIC: {
+			/* Dunno, ncurses doesnt support italic stuff */
+			break;
+		}
+
+		case ATTR_UNDERLINE2:
+		case ATTR_UNDERLINE: {
+			attrs->flags |= A_UNDERLINE;
+			break;
+		}
+
+		default:
+			break;
+	}
+
+	attrs->skipcount = skipcount;
+
+	return 0;
 }
 
 int cCursesWindow::CalculatePrint(cString* string) {
 	if (string)
-		return (int) (string->GetLength() / GetWidth()) + 1;
+		return (int) ( string->GetLength() / GetWidth() ) + 1;
 	else
 		return 0;
+}
+
+void cCursesWindow::CreateFormattingNodes(void) {
+	if (!m_formatNodes) {
+		/* Should be allowed to read from config */
+		m_formatNodes = new cHashNodes(10003);
+	}
+}
+
+void cCursesWindow::DestroyFormattingNodes(void) {
+	if (m_formatNodes) {
+		delete m_formatNodes;
+		m_formatNodes = NULL;
+	}
+}
+
+int cCursesWindow::RegisterFormattingCallback( const char* identifier, OnPrintCallback callback ) {
+	CallbackPtr* ptr = (CallbackPtr*) malloc(sizeof(CallbackPtr));
+
+	ptr->callback = callback;
+
+	m_formatNodes->Add( identifier, ptr );
+
+	return 0;
+}
+
+int cCursesWindow::UnregisterFormattingCallback( const char* identifier ) {
+	cHashNode* node;
+	CallbackPtr* ptr;
+
+	if (!identifier)
+		return 0;
+
+	node = m_formatNodes->Get( identifier, strlen( identifier ) );
+
+	if ( node ) {
+		ptr = (CallbackPtr*) node->GetNodeData();
+
+		if (ptr) {
+			free(ptr);
+		}
+
+		m_formatNodes->Delete( node, strlen( identifier ) );
+	}
+
+	return 0;
+}
+
+CallbackPtr* cCursesWindow::GetFormattingCallback( const char* identifier ) {
+	cHashNode* node;
+
+	if (!identifier)
+		return NULL;
+
+	node = m_formatNodes->Get( identifier, strlen( identifier ) );
+
+	if ( node && node->GetPtr() ) {
+		return (CallbackPtr*) node->GetPtr();
+	}
+
+	return NULL;
 }
 
 int cCursesWindow::OnKeyPressed( const int key ) {

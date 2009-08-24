@@ -24,8 +24,7 @@ namespace NSWindows {
 
 cTextLine::cTextLine(cTreeNodes* nodes, cTreeNode* node, const char* str, unsigned int uid)
 :	cTreeNode(nodes, node, NULL),
-	cString() {
-	Copy( str );
+	cCursesString(str) {
 }
 
 cTextLine::~cTextLine(void) {

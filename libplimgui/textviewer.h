@@ -25,32 +25,39 @@
 #include "application.h"
 #include "windows.h"
 #include "strings.h"
+#include "cursesstring.h"
 #include "treenodes.h"
+#include "lexer.h"
 
 namespace NSWindows {
 
+#define REGISTER_F_CALL(name, method) RegisterFormattingCallback(name, (OnPrintCallback) &NSWindows::cTextWindow::method)
 using namespace NSApplication;
 using namespace NSString;
 
-class cTextLine: public cTreeNode, public cString {
+class cTextLine: public cTreeNode, public cCursesString {
 public:
 	cTextLine(cTreeNodes* nodes, cTreeNode* node, const char* str, unsigned int uid);
 	virtual ~cTextLine(void);
 };
 
-/* TODO: Implement lines display with formating, probally on the next commit */
+
 class cTextWindow: public cCursesWindow {
 public: 
 	cTextWindow(cApplication* app, cCursesWindow* parent);
 	virtual ~cTextWindow(void);
 	cTextLine* NewLine(const char* buffer, unsigned int uid);
+	cTextLine* NewLine(cTextLine* line, const char* buffer, unsigned int uid);
 	void ScrollDown(int count);
 	void ScrollUp(int count);
 	void PageUp(void);
 	void PageDown(void);
 	int OnResize(void);
 	void PartialUpdate(void);
+	cTextLine* GetFirstLine(void) { return (cTextLine*) m_lineBuffer->GetFirstNode(); };
+	cTextLine* GetLastLine(void) { return (cTextLine*) m_lineBuffer->GetLastNode(); };
 protected:
+	int OnCppKeyword(cCursesWindow* window, cPlimToken* token, PlimAttrs* attrs);
 	void Pin(void);
 private:
 	/*! Lines */
@@ -58,6 +65,8 @@ private:
 	cTreeNode* m_lineTop;
 	/*! Line count*/
 	int m_linesDrawed;
+	/*! plim lexer*/
+	cPlimLexer m_plimLexer;
 };
 
 };

@@ -6,12 +6,13 @@ namespace NSApplication {
 using namespace NSWindows;
 
 cApplication::cApplication(int argc, char** argv)
-:	cTreeNodes(),
-	cKeyboard(),
+:	cTreeNodes(), cKeyboard(),
 	m_rootWindow(initscr()),
 	m_termWidth(getmaxx(stdscr)), 
 	m_termHeight(getmaxy(stdscr)),
-	m_timeout(0) {
+	m_timeout(0),
+	m_endApp(0),
+	m_colors(NULL) {
 	
 	m_descriptors = new cTreeNodes();
 
@@ -24,9 +25,13 @@ cApplication::cApplication(int argc, char** argv)
 		leaveok(m_rootWindow, TRUE);
 		nodelay(m_rootWindow, TRUE);
 		timeout(0);
+		raw();
 
 		if (has_colors()) {
 			start_color();
+			use_default_colors();
+
+			m_colors = new cPallete();
 		}
 
 		wrefresh(m_rootWindow);
@@ -37,6 +42,10 @@ cApplication::cApplication(int argc, char** argv)
 
 cApplication::~cApplication() {
 	/* if you forget something to freeup */
+	noraw();
+
+	if (m_colors)	delete m_colors;
+
 	delete m_descriptors;
 
 	if ( m_rootWindow )
@@ -47,6 +56,11 @@ int cApplication::Loop(void) {
 	int retCode;
 
 	while (!(retCode = LoopMsg())) {
+		if (m_endApp) {
+			/* Say bye. */
+			break;
+		}
+
 		OnPostLoop();
 		PostLoopMsg();
 	}

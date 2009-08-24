@@ -38,6 +38,7 @@
 #include "treenodes.h"
 #include "descriptor.h"
 #include "keyboard.h"
+#include "pallete.h"
 
 namespace NSApplication {
 
@@ -55,6 +56,9 @@ public:
 	*/
 	cApplication(int argc, char** argv);
 	virtual ~cApplication(void);
+	/* Close the app
+	*/
+	void Close(void) { m_endApp = 1; };
 	/*	Process messages in application
 		@return application exit code
 	*/
@@ -79,6 +83,9 @@ public:
 		@return number of the columns in the terminal window
 	*/
 	int GetTermCols(void) { return getmaxx(m_rootWindow); };
+	/*	get the pair of colors
+	*/
+	int GetColorPair(int fg, int bg) { return m_colors->GetPair(fg, bg); };
 	/*	get the root window handle
 		@return ncurses WINDOW struct
 	*/
@@ -115,6 +122,10 @@ private:
 	cTreeNodes* m_descriptors;
 	/*!timeout*/
 	long m_timeout;
+	/*!endloop*/
+	int m_endApp;
+	/*! Colors */
+	cPallete* m_colors;
 };
 
 };

@@ -18,37 +18,57 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "pallete.h"
+#ifndef __PLIM_HASHNODES_H__
+#define __PLIM_HASHNODES_H__
 
-namespace NSApplication {
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "strings.h"
+#include "treenodes.h"
 
-cPallete::cPallete(void)
-:	cTreeNodes() {
-	/* Initialize the default colors, need some tuneup */
-	for (int i = 1; i < 64; i++ )
-		new cColor( this, i, (int) (i / 8), i % 7);
-}
+using namespace NSString;
 
-cPallete::~cPallete(void) {
-}
+namespace NSTree {
 
-int cPallete::GetPair(int fg, int bg) {
-	cColor* color;
-	int ret;
+class cHashNode: public cTreeNode {
+public:
+	cHashNode(cTreeNodes* nodes, const char* identifier, int len, void* data)
+	:	cTreeNode(nodes, NULL, NULL),
+		m_len(len),
+		m_data(data) {
+		m_identifier.Copy(identifier);
+	};
+	virtual ~cHashNode(void) {};
+	const char* GetIdentifier() { return m_identifier.GetBuffer(); };
+	const int GetLen() { return m_len; };
+	void* GetPtr(void) { return m_data; };
+private:
+	cString m_identifier;
+	int m_len;
+	void* m_data;
+};
 
-	color = GetFirstNode();
+class cHashNodes
+{
+public:
+	cHashNodes(int cHashElements);
+	virtual ~cHashNodes(void);
+	int SetNewElements(int elements) { return ResizeNodes(elements); };
+	virtual cHashNode* Add(const char* identifier, const int len, void* data);
+	virtual cHashNode* Add(const char* identifier, void* data);
+	cHashNode* Get(const char* identifier, int len);
+	int Delete(cHashNode* node, int len);
+protected:
+	int ResizeNodes(int elements);
+private:
+	int HGenerateIndex(const char* identifier, int len);
+	cTreeNodes** m_hashNodes;
+	int m_elements;
+};
 
-	while (color) {
-		
-		if ((ret = color->IsPair(fg, bg)) > -1)
-		{
-
-			return ret;
-		}
-		color = color->GetNextNode();
-	}
-
-	return -1;
-}
 
 };
+
+
+#endif

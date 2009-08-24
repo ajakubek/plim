@@ -31,9 +31,11 @@
 #include <libplimgui/input.h>
 #include <libplimgui/statusbar.h>
 #include <libplimgui/textviewer.h>
+#include <libplimgui/lexer.h>
 
 using namespace NSApplication;
 using namespace NSWindows;
+using namespace NSString;
 
 cApplication* app;
 cTextWindow* window;
@@ -41,10 +43,58 @@ cCursesWindow* root;
 cInputWindow* inputWindow;
 cStatusWindow* statusWindowTop;
 cStatusWindow* statusWindowBottom;
+cPlimLexer* lexer;
 
+void LexerTest(cPlimLexer* lexer) {
+	cPlimToken* token = lexer->GetFirstNode();
+	while (token) {
+
+
+		if ( token->GetTokenCase() & PLIM_L_IDENTIFIER ) {
+			printf("Identifier found (%s)\n", token->GetBuffer() );
+
+		}
+
+		if ( token->GetTokenCase() & PLIM_L_DIGIT_INTEGER ) {
+			printf("Integer found (%s)\n", token->GetBuffer() );
+		}
+
+		if ( token->GetTokenCase() & PLIM_L_DIGIT_FLOAT ) {
+			printf("Float found (%s)\n", token->GetBuffer() );
+
+
+		}
+
+		if ( token->GetTokenCase() & PLIM_L_DIGIT_HEXADECIMAL ) {
+			printf("Hexadecimal found (%s)\n", token->GetBuffer() );
+
+		}
+
+		if ( token->GetTokenCase() & PLIM_L_DIGIT_OCTAL ) {
+			printf("Octal found (%s)\n", token->GetBuffer() );
+
+		}
+
+		token = token->GetNextNode();
+	}
+
+
+}
+
+/* Test case */
 void OnEnterInput(const char* buffer) {
+	cTextLine* line;
+
+	if (!strcmp(buffer, "/quit")) {
+		if (app) app->Close();
+	}
+
 	if (window) {
-		window->NewLine( buffer, 0 );
+		if (!window->GetLastLine()) {
+			window->NewLine( buffer, 0 );
+		}
+		else
+			window->NewLine( window->GetLastLine(), buffer, 0 );
 	}
 }
 
