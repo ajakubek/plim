@@ -166,7 +166,7 @@ void cTextWindow::PartialUpdate(void) {
 
 		if ( line->GetParentNode() ) {
 			if ( line == line->GetParentNode()->GetLastNode() ) {
-				bufferLine.Copy("      `----- conversation of user IC0ffeeCup ended on 21:30 ----");
+				bufferLine.Copy("      `----- conversation of user IC0ffeeCup ended at 21:30 ----");
 
 				m_plimLexer.Refresh( bufferLine.GetBuffer() );
 

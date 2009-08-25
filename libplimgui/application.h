@@ -95,6 +95,7 @@ public:
 
 	/* Signals */
 	sigc::signal<void, const int> OnKeyPress;
+	sigc::signal<void, cApplication*, cString*> OnBindingPress;
 	sigc::signal<void, int, int> OnResize;
 	sigc::signal<void> OnPostLoop;
 protected:
@@ -103,6 +104,9 @@ protected:
 		@return int, if -1 than break Loop
 	*/
 	int OnKeyClicked( const int key );
+	/* Get a command and launch a event
+	*/
+	void OnBindingClicked(void);
 	/* base loop msg for processing all the msg */
 	virtual int LoopMsg(void);
 	/* Runned just after the LoopMsg in Loop */

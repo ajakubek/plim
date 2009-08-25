@@ -56,7 +56,7 @@ private:
 	int m_fg;
 	int m_bg;
 };
- 
+
 class cPallete: public cTreeNodes {
 public: 
 	cPallete(void);

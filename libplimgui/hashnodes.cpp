@@ -160,10 +160,12 @@ int cHashNodes::HGenerateIndex(const char* identifier, int len)
 	
 	if (!identifier)	return 0;
 
+	if ( len == 1 ) return (int) identifier[0];
+
 	for (;i < len; i++)
 	{
 		p1 = (int) identifier[i];
-		if (len == 1) p2 = (int) identifier[i];
+		if (i == 1) p2 = (int) identifier[i];
 		else			  p2 = (int) identifier[i -1];
 		pos += (int) p1;
 		pos += (int) ~((p1 % 3) ? p1 << i : p1 ^ ~i);

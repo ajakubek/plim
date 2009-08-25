@@ -31,28 +31,29 @@ void cBox::Update(void) {
 		/* The cableguy tells me that we need no anchors in ncurses */
 		/* Tell us to update the window */
 
-		childWindow->NeedUpdate();
-
+		//childWindow->NeedUpdate();
 
 		/* IMHO, no test at this commit, so it can be buggy */
 		switch (childWindow->GetWindowAlign()) {
 			case left: {
-				childWindow->SetLeft( m_lastLeftPos );
+				
+				childWindow->SetLeft( m_lastLeftPos  );
 				childWindow->SetTop( m_lastTopPos );
 				childWindow->SetHeight( m_lastBottomPos - m_lastTopPos );
-				
+
 				m_lastLeftPos += childWindow->GetWidth()  ;
+
 
 				break;
 			}
 
 			case right: {
 
-				childWindow->SetLeft ( clientWindow->GetWidth() - childWindow->GetWidth() );
+				childWindow->SetLeft ( m_lastRightPos - childWindow->GetWidth() - clientWindow->GetLeft() );
 				childWindow->SetTop( m_lastTopPos  );
 				childWindow->SetHeight ( m_lastBottomPos - m_lastTopPos );
 
-				m_lastRightPos -= childWindow->GetWidth() ;
+				m_lastRightPos -= childWindow->GetWidth();
 
 				break;
 			}

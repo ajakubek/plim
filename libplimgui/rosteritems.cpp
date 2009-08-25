@@ -18,40 +18,23 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "keyboard.h"
+#include "roster.h"
 
-namespace NSApplication {
+namespace NSWindows {
 
-cKeyboard::cKeyboard(void)
-:	cKeyBindings() {
-
-}
-
-cKeyboard::~cKeyboard(void) {
+cRosterItem::cRosterItem(cTreeNodes* nodes, cTreeNode* node, void* data)
+:	cTreeNode(nodes, node, NULL),
+	m_visible(1),
+	m_data(data) {
 
 }
 
-int cKeyboard::CheckKeyClicked(void) {
-	int key;
+cRosterItem::~cRosterItem(void) {
 
-	if ((key = getch()) != ERR) {
-		if ( ExpandKey( key ) ) {
-			OnBindingClicked();
-			return 1;
-		}
-
-		return OnKeyClicked( key );
-	}
-
-	return 0;
-}
- 
-int cKeyboard::OnKeyClicked( const int key ) {
-	return 0;
 }
 
-void cKeyboard::OnBindingClicked(void) {
-
+void* cRosterItem::GetData(void) {
+	return m_data;
 }
 
 };

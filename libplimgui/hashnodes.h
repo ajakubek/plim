@@ -52,7 +52,7 @@ private:
 class cHashNodes
 {
 public:
-	cHashNodes(int cHashElements);
+	cHashNodes(int elements);
 	virtual ~cHashNodes(void);
 	int SetNewElements(int elements) { return ResizeNodes(elements); };
 	virtual cHashNode* Add(const char* identifier, const int len, void* data);

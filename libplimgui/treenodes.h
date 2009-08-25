@@ -42,6 +42,7 @@ public:
 	virtual cTreeNode* GetFirstNode(void);
 	void SetLastNode(cTreeNode* node);
 	virtual cTreeNode* GetLastNode(void);
+	int GetLevelNode(void);
 	void* GetNodeData(void);
 private:
 	void* m_ptr;

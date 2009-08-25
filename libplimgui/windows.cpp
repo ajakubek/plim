@@ -68,8 +68,11 @@ cCursesWindow::cCursesWindow(cApplication* app)
 	m_needPartialUpdate(FALSE),
 	m_windowFirst(NULL),
 	m_windowLast(NULL),
+	m_windowData(NULL),
+	m_windowAlign(none),
 	m_colorPair(0),
-	m_formatNodes(NULL) {
+	m_sizeChanged(0),
+	m_formatNodes(NULL)  {
 
 	if (m_appInstance) {
 		SetWindowHandle( m_appInstance->GetWindowHandle() );
@@ -127,7 +130,7 @@ void cCursesWindow::RecreateWindow(void) {
 }
 
 void cCursesWindow::Erase(void) {
-	::wclear(m_windowHandle);
+	::werase(m_windowHandle);
 }
 
 void cCursesWindow::Clear(void) {
@@ -155,10 +158,10 @@ void cCursesWindow::Update(void) {
 	}
 
 	if ( m_windowParent ) { /* Update the sizes only if the window is a child */
-		if ( IsSizeChanged() ) {
+		//if ( IsSizeChanged() ) {
 			RecreateWindow();
 			m_sizeChanged = 0;
-		}
+		//}
 
 		if (m_windowHandle) {}
 	}
@@ -172,14 +175,38 @@ void cCursesWindow::Update(void) {
 	}
 
 	/* Set the window for repaint */
-	NeedPartialUpdate();
+	if (m_windowParent)
+		NeedPartialUpdate();
 
 	m_needUpdate = FALSE;
 }
 
+void cCursesWindow::ForceUpdate(void) {
+	cBox* box = (cBox*) m_boxPtr;
+	cCursesWindow* data;
+
+	if ( box ) {
+		/* recalculating is done. */
+		box->Update();
+	}
+
+	/* Update child windows */
+	data = GetFirstWindow();
+
+	while ( data ) {
+		data->NeedUpdate();
+		data = data->GetNextNode();
+	}
+
+	NeedUpdate();
+	Update();
+}
+
 void cCursesWindow::PartialUpdate(void) {
-	if (!m_needPartialUpdate)
+	if (!m_needPartialUpdate || !m_windowHandle )
+	{
 		return;
+	}
 
 	/* let it handle by the doupdate from curses */
 	if (!m_windowParent)
@@ -243,7 +270,7 @@ int cCursesWindow::Print(cString* string, int x, int y) {
 		if ( ret > GetHeight() - 1 )
 			break;
 
-		wmove( m_windowHandle, ret, x );
+		wmove( m_windowHandle, ret, x - 1 );
 		waddch( m_windowHandle, string->GetChar(i));
 
 		x++;
@@ -304,7 +331,7 @@ int cCursesWindow::PrintFormated(cCursesString* string, int x, int y) {
 		}
 
 		if (!string->IsSpecial(i)) {
-			wmove( m_windowHandle, yy, x );
+			wmove( m_windowHandle, yy, x - 1);
 			waddch( m_windowHandle, string->GetChar(i) | flags);
 			x++;
 		}
@@ -357,6 +384,7 @@ int cCursesWindow::PrintLexer(cPlimLexer* lexer, int x, int y) {
 			attrs.usecolor = 0;
 			attrs.reset = 0;
 			attrs.formcount = 0;
+			attrs.noformcount = 0;
 		}
 
 		if (attrs.usecolor) {
@@ -386,7 +414,7 @@ int cCursesWindow::PrintLexer(cPlimLexer* lexer, int x, int y) {
 
 				if ( attrs.formcount > -1) {
 					attrs.formcount--;
-					if (!attrs.formcount) {
+					if (!attrs.formcount && !attrs.noformcount) {
 						 attrs.reset = 1;
 					}
 				}

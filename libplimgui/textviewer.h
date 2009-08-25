@@ -32,6 +32,7 @@
 namespace NSWindows {
 
 #define REGISTER_F_CALL(name, method) RegisterFormattingCallback(name, (OnPrintCallback) &NSWindows::cTextWindow::method)
+
 using namespace NSApplication;
 using namespace NSString;
 

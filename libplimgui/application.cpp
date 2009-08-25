@@ -83,6 +83,16 @@ int cApplication::OnKeyClicked( const int key ) {
 	return OnKeyEvent( key );
 }
 
+void cApplication::OnBindingClicked(void) {
+	cString* cmd;
+
+	if (IsKeyBindingPending()) {
+		cmd = GetCommand(NULL);
+
+		OnBindingPress( this, cmd );
+	}
+}
+
 int cApplication::LoopMsg(void) {
 	struct timeval val;
 	fd_set rfds, wfds, efds;
@@ -165,7 +175,7 @@ int cApplication::LoopMsg(void) {
 int cApplication::OnTerminalSizeChanged(void) {
 	cCursesWindow* data;
 
-	wrefresh(m_rootWindow);
+	//::wrefresh(m_rootWindow);
 
 	if ( m_termWidth != getmaxx(stdscr) || m_termHeight != getmaxy(stdscr) ) {
 		m_termWidth = getmaxx(stdscr);
@@ -173,13 +183,6 @@ int cApplication::OnTerminalSizeChanged(void) {
 
 		OnResize(m_termWidth, m_termHeight);
 
-		/* Update just the first window wich should be the root window */
-		data = (cCursesWindow*) GetFirstWindow( );
-		
-		if ( data ) {
-			/* Update all child windows */
-			data->NeedUpdate();
-		}
 
 		LaunchResizeEvents();
 
@@ -222,6 +225,7 @@ void cApplication::LaunchResizeEvents(void) {
 
 	do {
 		if (data) {
+			data->NeedUpdate();
 			data->OnResize( );
 		}
 

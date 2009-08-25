@@ -49,6 +49,7 @@ typedef struct _PrintAttrs {
 	int newline: 1;
 	int reset: 1;
 	int usecolor: 1;
+	int noformcount: 1;
 	int fg;
 	int bg;
 	int skipcount;
@@ -93,6 +94,9 @@ public:
 	/*	Update the window sizes and repaint
 	*/
 	virtual void Update(void);
+	/* Force box update
+	*/
+	void ForceUpdate(void);
 	/*	Make a partial update without updating the sizes
 	*/
 	virtual void PartialUpdate(void);
@@ -221,7 +225,7 @@ public:
 	/*	If the window needs update */
 	int IsUpdateNeccesary(void) { return m_needUpdate; };
 	/*	If the window needs partial update */
-	int IsPartialNeccesary(void) { return m_needPartialUpdate; };
+	int IsPartialNeccesary(void) { return m_needPartialUpdate && m_windowHandle; };
 	/*	Launch a keypress event
 		@param key, int
 		@return int, if -1 than break Loop

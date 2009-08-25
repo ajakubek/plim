@@ -34,6 +34,8 @@ class cString
 {
 public:
 	cString(void);
+	cString(cString* string);
+	cString(const char* string);
 	virtual ~cString(void);
 	int Copy(const char* source);
 	int Copy(const char* source, int len);

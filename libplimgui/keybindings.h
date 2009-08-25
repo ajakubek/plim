@@ -17,16 +17,34 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
- 
+
 #ifndef __PLIM_KEYBINDINGS_H__
 #define __PLIM_KEYBINDINGS_H__
 
+#include "hashnodes.h"
+#include "strings.h"
+
 namespace NSApplication {
+
+using namespace NSTree;
+using namespace NSString;
+
+#define KEY_FOLLOW_ALT 0x1b
+
+/* TODO: Add some stack for keys */
 
 class cKeyBindings {
 public:
-	cKeyBindings(void) {};
-	~cKeyBindings(void) {};
+	cKeyBindings(void);
+	~cKeyBindings(void);
+	int ExpandKey(const int key);
+	int IsKeyBindingPending(void);
+	int BindKey(const char* key, const char* command);
+	cString* GetCommand(const char* key);
+private:
+	cHashNodes* m_keyBindings;
+	cString m_buffer;
+	int m_pendingKey;
 };
 
 };

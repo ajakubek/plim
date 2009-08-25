@@ -11,6 +11,22 @@ cString::cString(void)
 	
 }
 
+cString::cString(cString* string)
+:	m_stringBuffer(NULL),
+	m_length(0),
+	m_allocated(0)
+{
+	Copy(string);
+}
+
+cString::cString(const char* string)
+:	m_stringBuffer(NULL),
+	m_length(0),
+	m_allocated(0)
+{
+	Copy(string);
+}
+
 cString::~cString(void)
 {
 

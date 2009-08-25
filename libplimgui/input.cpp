@@ -6,7 +6,7 @@ cInputWindow::cInputWindow(cApplication* app, cCursesWindow* parent)
 :	cCursesWindow(app, 1, 1, 1, parent->GetWidth(), parent),
 	m_cursorPos(0) {
 	SetFocus( TRUE );
-	SetPrefixPrompt( "[input-change-it] " );
+	SetPrefixPrompt( "[#gentoo.pl]" );
 }
 
 cInputWindow::~cInputWindow(void) {
@@ -19,17 +19,15 @@ void cInputWindow::PartialUpdate(void) {
 
 	Erase();
 
-	PrintFormated( &m_prefixBuffer, 0, 0 );
-
-	if ( !m_cursorPos ) {
-		::wmove( GetWindowHandle(), 0, m_prefixBuffer.GetLength() + 1);
-	}
+	PrintFormated( &m_prefixBuffer, 1, 0 );
 
 	//::box(m_windowHandle, ACS_VLINE, ACS_HLINE);
 	if (m_buffer.GetBuffer()) {
 		//::wprintw(GetWindowHandle(), "%s", m_buffer->GetBuffer());
-		Print( &m_buffer, m_prefixBuffer.GetLength(), 0 );
+		Print( &m_buffer, m_prefixBuffer.GetLength() + 1, 0 );
 	}
+
+	::wmove( GetWindowHandle(), 0, m_prefixBuffer.GetLength() + m_cursorPos );
 
 	cCursesWindow::PartialUpdate();
 }
@@ -40,7 +38,8 @@ int cInputWindow::OnKeyPressed( const int key ) {
 	char xxx[1024];
 	cPlimToken* token;
 
-
+	sprintf(&xxx[0], "(%c)(0x%x)(%i)", key, key, key );
+	//OnEnter( &xxx[0]);
 	switch ( key ) {
 		case 127:
 		case KEY_BACKSPACE: {
@@ -54,6 +53,7 @@ int cInputWindow::OnKeyPressed( const int key ) {
 		case 0x09: {
 			break;
 		}
+
 		case 0x0A: {
 			if ( m_buffer.GetLength() > 0 ) {
 				OnEnter( m_buffer.GetBuffer() );
@@ -105,11 +105,10 @@ int cInputWindow::CalcSize(void) {
 
 void cInputWindow::UpdateSize(void) {
 	if (IsChild()) {
-		GetParentWindow()->NeedUpdate();
+		GetParentWindow()->ForceUpdate();
 	}
 
 	NeedPartialUpdate();
-
 }
 
 };

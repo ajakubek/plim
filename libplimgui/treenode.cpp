@@ -104,6 +104,20 @@ cTreeNode* cTreeNode::GetLastNode(void) {
 	return m_nodeLast; 
 }
 
+int cTreeNode::GetLevelNode(void) {
+	cTreeNode* node;
+	int level = 1;
+
+	node = GetParentNode();
+
+	while (node) {
+		level++;
+		node = node->GetParentNode();
+	}
+
+	return level;
+}
+
 void* cTreeNode::GetNodeData(void) {
 	return m_ptr;
 }
