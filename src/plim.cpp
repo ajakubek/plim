@@ -32,6 +32,7 @@
 #include <libplimgui/statusbar.h>
 #include <libplimgui/textviewer.h>
 #include <libplimgui/lexer.h>
+#include <libplimgui/roster.h>
 
 using namespace NSApplication;
 using namespace NSWindows;
@@ -43,45 +44,15 @@ cCursesWindow* root;
 cInputWindow* inputWindow;
 cStatusWindow* statusWindowTop;
 cStatusWindow* statusWindowBottom;
-cPlimLexer* lexer;
-
-void LexerTest(cPlimLexer* lexer) {
-	cPlimToken* token = lexer->GetFirstNode();
-	while (token) {
-
-
-		if ( token->GetTokenCase() & PLIM_L_IDENTIFIER ) {
-			printf("Identifier found (%s)\n", token->GetBuffer() );
-
-		}
-
-		if ( token->GetTokenCase() & PLIM_L_DIGIT_INTEGER ) {
-			printf("Integer found (%s)\n", token->GetBuffer() );
-		}
-
-		if ( token->GetTokenCase() & PLIM_L_DIGIT_FLOAT ) {
-			printf("Float found (%s)\n", token->GetBuffer() );
-
-
-		}
-
-		if ( token->GetTokenCase() & PLIM_L_DIGIT_HEXADECIMAL ) {
-			printf("Hexadecimal found (%s)\n", token->GetBuffer() );
-
-		}
-
-		if ( token->GetTokenCase() & PLIM_L_DIGIT_OCTAL ) {
-			printf("Octal found (%s)\n", token->GetBuffer() );
-
-		}
-
-		token = token->GetNextNode();
-	}
-
-
-}
+cRosterWindow* rosterWindow;
 
 /* Test case */
+void OnBindingPress(cApplication* app, cString* cmd) {
+	if (window && cmd) {
+		window->NewLine( cmd->GetBuffer(), 0 );
+	}
+}
+
 void OnEnterInput(const char* buffer) {
 	cTextLine* line;
 
@@ -109,16 +80,36 @@ int main(int argc, char** argv) {
 	statusWindowTop = new cStatusWindow(app, root);
 	statusWindowTop->SetWindowAlign(top);
 
+
 	inputWindow = new cInputWindow(app, root);
 	inputWindow->SetWindowAlign(bottom);
 
 	statusWindowBottom = new cStatusWindow(app, root);
 	statusWindowBottom->SetWindowAlign(bottom);
- 
+
+	statusWindowBottom->Add("status_time")->SetCaption("16:57");
+	statusWindowBottom->Add("status_nick")->SetCaption("IC0ffeeCup(+i)");
+	statusWindowBottom->Add("status_server")->SetCaption("2:warszawa/#gentoo.pl(+nst)");
+	statusWindowBottom->Add("status_active_window")->SetCaption("Act: 4");
+
+	rosterWindow = new cRosterWindow( app, root );
+	rosterWindow->SetWindowAlign(right);
+
+ 	rosterWindow->Add(NULL);
+ 	rosterWindow->Add(NULL);
+ 	rosterWindow->Add(NULL);
+ 	rosterWindow->Add(NULL);
+ 	rosterWindow->Add(NULL);
+	
 	window = new cTextWindow(app, root);
 	window->SetWindowAlign(client);
-	window->SetColorPair(2);
- 
+
+	app->BindKey("Alt+m", "/new ossom command!");
+	app->BindKey("Alt+d", "/kill window!");
+	app->BindKey("Alt+n", "/next ossom window!");
+	app->BindKey("Alt+p", "/prev ossom window!");
+
+ 	app->OnBindingPress.connect( &OnBindingPress );
 	inputWindow->OnEnter.connect( &OnEnterInput );
 
 	switch( app->Loop() ) {
@@ -128,6 +119,9 @@ int main(int argc, char** argv) {
 
 	delete root;
 	delete app;
+
+//	lexer.Refresh( "[@] IC0ffeeCup" );
+//	LexerTest(&lexer);
 
 	return 0;
 }
