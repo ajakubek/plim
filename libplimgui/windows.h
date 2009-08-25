@@ -68,7 +68,7 @@ typedef struct _CallbackPtr {
 	TODO: Suspend any drawings etc. when window is hidden (delwin)
 	@author: IC0ffeeCup
 */ 
-class cCursesWindow: public cTreeNode {
+class cCursesWindow: public cTreeNode, public sigc::trackable {
 public:
 	/* pos are relative to parent window */
 	cCursesWindow(cApplication* app, int left, int top, int height, int width, cCursesWindow* parent);
@@ -138,7 +138,7 @@ public:
 	/*	Set the visiblity of the window
 		@param visibility bool val
 	*/
-	void SetVisible(int visible) { if (m_isVisible != visible) { m_isVisible = visible; } };
+	void SetVisible(int visible) { if (m_isVisible != visible) { m_isVisible = visible; RecreateWindow(); NeedUpdate(); NeedPartialUpdate();  } };
 	void SetColorPair(int pair) { m_colorPair = pair; };
 	/*	Get the parent window
 		@return cCursesWindow

@@ -42,7 +42,7 @@ CONFIG_CLEAN_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
-am_plim_OBJECTS = plim.$(OBJEXT)
+am_plim_OBJECTS = cPlim.$(OBJEXT) plim.$(OBJEXT)
 plim_OBJECTS = $(am_plim_OBJECTS)
 plim_DEPENDENCIES = $(top_builddir)/libplimgui/libplimgui.a
 plim_LINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(plim_LDFLAGS) \
@@ -149,7 +149,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-plim_SOURCES = plim.cpp
+plim_SOURCES = cPlim.cpp plim.cpp
 
 # set the include path found by configure
 INCLUDES = -I$(top_srcdir)/. $(all_includes)
@@ -160,6 +160,7 @@ plim_LDADD = $(top_builddir)/libplimgui/libplimgui.a -lsigc-2.0
 AM_CFLAGS = -I../
 AM_CXXFLAGS = -I../ `pkg-config --cflags --libs sigc++-2.0`
 METASOURCES = AUTO
+_SOURCES = cPlim.h
 all: all-am
 
 .SUFFIXES:
@@ -226,6 +227,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cPlim.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/plim.Po@am__quote@
 
 .cpp.o:

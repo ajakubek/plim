@@ -26,28 +26,12 @@
 #include <curses.h>
 #include <signal.h>
 
-#include <libplimgui/application.h>
-#include <libplimgui/windows.h>
-#include <libplimgui/input.h>
-#include <libplimgui/statusbar.h>
-#include <libplimgui/textviewer.h>
-#include <libplimgui/lexer.h>
-#include <libplimgui/roster.h>
+#include "cPlim.h"
 
-using namespace NSApplication;
-using namespace NSWindows;
-using namespace NSString;
-
-cApplication* app;
-cTextWindow* window;
-cCursesWindow* root;
-cInputWindow* inputWindow;
-cStatusWindow* statusWindowTop;
-cStatusWindow* statusWindowBottom;
-cRosterWindow* rosterWindow;
+using namespace NSPlim;
 
 /* Test case */
-void OnBindingPress(cApplication* app, cString* cmd) {
+/*void OnBindingPress(cApplication* app, cString* cmd) {
 	if (window && cmd) {
 		window->NewLine( cmd->GetBuffer(), 0 );
 	}
@@ -68,11 +52,12 @@ void OnEnterInput(const char* buffer) {
 			window->NewLine( window->GetLastLine(), buffer, 0 );
 	}
 }
-
+*/
 /* Temporary code! 
 	For creating a new app, inheriting cApplication will be needed to handle app events */
 int main(int argc, char** argv) {
-
+	cPlim(argc, argv);
+/*
 	app = new cApplication(argc, argv);
 
 	root = new cCursesWindow(app, 0, 0, 0, 0, NULL);
@@ -122,6 +107,7 @@ int main(int argc, char** argv) {
 
 //	lexer.Refresh( "[@] IC0ffeeCup" );
 //	LexerTest(&lexer);
+*/
 
 	return 0;
 }

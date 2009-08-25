@@ -48,7 +48,7 @@ using namespace NSTree;
 	@author: IC0ffeeCup
 */
 /* TODO: add signals */
-class cApplication: public cTreeNodes, public cKeyboard {
+class cApplication: public cTreeNodes, public cKeyboard, public sigc::trackable {
 public:
 	/*	base construction for the main application
 		@param argc argument count

@@ -4,6 +4,7 @@ namespace NSWindows {
 
 cStatusWindow::cStatusWindow(cApplication* app, cCursesWindow* parent)
 :	cCursesWindow(app, 0, 0, 1, parent->GetWidth() + 10, parent) {
+
 	m_panelNodes = new cTreeNodes();
 
 	CreateFormattingNodes();

@@ -118,6 +118,10 @@ int cTreeNode::GetLevelNode(void) {
 	return level;
 }
 
+void cTreeNode::SetNodeData(void* data) {
+	m_ptr = data;
+}
+
 void* cTreeNode::GetNodeData(void) {
 	return m_ptr;
 }

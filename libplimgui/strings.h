@@ -46,6 +46,8 @@ public:
 	int Insert(int index, const char* source);
 	int Insert(int index, char source);
 	int Clean(void);
+	int Compare(const char* buffer) { return strcmp(m_stringBuffer, buffer); };
+	int Compare(cString* buffer) { return strcmp(m_stringBuffer, buffer->GetBuffer()); };
 	const char* GetBuffer(void);
 	const char GetChar(int index);
 	int GetLength(void);

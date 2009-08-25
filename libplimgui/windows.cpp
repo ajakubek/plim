@@ -106,27 +106,31 @@ void cCursesWindow::RecreateWindow(void) {
 
 	while ( child ) {
 
-		if (child->IsSizeChanged())
+		if ( child->IsSizeChanged() )
 			child->RecreateWindow();
 
 		if (child == lastChild)
 			break; /* RecreateWindow done. */
+
 		child = (cCursesWindow*) m_appInstance->GetNext( child );
 	}
 
-	if (m_windowHandle)
+	if (m_windowHandle) {
 		::delwin(m_windowHandle);
-
-	if (m_windowParent)
-		m_windowHandle = ::subwin(m_windowParent->GetWindowHandle(), m_height, m_width, GetTop(), GetLeft());
-	else
-		m_windowHandle = ::newwin(GetHeight(), GetWidth(), GetTop(), GetLeft());
-
-	if (!m_windowHandle) {
-		printw("Error in window handle creation");
+		m_windowHandle = NULL;
 	}
 
-	leaveok(m_windowHandle, TRUE);
+	/* TODO: Update the childs for not showing */
+	if (m_isVisible) {
+
+		if (m_windowParent)
+			m_windowHandle = ::subwin(m_windowParent->GetWindowHandle(), m_height, m_width, GetTop(), GetLeft());
+		else
+			m_windowHandle = ::newwin(GetHeight(), GetWidth(), GetTop(), GetLeft());
+
+		leaveok(m_windowHandle, TRUE);
+	}
+
 }
 
 void cCursesWindow::Erase(void) {
@@ -152,7 +156,7 @@ void cCursesWindow::Update(void) {
 	if (!m_needUpdate)
 		return;
 
-	if ( box ) {
+	if ( box  && m_windowHandle) {
 		/* recalculating is done. */
 		box->Update();
 	}
@@ -164,6 +168,11 @@ void cCursesWindow::Update(void) {
 		//}
 
 		if (m_windowHandle) {}
+	}
+
+ 	if (!m_windowHandle) {
+		m_needUpdate = FALSE;
+		return;
 	}
 
 	/* Update child windows */
