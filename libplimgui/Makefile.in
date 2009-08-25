@@ -57,9 +57,10 @@ am_libplimgui_a_OBJECTS = application.$(OBJEXT) base.$(OBJEXT) \
 	box.$(OBJEXT) cursesstring.$(OBJEXT) descriptor.$(OBJEXT) \
 	hashnodes.$(OBJEXT) input.$(OBJEXT) keybindings.$(OBJEXT) \
 	keyboard.$(OBJEXT) lexer.$(OBJEXT) pallete.$(OBJEXT) \
-	statusbar.$(OBJEXT) stdafx.$(OBJEXT) strings.$(OBJEXT) \
-	textline.$(OBJEXT) textviewer.$(OBJEXT) treenode.$(OBJEXT) \
-	treenodes.$(OBJEXT) windows.$(OBJEXT)
+	roster.$(OBJEXT) rosteritems.$(OBJEXT) statusbar.$(OBJEXT) \
+	stdafx.$(OBJEXT) strings.$(OBJEXT) textline.$(OBJEXT) \
+	textviewer.$(OBJEXT) treenode.$(OBJEXT) treenodes.$(OBJEXT) \
+	windows.$(OBJEXT)
 libplimgui_a_OBJECTS = $(am_libplimgui_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -173,10 +174,10 @@ noinst_HEADERS = application.h base.h box.h cursesstring.h descriptor.h input.h 
 lib_LIBRARIES = libplimgui.a
 libplimgui_a_SOURCES = application.cpp base.cpp box.cpp cursesstring.cpp \
 	descriptor.cpp hashnodes.cpp input.cpp keybindings.cpp keyboard.cpp lexer.cpp \
-	pallete.cpp statusbar.cpp stdafx.cpp strings.cpp textline.cpp textviewer.cpp \
-	treenode.cpp treenodes.cpp windows.cpp
+	pallete.cpp roster.cpp rosteritems.cpp statusbar.cpp stdafx.cpp strings.cpp \
+	textline.cpp textviewer.cpp treenode.cpp treenodes.cpp windows.cpp
 
-_SOURCES = hashnodes.h
+_SOURCES = roster.h
 AM_CXXFLAGS = `pkg-config --cflags sigc++-2.0`
 all: all-am
 
@@ -262,6 +263,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/keyboard.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lexer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pallete.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/roster.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rosteritems.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/statusbar.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stdafx.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strings.Po@am__quote@
