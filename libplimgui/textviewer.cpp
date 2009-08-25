@@ -28,7 +28,6 @@ cTextWindow::~cTextWindow(void) {
 	DestroyFormattingNodes();
 	if (m_lineBuffer)
 		delete m_lineBuffer;
-
 }
 
 cTextLine* cTextWindow::NewLine(const char* buffer, unsigned int uid) {
