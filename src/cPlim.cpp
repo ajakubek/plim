@@ -24,6 +24,7 @@ namespace NSPlim {
 
 cPlim::cPlim(int argc, char** argv)
 :	cApplication(argc, argv),
+	cPlimReactor(),
 	m_root(NULL), m_infoBar(NULL), m_inputBar(NULL), m_statusBar(NULL), m_rosterBar(NULL), m_roomWindows(NULL),
 	m_activeRoom(NULL), m_activeNode(NULL) {
 

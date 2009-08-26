@@ -35,7 +35,6 @@ cCursesWindow::cCursesWindow(cApplication* app, int left, int top, int height, i
 			m_windowHandle = ::subwin(m_windowParent->GetWindowHandle(), height, width, m_windowParent->GetTop() + top, m_windowParent->GetLeft() + left);
 			leaveok(m_windowHandle, TRUE);
 			if (!m_windowHandle) {
-				printw("Error winhan");
 			}
 			m_windowParent->NeedUpdate();
 		}
