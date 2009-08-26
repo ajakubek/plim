@@ -55,6 +55,8 @@ cApplication::~cApplication() {
 int cApplication::Loop(void) {
 	int retCode;
 
+	fcntl(0, F_SETFD, fcntl(0, F_GETFD) | O_NONBLOCK);
+
 	while (!(retCode = LoopMsg())) {
 		if (m_endApp) {
 			/* Say bye. */
@@ -106,8 +108,8 @@ int cApplication::LoopMsg(void) {
 	fmaxd = 0;
 	
 	val.tv_sec = 1;
-
-	/* Default timeout, primitive. */	
+/*
+	/* Default timeout, primitive. *
 	if ( m_timeout < 1000000 ) {
 		val.tv_sec = 0;
 		val.tv_usec = m_timeout;
@@ -118,18 +120,18 @@ int cApplication::LoopMsg(void) {
 		val.tv_usec = 0;
 	}
 
-	/* Check if there is somthing to input in the ui */
+	/* Check if there is somthing to input in the ui *
 	if ( CheckKeyClicked() > 0 ) {
 		m_timeout = 0;
 		val.tv_sec = 0;
-		/* Go for it */
-	}
+		/* Go for it *
+	}*/
 
 	/* Clear all descriptors */
 	FD_ZERO(&rfds);
 	FD_ZERO(&wfds);
 	FD_ZERO(&efds);
-
+/*
 	descriptor = GetFirstDescriptor();
 
 	while (descriptor) {
@@ -140,12 +142,19 @@ int cApplication::LoopMsg(void) {
 
 		descriptor = descriptor->GetNextNode();
 	}
+*/
 
+	FD_SET(0, &rfds);
 
 	/* Select */
 	selectRet = select(fmaxd + 1, &rfds, &wfds, &efds, &val);
 
-	if ( selectRet == -1 ) {
+	if (FD_ISSET(0, &rfds)) {
+		if ( CheckKeyClicked() > 0 ) {
+		}
+	}
+
+/*	if ( selectRet == -1 ) {
 		
 	} else if ( selectRet ) {
 		descriptor = GetFirstDescriptor();
@@ -156,7 +165,7 @@ int cApplication::LoopMsg(void) {
 		}
 		
 	}
-
+*/
 	/* Do all paint and size methods on the end */
 	data = (cCursesWindow*) GetFirstWindow( );
 	
