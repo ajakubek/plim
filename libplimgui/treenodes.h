@@ -42,6 +42,8 @@ public:
 	virtual cTreeNode* GetFirstNode(void);
 	void SetLastNode(cTreeNode* node);
 	virtual cTreeNode* GetLastNode(void);
+	int GetLevelNode(void);
+	void SetNodeData(void* data);
 	void* GetNodeData(void);
 private:
 	void* m_ptr;
@@ -58,9 +60,9 @@ public:
 	cTreeNodes(void);
 	virtual ~cTreeNodes(void);
 	void SetFirstNode(cTreeNode* node);
-	cTreeNode* GetFirstNode(void);
+	virtual cTreeNode* GetFirstNode(void);
 	void SetLastNode(cTreeNode* node);
-	cTreeNode* GetLastNode(void);
+	virtual cTreeNode* GetLastNode(void);
 	cTreeNode* RemoveNode(cTreeNode* node, int del = 0);
 	virtual cTreeNode* GetNext(cTreeNode* node);
 	virtual cTreeNode* GetPrev(cTreeNode* node);
@@ -70,7 +72,7 @@ private:
 	cTreeNode* m_nodeFirst;
 	cTreeNode* m_nodeLast;
 };
-
+ 
 };
 
 #endif

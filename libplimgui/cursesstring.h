@@ -18,40 +18,42 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "keyboard.h"
+#ifndef __PLIM_CURSESSTRING_H__
+#define __PLIM_CURSESSTRING_H__
 
-namespace NSApplication {
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <ncurses.h>
 
-cKeyboard::cKeyboard(void)
-:	cKeyBindings() {
+#include "strings.h"
 
-}
+namespace NSString
+{
 
-cKeyboard::~cKeyboard(void) {
+#define ATTR_BOLD			0x02
+#define ATTR_COLOR		0x03
+#define ATTR_RESET		0x0F
+#define ATTR_FIXED		0x11
+#define ATTR_REVERSE		0x12
+#define ATTR_REVERSE2	0x16
+#define ATTR_ITALIC		0x1D
+#define ATTR_UNDERLINE	0x1F
+#define ATTR_UNDERLINE2	0x15
 
-}
-
-int cKeyboard::CheckKeyClicked(void) {
-	int key;
-
-	if ((key = getch()) != ERR) {
-		if ( ExpandKey( key ) ) {
-			OnBindingClicked();
-			return 1;
-		}
-
-		return OnKeyClicked( key );
-	}
-
-	return 0;
-}
+class cCursesString: public cString
+{
+public:
+	cCursesString(void);
+	cCursesString(const char* str);
+	virtual ~cCursesString(void);
+	int GetFlags(int index, int* flags, int* colors);
+	int IsSpecial(int index) { return GetChar(index) < 32; };
+protected:
  
-int cKeyboard::OnKeyClicked( const int key ) {
-	return 0;
-}
-
-void cKeyboard::OnBindingClicked(void) {
-
-}
+private:
+};
 
 };
+
+#endif

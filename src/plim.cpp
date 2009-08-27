@@ -26,32 +26,38 @@
 #include <curses.h>
 #include <signal.h>
 
-#include <libplimgui/application.h>
-#include <libplimgui/windows.h>
-#include <libplimgui/input.h>
-#include <libplimgui/statusbar.h>
-#include <libplimgui/textviewer.h>
+#include "cPlim.h"
 
-using namespace NSApplication;
-using namespace NSWindows;
+using namespace NSPlim;
 
-cApplication* app;
-cTextWindow* window;
-cCursesWindow* root;
-cInputWindow* inputWindow;
-cStatusWindow* statusWindowTop;
-cStatusWindow* statusWindowBottom;
-
-void OnEnterInput(const char* buffer) {
-	if (window) {
-		window->NewLine( buffer, 0 );
+/* Test case */
+/*void OnBindingPress(cApplication* app, cString* cmd) {
+	if (window && cmd) {
+		window->NewLine( cmd->GetBuffer(), 0 );
 	}
 }
 
+void OnEnterInput(const char* buffer) {
+	cTextLine* line;
+
+	if (!strcmp(buffer, "/quit")) {
+		if (app) app->Close();
+	}
+
+	if (window) {
+		if (!window->GetLastLine()) {
+			window->NewLine( buffer, 0 );
+		}
+		else
+			window->NewLine( window->GetLastLine(), buffer, 0 );
+	}
+}
+*/
 /* Temporary code! 
 	For creating a new app, inheriting cApplication will be needed to handle app events */
 int main(int argc, char** argv) {
-
+	cPlim(argc, argv);
+/*
 	app = new cApplication(argc, argv);
 
 	root = new cCursesWindow(app, 0, 0, 0, 0, NULL);
@@ -59,16 +65,36 @@ int main(int argc, char** argv) {
 	statusWindowTop = new cStatusWindow(app, root);
 	statusWindowTop->SetWindowAlign(top);
 
+
 	inputWindow = new cInputWindow(app, root);
 	inputWindow->SetWindowAlign(bottom);
 
 	statusWindowBottom = new cStatusWindow(app, root);
 	statusWindowBottom->SetWindowAlign(bottom);
- 
+
+	statusWindowBottom->Add("status_time")->SetCaption("16:57");
+	statusWindowBottom->Add("status_nick")->SetCaption("IC0ffeeCup(+i)");
+	statusWindowBottom->Add("status_server")->SetCaption("2:warszawa/#gentoo.pl(+nst)");
+	statusWindowBottom->Add("status_active_window")->SetCaption("Act: 4");
+
+	rosterWindow = new cRosterWindow( app, root );
+	rosterWindow->SetWindowAlign(right);
+
+ 	rosterWindow->Add(NULL);
+ 	rosterWindow->Add(NULL);
+ 	rosterWindow->Add(NULL);
+ 	rosterWindow->Add(NULL);
+ 	rosterWindow->Add(NULL);
+	
 	window = new cTextWindow(app, root);
 	window->SetWindowAlign(client);
-	window->SetColorPair(2);
- 
+
+	app->BindKey("Alt+m", "/new ossom command!");
+	app->BindKey("Alt+d", "/kill window!");
+	app->BindKey("Alt+n", "/next ossom window!");
+	app->BindKey("Alt+p", "/prev ossom window!");
+
+ 	app->OnBindingPress.connect( &OnBindingPress );
 	inputWindow->OnEnter.connect( &OnEnterInput );
 
 	switch( app->Loop() ) {
@@ -78,6 +104,10 @@ int main(int argc, char** argv) {
 
 	delete root;
 	delete app;
+
+//	lexer.Refresh( "[@] IC0ffeeCup" );
+//	LexerTest(&lexer);
+*/
 
 	return 0;
 }

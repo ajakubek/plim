@@ -8,7 +8,23 @@ cString::cString(void)
 	m_length(0),
 	m_allocated(0)
 {
+	
+}
 
+cString::cString(cString* string)
+:	m_stringBuffer(NULL),
+	m_length(0),
+	m_allocated(0)
+{
+	Copy(string);
+}
+
+cString::cString(const char* string)
+:	m_stringBuffer(NULL),
+	m_length(0),
+	m_allocated(0)
+{
+	Copy(string);
 }
 
 cString::~cString(void)
@@ -24,6 +40,8 @@ int cString::Copy(const char* source)
 	if (!source)
 		return 0;
 
+	Clean();
+
 	sourceLength = ::strlen(source) + 1;
 
 	if (sourceLength >= m_length)
@@ -33,6 +51,21 @@ int cString::Copy(const char* source)
 	}
 
 	memcpy(m_stringBuffer, source, sourceLength * sizeof(char));
+
+	return m_length;
+}
+
+int cString::Copy(const char* source, int len) {
+	/* Make a small copy */
+	if (!source) return 0;
+
+	char* x = (char*) malloc( (len + 1) * sizeof(char));	
+	memcpy( x, source, (len + 1) * sizeof(char) );
+	x[len] = '\0';
+
+	if (x) {
+		Copy(x);
+	}
 
 	return m_length;
 }
@@ -153,7 +186,7 @@ int cString::GetLength(void)
 }
 
 const char* cString::GetBuffer(int index, int* range)
-{
+{ 
 	if (index <= m_length)
 	{
 		if (range)	*range = m_length - index;
@@ -162,5 +195,7 @@ const char* cString::GetBuffer(int index, int* range)
 	else
 		return NULL;
 }
+
+
 
 };

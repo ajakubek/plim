@@ -101,7 +101,25 @@ void cTreeNode::SetLastNode(cTreeNode* node) {
 }
 
 cTreeNode* cTreeNode::GetLastNode(void) {
-	return m_nodeLast;
+	return m_nodeLast; 
+}
+
+int cTreeNode::GetLevelNode(void) {
+	cTreeNode* node;
+	int level = 1;
+
+	node = GetParentNode();
+
+	while (node) {
+		level++;
+		node = node->GetParentNode();
+	}
+
+	return level;
+}
+
+void cTreeNode::SetNodeData(void* data) {
+	m_ptr = data;
 }
 
 void* cTreeNode::GetNodeData(void) {

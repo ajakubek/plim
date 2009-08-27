@@ -9,20 +9,25 @@ INCLUDE_DIRECTORIES(${LIBSIGCXX2_INCLUDE_DIRS})
 # build GUI plugin
 ADD_LIBRARY(plimgui SHARED
 			application.cpp
-			box.cpp
-			input.cpp
-			keyboard.cpp
-			statusbar.cpp
-			strings.cpp
-			textviewer.cpp
-			treenodes.cpp
 			base.cpp
+			box.cpp
+			cursesstring.cpp
 			descriptor.cpp
+			hashnodes.cpp
+			input.cpp
 			keybindings.cpp
+			keyboard.cpp
+			lexer.cpp
 			pallete.cpp
+			roster.cpp
+			rosteritems.cpp
+			statusbar.cpp
 			stdafx.cpp
+			strings.cpp
 			textline.cpp
+			textviewer.cpp
 			treenode.cpp
+			treenodes.cpp
 			windows.cpp)
 
 # link with curses and libsigc++2

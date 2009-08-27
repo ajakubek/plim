@@ -6,12 +6,13 @@ namespace NSApplication {
 using namespace NSWindows;
 
 cApplication::cApplication(int argc, char** argv)
-:	cTreeNodes(),
-	cKeyboard(),
+:	cTreeNodes(), cKeyboard(),
 	m_rootWindow(initscr()),
 	m_termWidth(getmaxx(stdscr)), 
 	m_termHeight(getmaxy(stdscr)),
-	m_timeout(0) {
+	m_timeout(0),
+	m_endApp(0),
+	m_colors(NULL) {
 	
 	m_descriptors = new cTreeNodes();
 
@@ -24,9 +25,13 @@ cApplication::cApplication(int argc, char** argv)
 		leaveok(m_rootWindow, TRUE);
 		nodelay(m_rootWindow, TRUE);
 		timeout(0);
+		raw();
 
 		if (has_colors()) {
 			start_color();
+			use_default_colors();
+
+			m_colors = new cPallete();
 		}
 
 		wrefresh(m_rootWindow);
@@ -34,9 +39,13 @@ cApplication::cApplication(int argc, char** argv)
 
 	}
 }
-
+ 
 cApplication::~cApplication() {
 	/* if you forget something to freeup */
+	noraw();
+
+	if (m_colors)	delete m_colors;
+
 	delete m_descriptors;
 
 	if ( m_rootWindow )
@@ -46,7 +55,14 @@ cApplication::~cApplication() {
 int cApplication::Loop(void) {
 	int retCode;
 
+	fcntl(0, F_SETFD, fcntl(0, F_GETFD) | O_NONBLOCK);
+
 	while (!(retCode = LoopMsg())) {
+		if (m_endApp) {
+			/* Say bye. */
+			break;
+		}
+
 		OnPostLoop();
 		PostLoopMsg();
 	}
@@ -69,6 +85,16 @@ int cApplication::OnKeyClicked( const int key ) {
 	return OnKeyEvent( key );
 }
 
+void cApplication::OnBindingClicked(void) {
+	cString* cmd;
+
+	if (IsKeyBindingPending()) {
+		cmd = GetCommand(NULL);
+
+		OnBindingPress( this, cmd );
+	}
+}
+
 int cApplication::LoopMsg(void) {
 	struct timeval val;
 	fd_set rfds, wfds, efds;
@@ -82,8 +108,8 @@ int cApplication::LoopMsg(void) {
 	fmaxd = 0;
 	
 	val.tv_sec = 1;
-
-	/* Default timeout, primitive. */	
+/*
+	/* Default timeout, primitive. *
 	if ( m_timeout < 1000000 ) {
 		val.tv_sec = 0;
 		val.tv_usec = m_timeout;
@@ -94,18 +120,18 @@ int cApplication::LoopMsg(void) {
 		val.tv_usec = 0;
 	}
 
-	/* Check if there is somthing to input in the ui */
+	/* Check if there is somthing to input in the ui *
 	if ( CheckKeyClicked() > 0 ) {
 		m_timeout = 0;
 		val.tv_sec = 0;
-		/* Go for it */
-	}
+		/* Go for it *
+	}*/
 
 	/* Clear all descriptors */
 	FD_ZERO(&rfds);
 	FD_ZERO(&wfds);
 	FD_ZERO(&efds);
-
+/*
 	descriptor = GetFirstDescriptor();
 
 	while (descriptor) {
@@ -116,12 +142,19 @@ int cApplication::LoopMsg(void) {
 
 		descriptor = descriptor->GetNextNode();
 	}
+*/
 
+	FD_SET(0, &rfds);
 
 	/* Select */
 	selectRet = select(fmaxd + 1, &rfds, &wfds, &efds, &val);
 
-	if ( selectRet == -1 ) {
+	if (FD_ISSET(0, &rfds)) {
+		if ( CheckKeyClicked() > 0 ) {
+		}
+	}
+
+/*	if ( selectRet == -1 ) {
 		
 	} else if ( selectRet ) {
 		descriptor = GetFirstDescriptor();
@@ -132,7 +165,7 @@ int cApplication::LoopMsg(void) {
 		}
 		
 	}
-
+*/
 	/* Do all paint and size methods on the end */
 	data = (cCursesWindow*) GetFirstWindow( );
 	
@@ -151,7 +184,7 @@ int cApplication::LoopMsg(void) {
 int cApplication::OnTerminalSizeChanged(void) {
 	cCursesWindow* data;
 
-	wrefresh(m_rootWindow);
+	//::wrefresh(m_rootWindow);
 
 	if ( m_termWidth != getmaxx(stdscr) || m_termHeight != getmaxy(stdscr) ) {
 		m_termWidth = getmaxx(stdscr);
@@ -159,13 +192,6 @@ int cApplication::OnTerminalSizeChanged(void) {
 
 		OnResize(m_termWidth, m_termHeight);
 
-		/* Update just the first window wich should be the root window */
-		data = (cCursesWindow*) GetFirstWindow( );
-		
-		if ( data ) {
-			/* Update all child windows */
-			data->NeedUpdate();
-		}
 
 		LaunchResizeEvents();
 
@@ -208,6 +234,7 @@ void cApplication::LaunchResizeEvents(void) {
 
 	do {
 		if (data) {
+			data->NeedUpdate();
 			data->OnResize( );
 		}
 

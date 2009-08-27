@@ -51,11 +51,13 @@ cTreeNode* cTreeNodes::GetLastNode(void) {
 cTreeNode* cTreeNodes::RemoveNode(cTreeNode* node, int del) {
 	cTreeNode* rmnode;
 
+	if (!node) return NULL;
+
 	if ( node->GetParentNode() ) {
 		rmnode = node->GetLastNode();
 
 		while (rmnode) {
-			rmnode = RemoveNode(rmnode, 1);
+			rmnode = RemoveNode(rmnode, del);
 		}
 
 		if ( node->GetParentNode()->GetFirstNode() == node )
@@ -67,7 +69,7 @@ cTreeNode* cTreeNodes::RemoveNode(cTreeNode* node, int del) {
 		
 	}
 	else {
-		if ( GetFirstNode() == node )
+		if ( GetFirstNode() == node ) 
 			SetFirstNode( node->GetNextNode() );
 
 		if ( GetLastNode() == node )
@@ -82,7 +84,8 @@ cTreeNode* cTreeNodes::RemoveNode(cTreeNode* node, int del) {
 	if ( node->GetPrevNode() )
 		node->GetPrevNode()->SetNextNode( node->GetNextNode() );
 	
-	if (del)	delete node;
+	if (del)
+		delete node;
 
 	return rmnode;
 }

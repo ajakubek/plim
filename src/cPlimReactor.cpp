@@ -18,39 +18,15 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "keyboard.h"
+#include "cPlimReactor.h"
 
-namespace NSApplication {
+namespace NSReactor {
 
-cKeyboard::cKeyboard(void)
-:	cKeyBindings() {
-
-}
-
-cKeyboard::~cKeyboard(void) {
+cPlimReactor::cPlimReactor(void) {
 
 }
 
-int cKeyboard::CheckKeyClicked(void) {
-	int key;
-
-	if ((key = getch()) != ERR) {
-		if ( ExpandKey( key ) ) {
-			OnBindingClicked();
-			return 1;
-		}
-
-		return OnKeyClicked( key );
-	}
-
-	return 0;
-}
- 
-int cKeyboard::OnKeyClicked( const int key ) {
-	return 0;
-}
-
-void cKeyboard::OnBindingClicked(void) {
+cPlimReactor::~cPlimReactor(void) {
 
 }
 

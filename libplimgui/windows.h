@@ -22,25 +22,53 @@
 #define __PLIM_WINDOWS_H__
 
 #include <ncurses.h>
+#include <ctype.h>
 
 #include "application.h"
 #include "base.h"
 #include "strings.h"
+#include "lexer.h"
+#include "cursesstring.h"
 #include "treenodes.h"
+#include "hashnodes.h"
 
 namespace NSWindows {
 
 using namespace NSApplication;
 using namespace NSString;
+using namespace NSTree;
+
+class cCursesWindow;
 
 typedef enum _align { none = 0, left, top, bottom, right, client } align;
+
+/* Structure on wich depends what the PrintLexer method will do */
+typedef struct _PrintAttrs {
+	int display: 1;
+	int wrap: 1;
+	int newline: 1;
+	int reset: 1;
+	int usecolor: 1;
+	int noformcount: 1;
+	int fg;
+	int bg;
+	int skipcount;
+	int formcount;
+	int flags;
+} PlimAttrs;
+/* Callback method */
+typedef int (cCursesWindow::*OnPrintCallback) ( cCursesWindow* window, cPlimToken* token, PlimAttrs* attr );
+
+typedef struct _CallbackPtr {
+	OnPrintCallback callback;
+} CallbackPtr;
 
 /*	ncurses base window class
 	TODO: Add hide and show capabilities ie. newwin,subwin,delwin
 	TODO: Suspend any drawings etc. when window is hidden (delwin)
 	@author: IC0ffeeCup
-*/
-class cCursesWindow: public cTreeNode {
+*/ 
+class cCursesWindow: public cTreeNode, public sigc::trackable {
 public:
 	/* pos are relative to parent window */
 	cCursesWindow(cApplication* app, int left, int top, int height, int width, cCursesWindow* parent);
@@ -66,6 +94,9 @@ public:
 	/*	Update the window sizes and repaint
 	*/
 	virtual void Update(void);
+	/* Force box update
+	*/
+	void ForceUpdate(void);
 	/*	Make a partial update without updating the sizes
 	*/
 	virtual void PartialUpdate(void);
@@ -77,6 +108,15 @@ public:
 	*/
 	int Print(cString* string, int start); /* TODO: Add some overloaded Print and formating */
 	int Print(cString* string, int x, int y); /* TODO: Add some overloaded Print and formating */
+	/* Used for displaying text in  textwindow, shoul be changed in the future to use PrintLexer instead as it allows better str handling
+	*/
+	int PrintFormated(cCursesString* string, int x, int y);
+	/* Used for displaying text with predefined values from cPlimLexer
+	*/
+	int PrintLexer(cPlimLexer* lexer, int x, int y);
+	/* Handle special ncurses spec-chars
+	*/
+	int HandleSpecChars(cPlimToken* token, PlimAttrs* attrs);
 	/*	Calculate text lines
 		@param cString
 		@return number of lines
@@ -98,7 +138,7 @@ public:
 	/*	Set the visiblity of the window
 		@param visibility bool val
 	*/
-	void SetVisible(int visible) { if (m_isVisible != visible) { m_isVisible = visible; } };
+	void SetVisible(int visible) { if (m_isVisible != visible) { m_isVisible = visible; RecreateWindow(); NeedUpdate(); NeedPartialUpdate();  } };
 	void SetColorPair(int pair) { m_colorPair = pair; };
 	/*	Get the parent window
 		@return cCursesWindow
@@ -185,13 +225,30 @@ public:
 	/*	If the window needs update */
 	int IsUpdateNeccesary(void) { return m_needUpdate; };
 	/*	If the window needs partial update */
-	int IsPartialNeccesary(void) { return m_needPartialUpdate; };
+	int IsPartialNeccesary(void) { return m_needPartialUpdate && m_windowHandle; };
 	/*	Launch a keypress event
 		@param key, int
 		@return int, if -1 than break Loop
 	*/
 	cCursesWindow* GetNextNode(void) { return (cCursesWindow*) cTreeNode::GetNextNode(); };
 	cCursesWindow* GetPrevNode(void) { return (cCursesWindow*) cTreeNode::GetPrevNode(); };
+	/* Get the application instance
+	*/
+	cApplication* GetApplication(void) { return m_appInstance; };
+
+	/* Create and destroy hashnodes */
+	void CreateFormattingNodes(void);
+	void DestroyFormattingNodes(void);
+
+	/* Sets the formatting nodes for PrintLexer */
+	void SetFormattingNodes(cHashNodes* nodes) { m_formatNodes = nodes; };
+	cHashNodes* GetFormattingNodes(void) { return m_formatNodes; };
+
+ 	/* Register formatting routine for PrintLexer */
+	int RegisterFormattingCallback( const char* identifier, OnPrintCallback callback );
+	int UnregisterFormattingCallback( const char* identifier );
+	CallbackPtr* GetFormattingCallback( const char* identifier );
+
 	virtual int OnKeyPressed( const int key ); /* TODO: Need to change args ie. implement keybindings, add some buffer */
 	virtual int OnResize(void);
 protected:
@@ -230,7 +287,10 @@ private:
 	/*!	pointer to cBox */
 	void* m_boxPtr;
 	int m_colorPair;
+	/*! Hash nodes for PrintLexer callbacks */
+	cHashNodes* m_formatNodes;
 };
+
 
 };
 

@@ -19,3 +19,36 @@
  ***************************************************************************/
 
 #include "pallete.h"
+
+namespace NSApplication {
+
+cPallete::cPallete(void)
+:	cTreeNodes() {
+	/* Initialize the default colors, need some tuneup */
+	for (int i = 1; i < 64; i++ )
+		new cColor( this, i, (int) (i / 8), i % 7);
+}
+
+cPallete::~cPallete(void) {
+}
+
+int cPallete::GetPair(int fg, int bg) {
+	cColor* color;
+	int ret;
+
+	color = GetFirstNode();
+
+	while (color) {
+		
+		if ((ret = color->IsPair(fg, bg)) > -1)
+		{
+
+			return ret;
+		}
+		color = color->GetNextNode();
+	} 
+
+	return -1;
+}
+
+};

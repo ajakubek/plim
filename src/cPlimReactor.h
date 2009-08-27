@@ -18,40 +18,21 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "keyboard.h"
+#include <sigc++/signal.h>
 
-namespace NSApplication {
+namespace NSReactor {
 
-cKeyboard::cKeyboard(void)
-:	cKeyBindings() {
+class cPlimReactor {
+public:
+	cPlimReactor(void);
+	virtual ~cPlimReactor(void);
 
-}
+	/* Signals from the UI */
+	
+	
+	/* Signals to the UI */
 
-cKeyboard::~cKeyboard(void) {
 
-}
-
-int cKeyboard::CheckKeyClicked(void) {
-	int key;
-
-	if ((key = getch()) != ERR) {
-		if ( ExpandKey( key ) ) {
-			OnBindingClicked();
-			return 1;
-		}
-
-		return OnKeyClicked( key );
-	}
-
-	return 0;
-}
- 
-int cKeyboard::OnKeyClicked( const int key ) {
-	return 0;
-}
-
-void cKeyboard::OnBindingClicked(void) {
-
-}
+};
 
 };

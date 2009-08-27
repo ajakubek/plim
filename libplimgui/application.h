@@ -38,6 +38,7 @@
 #include "treenodes.h"
 #include "descriptor.h"
 #include "keyboard.h"
+#include "pallete.h"
 
 namespace NSApplication {
 
@@ -47,7 +48,7 @@ using namespace NSTree;
 	@author: IC0ffeeCup
 */
 /* TODO: add signals */
-class cApplication: public cTreeNodes, public cKeyboard {
+class cApplication: public cTreeNodes, public cKeyboard, public sigc::trackable {
 public:
 	/*	base construction for the main application
 		@param argc argument count
@@ -55,6 +56,9 @@ public:
 	*/
 	cApplication(int argc, char** argv);
 	virtual ~cApplication(void);
+	/* Close the app
+	*/
+	void Close(void) { m_endApp = 1; };
 	/*	Process messages in application
 		@return application exit code
 	*/
@@ -79,15 +83,19 @@ public:
 		@return number of the columns in the terminal window
 	*/
 	int GetTermCols(void) { return getmaxx(m_rootWindow); };
+	/*	get the pair of colors
+	*/
+	int GetColorPair(int fg, int bg) { return m_colors->GetPair(fg, bg); };
 	/*	get the root window handle
 		@return ncurses WINDOW struct
-	*/
+	*/ 
 	WINDOW* GetWindowHandle(void) { return m_rootWindow; };
 	/* Terminal resize event */
 	virtual int OnTerminalSizeChanged(void);
 
 	/* Signals */
 	sigc::signal<void, const int> OnKeyPress;
+	sigc::signal<void, cApplication*, cString*> OnBindingPress;
 	sigc::signal<void, int, int> OnResize;
 	sigc::signal<void> OnPostLoop;
 protected:
@@ -96,6 +104,9 @@ protected:
 		@return int, if -1 than break Loop
 	*/
 	int OnKeyClicked( const int key );
+	/* Get a command and launch a event
+	*/
+	void OnBindingClicked(void);
 	/* base loop msg for processing all the msg */
 	virtual int LoopMsg(void);
 	/* Runned just after the LoopMsg in Loop */
@@ -115,6 +126,10 @@ private:
 	cTreeNodes* m_descriptors;
 	/*!timeout*/
 	long m_timeout;
+	/*!endloop*/
+	int m_endApp;
+	/*! Colors */
+	cPallete* m_colors;
 };
 
 };

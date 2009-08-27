@@ -18,40 +18,75 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "keyboard.h"
+#include "cursesstring.h"
 
-namespace NSApplication {
+namespace NSString {
 
-cKeyboard::cKeyboard(void)
-:	cKeyBindings() {
-
-}
-
-cKeyboard::~cKeyboard(void) {
+cCursesString::cCursesString(void)
+:	cString() {
 
 }
 
-int cKeyboard::CheckKeyClicked(void) {
-	int key;
+cCursesString::cCursesString(const char* str)
+:	cString() {
+	Copy(str);
+}
 
-	if ((key = getch()) != ERR) {
-		if ( ExpandKey( key ) ) {
-			OnBindingClicked();
-			return 1;
+cCursesString::~cCursesString(void) {
+
+}
+
+int cCursesString::GetFlags(int index, int* flags, int* colors) {
+	char ch = GetChar(index);
+
+	*colors = 0;
+
+	if ( IsSpecial(index) ) {
+		switch (ch)
+		{
+			case ATTR_BOLD: {
+				*flags |= A_BOLD;
+				break;
+			}
+			case ATTR_COLOR: {
+				*colors = 1;
+				break;
+			} 
+
+			case ATTR_RESET: {
+				*flags = ATTR_RESET;
+				break;
+			}
+
+			case ATTR_FIXED: {
+				/* dunno */
+				break;
+			}
+
+			case ATTR_REVERSE:
+			case ATTR_REVERSE2: {
+				*flags |= A_REVERSE;
+				break;
+			}
+
+			case ATTR_ITALIC: {
+				/* Dunno, ncurses doesnt support italic stuff */
+				break;
+			}
+
+			case ATTR_UNDERLINE2:
+			case ATTR_UNDERLINE: {
+				*flags |= A_UNDERLINE;
+				break;
+			}
+
+			default:
+				break;
 		}
 
-		return OnKeyClicked( key );
 	}
 
 	return 0;
-}
- 
-int cKeyboard::OnKeyClicked( const int key ) {
-	return 0;
-}
-
-void cKeyboard::OnBindingClicked(void) {
-
 }
 
 };

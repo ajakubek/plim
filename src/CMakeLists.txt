@@ -15,7 +15,12 @@ SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 # build main executable
-ADD_EXECUTABLE(plim plim.cpp)
+ADD_EXECUTABLE(plim
+			   cPlim.cpp
+			   cPlimReactor.cpp
+			   cPlimRoom.cpp
+			   cPlimUser.cpp
+			   plim.cpp)
 
 # this should be removed (GUI should be loaded dynamically)
 LINK_DIRECTORIES(libplimgui)

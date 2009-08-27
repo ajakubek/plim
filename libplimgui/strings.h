@@ -34,17 +34,25 @@ class cString
 {
 public:
 	cString(void);
+	cString(cString* string);
+	cString(const char* string);
 	virtual ~cString(void);
 	int Copy(const char* source);
+	int Copy(const char* source, int len);
+	int Copy(cString* string) { return Copy(string->GetBuffer()); };
 	int Cat(const char* source);
+	int Cat(cString* string) { return Cat(string->GetBuffer()); };
 	int Delete(int index, int range, char* out);
 	int Insert(int index, const char* source);
 	int Insert(int index, char source);
 	int Clean(void);
+	int Compare(const char* buffer) { return strcmp(m_stringBuffer, buffer); };
+	int Compare(cString* buffer) { return strcmp(m_stringBuffer, buffer->GetBuffer()); };
 	const char* GetBuffer(void);
 	const char GetChar(int index);
 	int GetLength(void);
 	const char* GetBuffer(int index, int* range);
+
 protected:
 	
 private:
@@ -52,7 +60,7 @@ private:
 	int m_allocated;
 	char* m_stringBuffer;
 };
-
+ 
 };
 
 #endif

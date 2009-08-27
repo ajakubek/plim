@@ -22,23 +22,55 @@
 #define __PLIM_STATUSBAR_H__
 
 #include <ncurses.h>
+#include <string.h>
+
 #include "application.h"
 #include "windows.h"
+#include "hashnodes.h"
+#include "strings.h"
+#include "lexer.h"
 
 namespace NSWindows {
 
+#define REGISTER_S_CALL(name, method) RegisterFormattingCallback(name, (OnPrintCallback) &NSWindows::cStatusWindow::method)
+
 using namespace NSApplication;
+using namespace NSTree;
+using namespace NSString;
+
+class cStatusItem: public cTreeNode {
+public:
+	cStatusItem(cTreeNodes* nodes, const char* name): cTreeNode(nodes, NULL, NULL) {};
+	virtual ~cStatusItem(void) {}
+	void SetCaption(const char* caption) { m_buffer.Copy(caption); };
+	const char* GetCaption(void) { return m_buffer.GetBuffer(); };
+	int GetCaptionLength(void) { return m_buffer.GetLength(); };
+	const char* GetName(void) { return m_name.GetBuffer(); };
+	cStatusItem* GetNextNode(void) { return (cStatusItem*) cTreeNode::GetNextNode(); };
+	cStatusItem* GetPrevNode(void) { return (cStatusItem*) cTreeNode::GetPrevNode(); };
+private:
+	cString m_buffer;
+	cString m_name;
+};
 
 /* TODO: Add panels etc. */
 class cStatusWindow: public cCursesWindow {
 public:
 	cStatusWindow(cApplication* app, cCursesWindow* parent);
 	virtual ~cStatusWindow(void);
+
+	cStatusItem* Add(const char* identifier);
+	cStatusItem* Get(const char* identifier);
+	void Delete(const char* identifier);
+
 	void PartialUpdate(void);
+protected:
+	int OnOpenCloseItem(cCursesWindow* window, cPlimToken* token, PlimAttrs* attrs);
 private:
-
+	cTreeNodes* m_panelNodes;
+	cPlimLexer lexhex;
 };
-
+ 
 };
 
 #endif

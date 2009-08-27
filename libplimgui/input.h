@@ -27,6 +27,7 @@
 #include "application.h"
 #include "windows.h"
 #include "strings.h"
+#include "lexer.h"
 
 namespace NSWindows {
 
@@ -47,16 +48,17 @@ public:
 	void PartialUpdate(void);
 	int OnKeyPressed( const int key );
 	int OnResize(void);
-
+ 
 	/* Signals */
 	sigc::signal <void, const char*> OnEnter;
 protected:
 	int CalcSize(void);
 	void UpdateSize(void);
 private:
-	cString m_prefixBuffer;
-	cString* m_buffer;
+	cCursesString m_prefixBuffer;
+	cCursesString m_buffer;
 	int m_cursorPos;
+	cPlimLexer lexer;
 };
 
 };

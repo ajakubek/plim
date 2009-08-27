@@ -11,7 +11,7 @@ cDescriptor::~cDescriptor(void) {
 }
 
 void cDescriptor::SetupDescriptor(void) {
-
+ 
 }
 
 void cDescriptor::IssetDescriptor(void) {

@@ -18,40 +18,57 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "keyboard.h"
+#ifndef __PLIM_HASHNODES_H__
+#define __PLIM_HASHNODES_H__
 
-namespace NSApplication {
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "strings.h"
+#include "treenodes.h"
 
-cKeyboard::cKeyboard(void)
-:	cKeyBindings() {
+using namespace NSString;
 
-}
+namespace NSTree {
 
-cKeyboard::~cKeyboard(void) {
-
-}
-
-int cKeyboard::CheckKeyClicked(void) {
-	int key;
-
-	if ((key = getch()) != ERR) {
-		if ( ExpandKey( key ) ) {
-			OnBindingClicked();
-			return 1;
-		}
-
-		return OnKeyClicked( key );
-	}
-
-	return 0;
-}
+class cHashNode: public cTreeNode {
+public:
+	cHashNode(cTreeNodes* nodes, const char* identifier, int len, void* data)
+	:	cTreeNode(nodes, NULL, NULL),
+		m_len(len),
+		m_data(data) {
+		m_identifier.Copy(identifier);
+	};
+	virtual ~cHashNode(void) {};
+	const char* GetIdentifier() { return m_identifier.GetBuffer(); };
+	const int GetLen() { return m_len; };
+	void* GetPtr(void) { return m_data; };
+private:
+	cString m_identifier;
+	int m_len;
+	void* m_data;
+};
  
-int cKeyboard::OnKeyClicked( const int key ) {
-	return 0;
-}
+class cHashNodes
+{
+public:
+	cHashNodes(int elements);
+	virtual ~cHashNodes(void);
+	int SetNewElements(int elements) { return ResizeNodes(elements); };
+	virtual cHashNode* Add(const char* identifier, const int len, void* data);
+	virtual cHashNode* Add(const char* identifier, void* data);
+	cHashNode* Get(const char* identifier, int len);
+	int Delete(cHashNode* node, int len);
+protected:
+	int ResizeNodes(int elements);
+private:
+	int HGenerateIndex(const char* identifier, int len);
+	cTreeNodes** m_hashNodes;
+	int m_elements;
+};
 
-void cKeyboard::OnBindingClicked(void) {
-
-}
 
 };
+
+
+#endif
