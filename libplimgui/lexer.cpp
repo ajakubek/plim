@@ -311,7 +311,7 @@ int cPlimLexer::ScriptDigitParse(const char *src, int len, int* newPos, TokenFla
 						/* Check for sign, if there is no, then assume its a + */
 						if (IsSign(src[i]))
 						{
-							if (ScriptCompareSymbol(L'-', src[i])) result |= PLIM_L_DIGIT_FLOAT_EXPONENT_MINUS;
+							if (ScriptCompareSymbol('-', src[i])) result |= PLIM_L_DIGIT_FLOAT_EXPONENT_MINUS;
 							else	result |= PLIM_L_DIGIT_FLOAT_EXPONENT_PLUS;
 
 							ScriptShiftPos(newPos);
@@ -883,7 +883,7 @@ int cPlimLexer::ScriptCheckFlags(int flags, int source) {
 int cPlimLexer::IsSymbol(char c)
 {
 	/* Include control chars */
-	return (ispunct(c) && !(c == '_')) || (c < 32);
+	return (ispunct(c) && !(c == '_')) || (c < 32) || IsEscape(c);
 }
 
 int cPlimLexer::IsODigit(char c)
@@ -948,27 +948,27 @@ int cPlimLexer::IsBlank(char c)
 
 int cPlimLexer::IsCRLF(char c)
 {
-	return (c == L'\r' || c == L'\n');
+	return (c == '\r' || c == '\n');
 }
 
 int cPlimLexer::IsEscape(char c)
 {
-	return (c == L'\\');
+	return (c == '\\');
 }
 
 int cPlimLexer::IsExponent(char c)
 {
-	return (c == L'e' || c == L'E');
+	return (c == 'e' || c == 'E');
 }
 
 int cPlimLexer::IsSign(char c)
 {
-	return (c == L'-' || c == L'+');
+	return (c == '-' || c == '+');
 }
 
 int cPlimLexer::IsDot(char c)
 {
-	return (c == L'.');
+	return (c == '.');
 }
 
 };
