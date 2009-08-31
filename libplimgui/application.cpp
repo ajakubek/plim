@@ -108,41 +108,13 @@ int cApplication::LoopMsg(void) {
 	fmaxd = 0;
 	
 	val.tv_sec = 1;
-/*
-	/* Default timeout, primitive. *
-	if ( m_timeout < 1000000 ) {
-		val.tv_sec = 0;
-		val.tv_usec = m_timeout;
-		m_timeout += 1000;
-	}
-	else {
-		val.tv_sec = 1;
-		val.tv_usec = 0;
-	}
-
-	/* Check if there is somthing to input in the ui *
-	if ( CheckKeyClicked() > 0 ) {
-		m_timeout = 0;
-		val.tv_sec = 0;
-		/* Go for it *
-	}*/
+	
+	if ( OnTerminalSizeChanged() );
 
 	/* Clear all descriptors */
 	FD_ZERO(&rfds);
 	FD_ZERO(&wfds);
 	FD_ZERO(&efds);
-/*
-	descriptor = GetFirstDescriptor();
-
-	while (descriptor) {
-		descriptor->SetupDescriptor();
-
-		if ( fmaxd < descriptor->GetDescriptor() ) 
-			fmaxd = descriptor->GetDescriptor();
-
-		descriptor = descriptor->GetNextNode();
-	}
-*/
 
 	FD_SET(0, &rfds);
 
@@ -154,18 +126,6 @@ int cApplication::LoopMsg(void) {
 		}
 	}
 
-/*	if ( selectRet == -1 ) {
-		
-	} else if ( selectRet ) {
-		descriptor = GetFirstDescriptor();
-
-		while (descriptor) {
-			descriptor->IssetDescriptor();
-			descriptor = descriptor->GetNextNode();
-		}
-		
-	}
-*/
 	/* Do all paint and size methods on the end */
 	data = (cCursesWindow*) GetFirstWindow( );
 	
@@ -183,8 +143,6 @@ int cApplication::LoopMsg(void) {
 
 int cApplication::OnTerminalSizeChanged(void) {
 	cCursesWindow* data;
-
-	//::wrefresh(m_rootWindow);
 
 	if ( m_termWidth != getmaxx(stdscr) || m_termHeight != getmaxy(stdscr) ) {
 		m_termWidth = getmaxx(stdscr);

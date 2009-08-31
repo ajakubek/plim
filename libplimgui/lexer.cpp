@@ -68,6 +68,21 @@ void cPlimLexer::PerformParse(void) {
 
 		switch (lexerType)
 		{
+			case PLIM_L_FEED: {
+				if (ScriptBlankParse(&src[i], len - i, &i, &flags) == PLIM_OK) {
+					newToken = new cPlimToken( this );
+					if (newToken) {
+						newToken->SetOffset( pos );
+						newToken->SetLen( i - pos );
+						newToken->SetTokenCase(PLIM_L_FEED);
+						newToken->SetTokenExCase(flags.b);
+						newToken->SetIllegalFlags(flags.c);
+						newToken->Copy( &src[pos], i - pos );
+					}
+				}
+				break;
+			}
+
 			case PLIM_L_BLANK:
 			{
 				if (ScriptBlankParse(&src[i], len - i, &i, &flags) == PLIM_OK)
@@ -157,6 +172,8 @@ void cPlimLexer::PerformParse(void) {
 
 int cPlimLexer::ScriptType(char c)
 {
+	if (IsCRLF(c))
+		return PLIM_L_FEED;
 	if (IsDigit(c))
 		return PLIM_L_DIGIT;
 	if (IsEscape(c))
@@ -584,18 +601,17 @@ int cPlimLexer::ScriptSymbolParse(const char *src, int len, int* newPos, TokenFl
 		else switch (src[i])
 		{
 			/* Main symbols */
-			case L'\\':
+			case '\\':
 			{
 				case_flags = PLIM_L_CASE_FLAGS_SYMBOLS;
 				result = PLIM_L_SYMBOL_BACKSLASH;
-				
 				ScriptShiftPos(newPos);
 				ScriptShiftPos(&i);
 
 				break;
 			}
  
-			case L':':
+			case ':':
 			{
 				case_flags = PLIM_L_CASE_FLAGS_SYMBOLS;
 				result = PLIM_L_SYMBOL_COLON;
@@ -606,7 +622,7 @@ int cPlimLexer::ScriptSymbolParse(const char *src, int len, int* newPos, TokenFl
 				break;
 			}
 			
-			case L';':
+			case ';':
 			{
 				case_flags = PLIM_L_CASE_FLAGS_SYMBOLS;
 				result = PLIM_L_SYMBOL_SEMICOLON;
@@ -617,7 +633,7 @@ int cPlimLexer::ScriptSymbolParse(const char *src, int len, int* newPos, TokenFl
 				break;
 			}
 
-			case L',':
+			case ',':
 			{
 				case_flags = PLIM_L_CASE_FLAGS_SYMBOLS;
 				result = PLIM_L_SYMBOL_COMMA;
@@ -628,7 +644,7 @@ int cPlimLexer::ScriptSymbolParse(const char *src, int len, int* newPos, TokenFl
 				break;
 			}
 
-			case L'.':
+			case '.':
 			{
 				case_flags = PLIM_L_CASE_FLAGS_SYMBOLS;
 				result = PLIM_L_SYMBOL_DOT;
@@ -641,7 +657,7 @@ int cPlimLexer::ScriptSymbolParse(const char *src, int len, int* newPos, TokenFl
 			/* End of main symbols */
 			
 			/* Bracket symbols */
-			case L'(':
+			case '(':
 			{
 				case_flags = PLIM_L_CASE_FLAGS_BRACKETS;
 				result = PLIM_L_SYMBOL_BRACKET_PARENTHESES_OPEN;
@@ -652,7 +668,7 @@ int cPlimLexer::ScriptSymbolParse(const char *src, int len, int* newPos, TokenFl
 				break;			
 			}
 			
-			case L')':
+			case ')':
 			{
 				case_flags = PLIM_L_CASE_FLAGS_BRACKETS;
 				result = PLIM_L_SYMBOL_BRACKET_PARENTHESES_CLOSE;
@@ -663,7 +679,7 @@ int cPlimLexer::ScriptSymbolParse(const char *src, int len, int* newPos, TokenFl
 				break;			
 			}
 			
-			case L'[':
+			case '[':
 			{
 				case_flags = PLIM_L_CASE_FLAGS_BRACKETS;
 				result = PLIM_L_SYMBOL_BRACKET_SQUARE_OPEN;
@@ -674,7 +690,7 @@ int cPlimLexer::ScriptSymbolParse(const char *src, int len, int* newPos, TokenFl
 				break;			
 			}
 
-			case L']':
+			case ']':
 			{
 				case_flags = PLIM_L_CASE_FLAGS_BRACKETS;
 				result = PLIM_L_SYMBOL_BRACKET_SQUARE_CLOSE;
@@ -685,7 +701,7 @@ int cPlimLexer::ScriptSymbolParse(const char *src, int len, int* newPos, TokenFl
 				break;			
 			}
 			
-			case L'{':
+			case '{':
 			{
 				case_flags = PLIM_L_CASE_FLAGS_BRACKETS;
 				result = PLIM_L_SYMBOL_BRACKET_CURLY_OPEN;
@@ -696,18 +712,18 @@ int cPlimLexer::ScriptSymbolParse(const char *src, int len, int* newPos, TokenFl
 				break;			
 			}
 
-			case L'}':
+			case '}':
 			{
 				case_flags = PLIM_L_CASE_FLAGS_BRACKETS;
 				result = PLIM_L_SYMBOL_BRACKET_CURLY_CLOSE;
-
+				
 				ScriptShiftPos(newPos);
 				ScriptShiftPos(&i);
 
 				break;			
 			}
 						
-			case L'<':
+			case '<':
 			{
 				case_flags = PLIM_L_CASE_FLAGS_BRACKETS | PLIM_L_CASE_FLAGS_MATH;
 				result = PLIM_L_SYMBOL_BRACKET_ANGLE_OPEN;
@@ -718,7 +734,7 @@ int cPlimLexer::ScriptSymbolParse(const char *src, int len, int* newPos, TokenFl
 				break;			
 			}
 			
-			case L'>':
+			case '>':
 			{
 				case_flags = PLIM_L_CASE_FLAGS_BRACKETS | PLIM_L_CASE_FLAGS_MATH;
 				result = PLIM_L_SYMBOL_BRACKET_ANGLE_CLOSE;
@@ -731,7 +747,17 @@ int cPlimLexer::ScriptSymbolParse(const char *src, int len, int* newPos, TokenFl
 			/* End of bracket symbols */
 			
 			/* Math symbols */
-			case L'+':
+			case '#':
+			{
+				case_flags = PLIM_L_CASE_FLAGS_MATH;
+				result = PLIM_L_SYMBOL_MATH_HATCH;
+
+				ScriptShiftPos(newPos);
+				ScriptShiftPos(&i);
+				break;
+			}
+
+			case '+':
 			{
 				case_flags = PLIM_L_CASE_FLAGS_MATH;
 				result = PLIM_L_SYMBOL_MATH_SIGN_PLUS;
@@ -742,7 +768,7 @@ int cPlimLexer::ScriptSymbolParse(const char *src, int len, int* newPos, TokenFl
 				break;						
 			}
 
-			case L'-':
+			case '-':
 			{
 				case_flags = PLIM_L_CASE_FLAGS_MATH;
 				result = PLIM_L_SYMBOL_MATH_SIGN_MINUS;
@@ -753,7 +779,7 @@ int cPlimLexer::ScriptSymbolParse(const char *src, int len, int* newPos, TokenFl
 				break;						
 			}
 			
-			case L'=':
+			case '=':
 			{
 				case_flags = PLIM_L_CASE_FLAGS_MATH;
 				result = PLIM_L_SYMBOL_MATH_ASSIGN;
@@ -764,7 +790,7 @@ int cPlimLexer::ScriptSymbolParse(const char *src, int len, int* newPos, TokenFl
 				break;						
 			}
 
-			case L'*':
+			case '*':
 			{
 				case_flags = PLIM_L_CASE_FLAGS_MATH;
 				result = PLIM_L_SYMBOL_MATH_SIGN_MULTIPLE;
@@ -775,7 +801,7 @@ int cPlimLexer::ScriptSymbolParse(const char *src, int len, int* newPos, TokenFl
 				break;						
 			}
 
-			case L'/':
+			case '/':
 			{
 				case_flags = PLIM_L_CASE_FLAGS_MATH;
 				result = PLIM_L_SYMBOL_MATH_SIGN_DIVIDE;
@@ -790,7 +816,7 @@ int cPlimLexer::ScriptSymbolParse(const char *src, int len, int* newPos, TokenFl
 			
 			/* Literal symbols */
 			
-			case L'"':
+			case '"':
 			{
 				case_flags = PLIM_L_CASE_FLAGS_LITERALS;
 				result = PLIM_L_SYMBOL_LITERAL_DQUOTE;
@@ -801,7 +827,7 @@ int cPlimLexer::ScriptSymbolParse(const char *src, int len, int* newPos, TokenFl
 				break;						
 			}
 
-			case L'\'':
+			case '\'':
 			{
 				case_flags = PLIM_L_CASE_FLAGS_LITERALS;
 				result = PLIM_L_SYMBOL_LITERAL_QUOTE;
@@ -917,7 +943,7 @@ int cPlimLexer::IsIdentifier(char c)
 
 int cPlimLexer::IsBlank(char c)
 {
-	return (c == 0x20 || c == '\t' || IsCRLF(c));
+	return (c == ' ' || c == '\t' || IsCRLF(c));
 }
 
 int cPlimLexer::IsCRLF(char c)

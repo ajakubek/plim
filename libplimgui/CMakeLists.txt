@@ -35,6 +35,11 @@ TARGET_LINK_LIBRARIES(plimgui
 			${CURSES_LIBRARIES}
 			${LIBSIGCXX2_LIBRARIES})
 
+if (WIN32)
+INSTALL(TARGETS plimgui
+		DESTINATION bin)
+else()
 # install GUI plugin
 INSTALL(TARGETS plimgui
 		LIBRARY DESTINATION lib)
+endif ()

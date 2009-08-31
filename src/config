@@ -1,0 +1,33 @@
+# sample configuration for plim
+
+plim {
+
+	gui { 
+			  window_status_bar = "te adsf adsf as fsad sadf dasf st"
+				window_info_bar = "test"
+					window_textbuffer = "te/"st"
+					window_roster = "test"
+					xx { xx= "test" yy= "test" } 
+	}
+	test_1 {
+			  }
+	__ {
+			  supa.dupa {}
+			  }
+	_test123 {	
+			  
+			  }
+	___x____ {	
+
+			  }
+}
+
+plim.gui.test {
+	gated = "test"
+	plim.gui.ddd {
+		test= "test"
+	}
+}
+plim.gui.test2 {
+
+}

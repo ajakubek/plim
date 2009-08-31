@@ -17,6 +17,7 @@ SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 # build main executable
 ADD_EXECUTABLE(plim
 			   cPlim.cpp
+			   cPlimConfig.cpp
 			   cPlimReactor.cpp
 			   cPlimRoom.cpp
 			   cPlimUser.cpp

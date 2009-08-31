@@ -27,87 +27,16 @@
 #include <signal.h>
 
 #include "cPlim.h"
+#include "cPlimConfig.h"
 
 using namespace NSPlim;
+using namespace NSConfig;
 
-/* Test case */
-/*void OnBindingPress(cApplication* app, cString* cmd) {
-	if (window && cmd) {
-		window->NewLine( cmd->GetBuffer(), 0 );
-	}
-}
-
-void OnEnterInput(const char* buffer) {
-	cTextLine* line;
-
-	if (!strcmp(buffer, "/quit")) {
-		if (app) app->Close();
-	}
-
-	if (window) {
-		if (!window->GetLastLine()) {
-			window->NewLine( buffer, 0 );
-		}
-		else
-			window->NewLine( window->GetLastLine(), buffer, 0 );
-	}
-}
-*/
-/* Temporary code! 
-	For creating a new app, inheriting cApplication will be needed to handle app events */
 int main(int argc, char** argv) {
-	cPlim(argc, argv);
-/*
-	app = new cApplication(argc, argv);
+//	cPlim(argc, argv);
+	cPlimConfig config;
 
-	root = new cCursesWindow(app, 0, 0, 0, 0, NULL);
-
-	statusWindowTop = new cStatusWindow(app, root);
-	statusWindowTop->SetWindowAlign(top);
-
-
-	inputWindow = new cInputWindow(app, root);
-	inputWindow->SetWindowAlign(bottom);
-
-	statusWindowBottom = new cStatusWindow(app, root);
-	statusWindowBottom->SetWindowAlign(bottom);
-
-	statusWindowBottom->Add("status_time")->SetCaption("16:57");
-	statusWindowBottom->Add("status_nick")->SetCaption("IC0ffeeCup(+i)");
-	statusWindowBottom->Add("status_server")->SetCaption("2:warszawa/#gentoo.pl(+nst)");
-	statusWindowBottom->Add("status_active_window")->SetCaption("Act: 4");
-
-	rosterWindow = new cRosterWindow( app, root );
-	rosterWindow->SetWindowAlign(right);
-
- 	rosterWindow->Add(NULL);
- 	rosterWindow->Add(NULL);
- 	rosterWindow->Add(NULL);
- 	rosterWindow->Add(NULL);
- 	rosterWindow->Add(NULL);
-	
-	window = new cTextWindow(app, root);
-	window->SetWindowAlign(client);
-
-	app->BindKey("Alt+m", "/new ossom command!");
-	app->BindKey("Alt+d", "/kill window!");
-	app->BindKey("Alt+n", "/next ossom window!");
-	app->BindKey("Alt+p", "/prev ossom window!");
-
- 	app->OnBindingPress.connect( &OnBindingPress );
-	inputWindow->OnEnter.connect( &OnEnterInput );
-
-	switch( app->Loop() ) {
-		default:
-			break;
-	}
-
-	delete root;
-	delete app;
-
-//	lexer.Refresh( "[@] IC0ffeeCup" );
-//	LexerTest(&lexer);
-*/
+	config.LoadConfig( "config" );
 
 	return 0;
 }
