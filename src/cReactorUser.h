@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2009 by Lukasz Marcin Borzecki                          *
- *   lukasz.borzecki@gmail.com                                             *
+ *   Copyright (C) 2009 by Lukasz Marcin Borzecki   *
+ *   lukasz.borzecki@gmail.com   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU Library General Public License as       *
@@ -18,26 +18,14 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#ifndef __REACTOR_USER_H__
+#define __REACTOR_USER_H__
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
+#include <libplimgui/abstract.h>
+
+namespace NSReactor {
+
+
+};
+
 #endif
-
-#include <curses.h>
-#include <signal.h>
-
-#include "cPlim.h"
-#include "cPlimConfig.h"
-
-using namespace NSPlim;
-//using namespace NSConfig;
-
-int main(int argc, char** argv) {
-	cPlim(argc, argv);
-
-//	cPlimConfig config;
-//	config.LoadConfig( "config" );
-
-	return 0;
-}
-

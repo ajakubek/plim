@@ -812,6 +812,16 @@ int cPlimLexer::ScriptSymbolParse(const char *src, int len, int* newPos, TokenFl
 				break;						
 			}
 
+			case '%':
+			{
+				case_flags = PLIM_L_CASE_FLAGS_MATH;
+				result = PLIM_L_SYMBOL_MATH_PERCENT;
+				
+				ScriptShiftPos(newPos);
+				ScriptShiftPos(&i);
+				
+				break;									
+			}
 			/* End of math symbols */
 			
 			/* Literal symbols */

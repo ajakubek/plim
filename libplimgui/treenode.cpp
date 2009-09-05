@@ -31,31 +31,33 @@ cTreeNode::cTreeNode(cTreeNodes* nodes, cTreeNode* node, const void* ptr)
 	m_nodeFirst(NULL),
 	m_nodeLast(NULL) {
 
-	/* Add the node to the tree */
-	if (!node) {
-		if (!nodes->GetFirstNode()) {
-			nodes->SetLastNode( this );
-			nodes->SetFirstNode( this );
-		}
+	if (nodes) {
+		/* Add the node to the tree */
+		if (!node) {
+			if (!nodes->GetFirstNode()) {
+				nodes->SetLastNode( this );
+				nodes->SetFirstNode( this );
+			}
+			else {
+				nodes->GetLastNode()->SetNextNode( this );
+				SetPrevNode( nodes->GetLastNode() );
+				nodes->SetLastNode( this );
+			}
+		} 
 		else {
-			nodes->GetLastNode()->SetNextNode( this );
-			SetPrevNode( nodes->GetLastNode() );
-			nodes->SetLastNode( this );
-		}
-	} 
-	else {
-		/* Add the node to the node */
-		if (!node->GetFirstNode()) {
-			node->SetLastNode( this );
-			node->SetFirstNode( this );
-		} else {
-			node->GetLastNode()->SetNextNode( this );
-			SetPrevNode( node->GetLastNode() );
-			node->SetLastNode( this );
-		}
+			/* Add the node to the node */
+			if (!node->GetFirstNode()) {
+				node->SetLastNode( this );
+				node->SetFirstNode( this );
+			} else {
+				node->GetLastNode()->SetNextNode( this );
+				SetPrevNode( node->GetLastNode() );
+				node->SetLastNode( this );
+			}
 
+		}
+	
 	}
-
 }
 
 cTreeNode::~cTreeNode(void) {

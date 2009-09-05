@@ -109,7 +109,6 @@ cPlimConfigNode* cPlimConfig::GetConfigNodeByPath(const char* path) {
 		if ( token->GetTokenCase() == PLIM_L_IDENTIFIER ) {
 			node = GetConfigNode( node, token->GetBuffer() );
 			token = (cPlimToken*) lex.GetNext(token);
-
 			
 			if ( token && 
 					token->GetTokenCase() == PLIM_L_CASE_FLAGS_SYMBOLS &&
@@ -117,8 +116,6 @@ cPlimConfigNode* cPlimConfig::GetConfigNodeByPath(const char* path) {
 				}
 			else
 				break;
-
-
 		}
 
 		token = (cPlimToken*) lex.GetNext(token);
@@ -127,6 +124,13 @@ cPlimConfigNode* cPlimConfig::GetConfigNodeByPath(const char* path) {
 	return node;
 }
 
+const char* cPlimConfig::GetConfigVarByPath(const char* path) {
+	cPlimConfigNode* node = GetConfigNodeByPath(path);
+	
+	if (node)	return node->GetVar();
+	
+	return NULL;
+}
 
 cPlimConfigNode* cPlimConfig::GetConfigNode(const char* id) {
 	cPlimConfigNode* node;
@@ -401,7 +405,8 @@ cPlimToken* cPlimConfig::AnalyseVariables(cPlimToken* token, cPlimConfigNode* no
 				return token;
 			} else
 				break;
-		} else break;
+		} else 
+			break;
 
 
 		token = AnalyseComment(token);

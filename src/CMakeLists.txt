@@ -18,9 +18,11 @@ SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 ADD_EXECUTABLE(plim
 			   cPlim.cpp
 			   cPlimConfig.cpp
-			   cPlimReactor.cpp
-			   cPlimRoom.cpp
-			   cPlimUser.cpp
+			   cReactor.cpp
+			   cReactorPlugin.cpp
+			   cReactorRoom.cpp
+			   cReactorUser.cpp
+			   cReactorSession.cpp
 			   plim.cpp)
 
 # this should be removed (GUI should be loaded dynamically)

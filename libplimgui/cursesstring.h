@@ -18,6 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+/* TODO: Remove this class. Useless. @IC0ffeeCup */
+
 #ifndef __PLIM_CURSESSTRING_H__
 #define __PLIM_CURSESSTRING_H__
 

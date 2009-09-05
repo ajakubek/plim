@@ -5,7 +5,9 @@ namespace NSWindows {
 cTextWindow::cTextWindow(cApplication* app, cCursesWindow* parent)
 :	cCursesWindow(app, 1, 1, 1, parent->GetWidth(), parent),
 	m_lineTop(NULL),
-	m_linesDrawed(0) {
+	m_linesDrawed(0),
+	m_useSlibText(0),
+	m_room(NULL) {
 
 	SetFocus( FALSE );
 
@@ -33,17 +35,32 @@ cTextWindow::~cTextWindow(void) {
 cTextLine* cTextWindow::NewLine(const char* buffer, unsigned int uid) {
 	cTextLine* line, *sub;
 	cString bufferOut;
-
+	int scrollby;
+	
+	/* TODO: add search for uid of the user */
 	if (!buffer)
 		return NULL;
 
-	bufferOut.Copy( "20:47 ,---- IC0ffeeCup ---- " );
+	if (m_useSlibText) {
+	
+		bufferOut.Copy( buffer );
 
-	line = new cTextLine( m_lineBuffer, NULL, bufferOut.GetBuffer(), 0 );
-	sub = new cTextLine( m_lineBuffer, line, buffer, 0 );
-
+		line = new cTextLine( m_lineBuffer, NULL, bufferOut.GetBuffer() );
+		sub = new cTextLine( m_lineBuffer, line, buffer );
+		
+		scrollby = CalculatePrint( line ) + CalculatePrint( sub );
+	}
+	else
+	{
+		bufferOut.Copy( buffer );
+		
+		line = new cTextLine( m_lineBuffer, NULL, bufferOut.GetBuffer() );
+		
+		scrollby = CalculatePrint( line );
+	}
+	
 	if ( m_linesDrawed >= GetHeight() ) {
-		ScrollDown( CalculatePrint( line ) + CalculatePrint( sub ) );
+		ScrollDown( scrollby );
 	}
 
 	NeedPartialUpdate();
@@ -61,7 +78,7 @@ cTextLine* cTextWindow::NewLine(cTextLine* line, const char* buffer, unsigned in
 
 	bufferOut.Copy( buffer );
 
-	lineb = new cTextLine( m_lineBuffer, line, bufferOut.GetBuffer(), 0 );
+	lineb = new cTextLine( m_lineBuffer, line, bufferOut.GetBuffer() );
 
 	if ( m_linesDrawed >= GetHeight() ) {
 		ScrollDown( CalculatePrint( lineb ) );
@@ -150,28 +167,60 @@ void cTextWindow::PartialUpdate(void) {
 	atdy = 0;
 
 	while ( line ) {
-
-		if ( line->GetParentNode() ) {
-			bufferLine.Copy("      | ");
-			bufferLine.Cat( line );
-
-			m_plimLexer.Refresh( bufferLine.GetBuffer() );
-
-			atdy += PrintLexer( &m_plimLexer, 0, atdy);
-		}
- 		else {
-			m_plimLexer.Refresh( line->GetBuffer() );
-			atdy += PrintLexer( &m_plimLexer, 0, atdy);
-		}
-
-		if ( line->GetParentNode() ) {
-			if ( line == line->GetParentNode()->GetLastNode() ) {
-				bufferLine.Copy("      `----- conversation of user IC0ffeeCup ended at 21:30 ----");
+		/* TODO: Add translation of the config to buffer. */
+		
+		/* Skype like text. */
+		if (m_useSlibText) {
+		
+			if ( line->GetParentNode() ) {
+				if ( m_slibText.GetBuffer() )
+					bufferLine.Copy(m_slibText.GetBuffer());
+				
+				bufferLine.Cat( line );
 
 				m_plimLexer.Refresh( bufferLine.GetBuffer() );
 
 				atdy += PrintLexer( &m_plimLexer, 0, atdy);
 			}
+ 			else { /* If have no parent then its the first line */
+ 				if ( m_firstText.GetLength() ) {
+ 					bufferLine.Copy ( m_firstText.GetBuffer() );
+ 					
+	 				bufferLine.Cat ( line->GetBuffer() );
+ 
+					m_plimLexer.Refresh( bufferLine.GetBuffer() );
+					atdy += PrintLexer( &m_plimLexer, 0, atdy);
+				}
+			}
+
+			if ( line->GetParentNode() ) {
+				if ( line == line->GetParentNode()->GetLastNode() ) {
+					if ( m_lastText.GetLength() ) {
+						bufferLine.Copy(m_lastText.GetBuffer());
+
+						m_plimLexer.Refresh( bufferLine.GetBuffer() );
+
+						atdy += PrintLexer( &m_plimLexer, 0, atdy);
+					}
+				}
+			}
+		}
+		/* Normal styled text. */
+		else {
+			bufferLine.Clean();
+			
+			if (m_slibText.GetLength() ) {
+				cString* translated = TranslateConfigVariables( m_slibText.GetBuffer(), TRANSLATE_PTR(TranslateCallback), line );
+				
+ 				bufferLine.Copy ( translated );
+
+ 				delete translated;
+			}
+
+ 			bufferLine.Cat ( line->GetBuffer() );
+
+			m_plimLexer.Refresh( bufferLine.GetBuffer() );
+			atdy += PrintLexer( &m_plimLexer, 0, atdy);
 		}
 
 		if (atdy > mtdy )
@@ -183,6 +232,49 @@ void cTextWindow::PartialUpdate(void) {
 	}
 
 	cCursesWindow::PartialUpdate();
+}
+
+char* cTextWindow::TranslateCallback( cPlimToken* token, void* data ) {
+	cTextLine* line = (cTextLine*) data;
+	char* mal = (char*) malloc(1024);
+	
+	memset(mal, 0, 1024);
+	
+	if (!token->Compare("time")) {
+		struct tm *tm = localtime(line->GetTime());
+		
+		strftime(mal, 1024, "%H:%M:%S", tm);
+
+	}
+	
+	return mal;
+}
+
+void cTextWindow::SetSlibUse(int slib) {
+	m_useSlibText = slib;
+}
+
+void cTextWindow::SetFirstText(const char* text) {
+	if (text)
+		m_firstText.Copy ( text ) ;
+}
+
+void cTextWindow::SetSlibText(const char* text) {
+	if (text)
+		m_slibText.Copy ( text );
+}
+
+void cTextWindow::SetLastText(const char* text) {
+	if (text)
+		m_lastText.Copy( text );
+}
+
+void cTextWindow::SetRoom(cAbstractRoom* room) {
+	m_room = room;
+}
+
+cAbstractRoom* cTextWindow::GetRoom(void) {
+	return m_room;
 }
 
 int cTextWindow::OnCppKeyword(cCursesWindow* window, cPlimToken* token, PlimAttrs* attrs) {

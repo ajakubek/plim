@@ -28,7 +28,10 @@
 #include <libplimgui/strings.h>
 #include <sigc++/signal.h>
 
-#include "cPlimReactor.h"
+#include "cReactor.h"
+#include "cPlimConfig.h"
+
+extern NSConfig::cPlimConfig* SharedConfiguration;
 
 namespace NSPlim {
 
@@ -37,11 +40,29 @@ using namespace NSWindows;
 using namespace NSString;
 using namespace NSTree;
 using namespace NSReactor;
+using namespace NSConfig;
 
-class cPlim: public cApplication, public cPlimReactor {
+class cPlim: public cApplication {
 public:
 	cPlim(int argc, char** argv);
 	virtual ~cPlim( void );
+	/* Loop 
+	*/
+	int LoopMsg(void);
+	/* Load a configuration file
+		@return bool
+	*/
+	int LoadConfiguration(const char* filename);
+	/* Assign configuration to the UI 
+	*/
+	void AssignConfiguration(cPlimConfig* config);
+	/* Get the shared config file 
+	*/
+	cPlimConfig* GetSharedConfig( void );
+	/* Set the reactor 
+	*/
+	void SetNuclearReactor(cReactor* reactor);
+	cReactor* GetNuclearReactor(void);
 	/* Public signals
 	*/
 protected:
@@ -71,6 +92,15 @@ private:
 	cTextWindow* m_activeRoom;
 	cTreeNode* m_activeNode;
 	cTreeNodes* m_roomWindows;
-};
+	/*! Configuration */
+	cPlimConfig* m_config;
+	/*! home directory */
+	cString* m_home;
+	/*! Config file path */
+	cString* m_homeConfig;
+	/*! Nuclear Reactor */
+	cReactor* m_nuclearReactor;
 	
+};
+
 };

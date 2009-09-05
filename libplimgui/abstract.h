@@ -18,62 +18,59 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __PLIM_TREENODES_H__
-#define __PLIM_TREENODES_H__
+#ifndef __PLIM_ABSTRACT_H__
+#define __PLIM_ABSTRACT_H__
 
-#include "stdafx.h"
+/* Used in reactor plugins. */
+/* Plugin => Sessions -> {Session[proto:connection] -> {room=>{users}} | {room=>{user} } single user conversation */
 
-namespace NSTree {
+#include "strings.h"
 
-class cTreeNodes;
+namespace NSAbstract {
 
-class cTreeNode {
+using namespace NSString;
+
+class cAbstractProtocol {
 public:
-	cTreeNode(cTreeNodes* nodes, cTreeNode* node, const void* ptr);
-	virtual ~cTreeNode(void);
-	/* TODO: Add future ptr check */
-	void SetNextNode(cTreeNode* node);
-	virtual cTreeNode* GetNextNode(void);
-	void SetPrevNode(cTreeNode* node);
-	virtual cTreeNode* GetPrevNode(void);
-	void SetParentNode(cTreeNode* node);
-	virtual cTreeNode* GetParentNode(void);
-	void SetFirstNode(cTreeNode* node);
-	virtual cTreeNode* GetFirstNode(void);
-	void SetLastNode(cTreeNode* node);
-	virtual cTreeNode* GetLastNode(void);
-	int GetLevelNode(void);
-	void SetNodeData(void* data);
-	void* GetNodeData(void);
+	cAbstractProtocol(void): m_socket(-1) {};
+	virtual ~cAbstractProtocol(void) {} ;
+	void SetSocket(int s) { m_socket = s; };
+	int GetSocket(void) { return m_socket; };
 private:
-	void* m_ptr;
-	cTreeNodes* m_treeNodes;
-	cTreeNode* m_nodeNext;
-	cTreeNode* m_nodePrev;
-	cTreeNode* m_nodeParent;
-	cTreeNode* m_nodeFirst;
-	cTreeNode* m_nodeLast;
+	int m_socket;
 };
 
-class cTreeNodes {
+class cAbstractSession: public cAbstractProtocol {
 public:
-	cTreeNodes(void);
-	virtual ~cTreeNodes(void);
-	void SetFirstNode(cTreeNode* node);
-	virtual cTreeNode* GetFirstNode(void);
-	void SetLastNode(cTreeNode* node);
-	virtual cTreeNode* GetLastNode(void);
-	cTreeNode* AddNode(cTreeNode* node, cTreeNode* parent);
-	cTreeNode* RemoveNode(cTreeNode* node, int del = 0);
-	virtual cTreeNode* GetNext(cTreeNode* node);
-	virtual cTreeNode* GetPrev(cTreeNode* node);
-protected:
-	
+	cAbstractSession(void): cAbstractProtocol() {};
+	virtual ~cAbstractSession(void) {};
+	void SetSessionName(const char* name) { m_sessionName.Copy( name ); };
+	const char* GetSessionName(void) { return m_sessionName.GetBuffer(); };
 private:
-	cTreeNode* m_nodeFirst;
-	cTreeNode* m_nodeLast;
+	cString m_sessionName;
 };
- 
+
+class cAbstractUser {
+public:
+	cAbstractUser(void) {};
+	virtual ~cAbstractUser(void) {};
+	void SetUserName(const char* name) { m_userName.Copy( name ); };
+	const char* GetUserName(void) { return m_userName.GetBuffer(); };
+private:
+	cString m_userName;
 };
+
+class cAbstractRoom {
+public:
+	cAbstractRoom(void) {};
+	virtual ~cAbstractRoom(void) {};
+	void SetRoomName(const char* name) { m_roomName.Copy( name ); };
+	const char* GetRoomName(void) { return m_roomName.GetBuffer(); };
+private:
+	cString m_roomName;
+};
+
+};
+
 
 #endif

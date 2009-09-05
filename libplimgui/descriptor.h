@@ -31,7 +31,8 @@
 
 using namespace NSTree;
 
-/* Blah didnt notice */
+/* TODO: Remove this class. Useless. @IC0ffeeCup */
+
 namespace NSApplication {
 
 class cDescriptor: public cTreeNode {

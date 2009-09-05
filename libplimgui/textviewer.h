@@ -28,18 +28,28 @@
 #include "cursesstring.h"
 #include "treenodes.h"
 #include "lexer.h"
+#include "abstract.h"
 
 namespace NSWindows {
 
 #define REGISTER_F_CALL(name, method) RegisterFormattingCallback(name, (OnPrintCallback) &NSWindows::cTextWindow::method)
+#define TRANSLATE_PTR(method) ((OnTranslateCallback) &NSWindows::cTextWindow::method)
 
 using namespace NSApplication;
 using namespace NSString;
+using namespace NSAbstract;
 
 class cTextLine: public cTreeNode, public cCursesString {
 public:
-	cTextLine(cTreeNodes* nodes, cTreeNode* node, const char* str, unsigned int uid);
+	cTextLine(cTreeNodes* nodes, cTreeNode* node, const char* str);
 	virtual ~cTextLine(void);
+	/* Accessors */
+	time_t* GetTime(void);
+	void SetUser(cAbstractUser* user);
+	cAbstractUser* GetUser(void);
+private:
+	time_t m_time;
+	cAbstractUser* m_user;
 };
 
 
@@ -47,6 +57,7 @@ class cTextWindow: public cCursesWindow {
 public: 
 	cTextWindow(cApplication* app, cCursesWindow* parent);
 	virtual ~cTextWindow(void);
+
 	cTextLine* NewLine(const char* buffer, unsigned int uid);
 	cTextLine* NewLine(cTextLine* line, const char* buffer, unsigned int uid);
 	void ScrollDown(int count);
@@ -55,6 +66,23 @@ public:
 	void PageDown(void);
 	int OnResize(void);
 	void PartialUpdate(void);
+	/* Callback for translating config nodes 
+	*/
+	char* TranslateCallback( cPlimToken* token, void* data );
+	/* Sets the textviewer to skype conversation format 
+	*/
+	void SetSlibUse(int slib);
+	/* Assign the format of displaying the text in 1 <-> last text node
+	*/
+	void SetFirstText(const char* text);
+	void SetSlibText(const char* text);
+	void SetLastText(const char* text);
+	
+	/* Set the room 
+	*/
+	void SetRoom(cAbstractRoom* room);
+	cAbstractRoom* GetRoom(void);
+	
 	cTextLine* GetFirstLine(void) { return (cTextLine*) m_lineBuffer->GetFirstNode(); };
 	cTextLine* GetLastLine(void) { return (cTextLine*) m_lineBuffer->GetLastNode(); };
 protected:
@@ -68,6 +96,14 @@ private:
 	int m_linesDrawed;
 	/*! plim lexer*/
 	cPlimLexer m_plimLexer;
+	/*! First text buffer */
+	cString m_firstText;
+	cString m_slibText;
+	cString m_lastText;
+	/*! Use slib text, skype like conversation */
+	int m_useSlibText;
+	/*! Abstract room */
+	cAbstractRoom* m_room;
 };
 
 };

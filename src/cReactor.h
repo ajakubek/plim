@@ -18,62 +18,57 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __PLIM_TREENODES_H__
-#define __PLIM_TREENODES_H__
+#ifndef __REACTOR_H__
+#define __REACTOR_H__
 
-#include "stdafx.h"
+#include <libplimgui/treenodes.h>
+#include <libplimgui/strings.h>
+#include <libplimgui/abstract.h>
+#include <libplimgui/application.h>
 
-namespace NSTree {
+#include <sigc++/signal.h>
 
-class cTreeNodes;
+#include "cPlimConfig.h"
 
-class cTreeNode {
+namespace NSReactor {
+
+using namespace NSTree;
+using namespace NSString;
+using namespace NSAbstract;
+
+using namespace NSApplication;
+using namespace NSConfig;
+
+class cReactor: public cTreeNodes {
 public:
-	cTreeNode(cTreeNodes* nodes, cTreeNode* node, const void* ptr);
-	virtual ~cTreeNode(void);
-	/* TODO: Add future ptr check */
-	void SetNextNode(cTreeNode* node);
-	virtual cTreeNode* GetNextNode(void);
-	void SetPrevNode(cTreeNode* node);
-	virtual cTreeNode* GetPrevNode(void);
-	void SetParentNode(cTreeNode* node);
-	virtual cTreeNode* GetParentNode(void);
-	void SetFirstNode(cTreeNode* node);
-	virtual cTreeNode* GetFirstNode(void);
-	void SetLastNode(cTreeNode* node);
-	virtual cTreeNode* GetLastNode(void);
-	int GetLevelNode(void);
-	void SetNodeData(void* data);
-	void* GetNodeData(void);
-private:
-	void* m_ptr;
-	cTreeNodes* m_treeNodes;
-	cTreeNode* m_nodeNext;
-	cTreeNode* m_nodePrev;
-	cTreeNode* m_nodeParent;
-	cTreeNode* m_nodeFirst;
-	cTreeNode* m_nodeLast;
-};
-
-class cTreeNodes {
-public:
-	cTreeNodes(void);
-	virtual ~cTreeNodes(void);
-	void SetFirstNode(cTreeNode* node);
-	virtual cTreeNode* GetFirstNode(void);
-	void SetLastNode(cTreeNode* node);
-	virtual cTreeNode* GetLastNode(void);
-	cTreeNode* AddNode(cTreeNode* node, cTreeNode* parent);
-	cTreeNode* RemoveNode(cTreeNode* node, int del = 0);
-	virtual cTreeNode* GetNext(cTreeNode* node);
-	virtual cTreeNode* GetPrev(cTreeNode* node);
-protected:
+	cReactor(cApplication* plimapp);
+	virtual ~cReactor(void);
 	
+	/* Add this to you app loop 
+		@return int,
+					-1, we can read something from the input.
+					> -1, process.
+	*/
+	int NuclearChainReaction(void);
+
+	/* Accessors */
+	cPlimConfig* GetConfig(void);
+
+	/* Signals from the UI */
+	sigc::signal <void, cString*, cAbstractUser*, cAbstractRoom*> OnGuiInputText;
+	sigc::signal <void, cAbstractUser*, cAbstractRoom*> OnGuiRoomChange;
+	
+	/* Signals to the UI */
+	sigc::signal <void, cString*, cAbstractUser*, cAbstractRoom*> OnMsgRecv;
+	sigc::signal <void, cString*, cAbstractUser*, cAbstractRoom*> OnMsgSend;
+	sigc::signal <void, cAbstractUser*, cAbstractRoom*> OnUserStatusChange;
+	sigc::signal <void, cAbstractRoom*> OnOpenRoom;
+
 private:
-	cTreeNode* m_nodeFirst;
-	cTreeNode* m_nodeLast;
+	cApplication* m_app;
+	cPlimConfig* m_config;
 };
- 
+
 };
 
 #endif

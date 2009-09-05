@@ -58,6 +58,7 @@ typedef struct _PrintAttrs {
 } PlimAttrs;
 /* Callback method */
 typedef int (cCursesWindow::*OnPrintCallback) ( cCursesWindow* window, cPlimToken* token, PlimAttrs* attr );
+typedef char* (cCursesWindow::*OnTranslateCallback) ( cPlimToken* token, void* data );
 
 typedef struct _CallbackPtr {
 	OnPrintCallback callback;
@@ -122,6 +123,10 @@ public:
 		@return number of lines
 	*/
 	int CalculatePrint(cString* string);
+	/* Translate config variables
+		@return cString
+	*/
+	cString* TranslateConfigVariables(const char* buffer, OnTranslateCallback call, void* data);
 	/*	Accessors */
 	/*	Get the focus of the window
 		@return window has focus either not

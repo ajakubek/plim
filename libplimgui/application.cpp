@@ -8,12 +8,12 @@ using namespace NSWindows;
 cApplication::cApplication(int argc, char** argv)
 :	cTreeNodes(), cKeyboard(),
 	m_rootWindow(initscr()),
-	m_termWidth(getmaxx(stdscr)), 
-	m_termHeight(getmaxy(stdscr)),
+	m_termWidth(0), 
+	m_termHeight(0),
 	m_timeout(0),
 	m_endApp(0),
 	m_colors(NULL) {
-	
+
 	m_descriptors = new cTreeNodes();
 
 	if (m_rootWindow) {
@@ -96,35 +96,10 @@ void cApplication::OnBindingClicked(void) {
 }
 
 int cApplication::LoopMsg(void) {
-	struct timeval val;
-	fd_set rfds, wfds, efds;
-	int fmaxd, selectRet;
 	cCursesWindow* data;
-	cDescriptor* descriptor;
 
 	if (!m_rootWindow)
 		return -1;
-
-	fmaxd = 0;
-	
-	val.tv_sec = 1;
-	
-	if ( OnTerminalSizeChanged() );
-
-	/* Clear all descriptors */
-	FD_ZERO(&rfds);
-	FD_ZERO(&wfds);
-	FD_ZERO(&efds);
-
-	FD_SET(0, &rfds);
-
-	/* Select */
-	selectRet = select(fmaxd + 1, &rfds, &wfds, &efds, &val);
-
-	if (FD_ISSET(0, &rfds)) {
-		if ( CheckKeyClicked() > 0 ) {
-		}
-	}
 
 	/* Do all paint and size methods on the end */
 	data = (cCursesWindow*) GetFirstWindow( );
@@ -144,15 +119,17 @@ int cApplication::LoopMsg(void) {
 int cApplication::OnTerminalSizeChanged(void) {
 	cCursesWindow* data;
 
+	wrefresh( m_rootWindow );
+
 	if ( m_termWidth != getmaxx(stdscr) || m_termHeight != getmaxy(stdscr) ) {
 		m_termWidth = getmaxx(stdscr);
 		m_termHeight = getmaxy(stdscr);
 
 		OnResize(m_termWidth, m_termHeight);
 
-
 		LaunchResizeEvents();
-
+		
+		doupdate();
 		return 1;
 	}
 

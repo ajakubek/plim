@@ -18,62 +18,51 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __PLIM_TREENODES_H__
-#define __PLIM_TREENODES_H__
+#include "cReactorPlugin.h"
 
-#include "stdafx.h"
+namespace NSReactor {
 
-namespace NSTree {
-
-class cTreeNodes;
-
-class cTreeNode {
-public:
-	cTreeNode(cTreeNodes* nodes, cTreeNode* node, const void* ptr);
-	virtual ~cTreeNode(void);
-	/* TODO: Add future ptr check */
-	void SetNextNode(cTreeNode* node);
-	virtual cTreeNode* GetNextNode(void);
-	void SetPrevNode(cTreeNode* node);
-	virtual cTreeNode* GetPrevNode(void);
-	void SetParentNode(cTreeNode* node);
-	virtual cTreeNode* GetParentNode(void);
-	void SetFirstNode(cTreeNode* node);
-	virtual cTreeNode* GetFirstNode(void);
-	void SetLastNode(cTreeNode* node);
-	virtual cTreeNode* GetLastNode(void);
-	int GetLevelNode(void);
-	void SetNodeData(void* data);
-	void* GetNodeData(void);
-private:
-	void* m_ptr;
-	cTreeNodes* m_treeNodes;
-	cTreeNode* m_nodeNext;
-	cTreeNode* m_nodePrev;
-	cTreeNode* m_nodeParent;
-	cTreeNode* m_nodeFirst;
-	cTreeNode* m_nodeLast;
-};
-
-class cTreeNodes {
-public:
-	cTreeNodes(void);
-	virtual ~cTreeNodes(void);
-	void SetFirstNode(cTreeNode* node);
-	virtual cTreeNode* GetFirstNode(void);
-	void SetLastNode(cTreeNode* node);
-	virtual cTreeNode* GetLastNode(void);
-	cTreeNode* AddNode(cTreeNode* node, cTreeNode* parent);
-	cTreeNode* RemoveNode(cTreeNode* node, int del = 0);
-	virtual cTreeNode* GetNext(cTreeNode* node);
-	virtual cTreeNode* GetPrev(cTreeNode* node);
-protected:
+cReactorPlugin::cReactorPlugin(cReactor* reactor, const char* configPath)
+:	cTreeNode(reactor, NULL, NULL),
+	m_reactor( NULL ), m_config( NULL )
+ {
 	
-private:
-	cTreeNode* m_nodeFirst;
-	cTreeNode* m_nodeLast;
-};
- 
-};
+	if ( reactor ) {
+		m_reactor = reactor;
+		if ( m_reactor->GetConfig() )
+			m_config = m_reactor->GetConfig()->GetConfigNodeByPath(configPath);
+	}
+	
+}
 
-#endif
+cReactorPlugin::~cReactorPlugin(void) {
+	
+}
+
+int cReactorPlugin::NuclearFission(fd_set *rfds, fd_set *wfds, fd_set *efds) {
+	
+	return 0;
+}
+
+int cReactorPlugin::NuclearRelease(fd_set *rfds, fd_set *wfds, fd_set *efds) {
+
+	return 0;
+}
+
+cPlimConfigNode* cReactorPlugin::GetConfig(const char* config) {
+	if (m_reactor && m_config && m_reactor->GetConfig()) {
+		return m_reactor->GetConfig()->GetConfigNode( m_config, config );
+	}
+	else
+		return NULL;
+}
+
+void cReactorPlugin::SetPluginName(const char* name) {
+	m_pluginName.Copy( name );
+}
+
+const char* cReactorPlugin::GetPluginName(void) {
+	return m_pluginName.GetBuffer();
+}
+
+};

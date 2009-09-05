@@ -130,6 +130,7 @@ private:
 	int m_endApp;
 	/*! Colors */
 	cPallete* m_colors;
+
 };
 
 };

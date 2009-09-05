@@ -18,62 +18,15 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __PLIM_TREENODES_H__
-#define __PLIM_TREENODES_H__
+#ifndef __REACTOR_SESSION_H__
+#define __REACTOR_SESSION_H__
 
-#include "stdafx.h"
+#include <libplimgui/abstract.h>
 
-namespace NSTree {
-
-class cTreeNodes;
-
-class cTreeNode {
-public:
-	cTreeNode(cTreeNodes* nodes, cTreeNode* node, const void* ptr);
-	virtual ~cTreeNode(void);
-	/* TODO: Add future ptr check */
-	void SetNextNode(cTreeNode* node);
-	virtual cTreeNode* GetNextNode(void);
-	void SetPrevNode(cTreeNode* node);
-	virtual cTreeNode* GetPrevNode(void);
-	void SetParentNode(cTreeNode* node);
-	virtual cTreeNode* GetParentNode(void);
-	void SetFirstNode(cTreeNode* node);
-	virtual cTreeNode* GetFirstNode(void);
-	void SetLastNode(cTreeNode* node);
-	virtual cTreeNode* GetLastNode(void);
-	int GetLevelNode(void);
-	void SetNodeData(void* data);
-	void* GetNodeData(void);
-private:
-	void* m_ptr;
-	cTreeNodes* m_treeNodes;
-	cTreeNode* m_nodeNext;
-	cTreeNode* m_nodePrev;
-	cTreeNode* m_nodeParent;
-	cTreeNode* m_nodeFirst;
-	cTreeNode* m_nodeLast;
-};
-
-class cTreeNodes {
-public:
-	cTreeNodes(void);
-	virtual ~cTreeNodes(void);
-	void SetFirstNode(cTreeNode* node);
-	virtual cTreeNode* GetFirstNode(void);
-	void SetLastNode(cTreeNode* node);
-	virtual cTreeNode* GetLastNode(void);
-	cTreeNode* AddNode(cTreeNode* node, cTreeNode* parent);
-	cTreeNode* RemoveNode(cTreeNode* node, int del = 0);
-	virtual cTreeNode* GetNext(cTreeNode* node);
-	virtual cTreeNode* GetPrev(cTreeNode* node);
-protected:
+namespace NSReactor {
 	
-private:
-	cTreeNode* m_nodeFirst;
-	cTreeNode* m_nodeLast;
+	
 };
- 
-};
+
 
 #endif

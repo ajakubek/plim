@@ -532,6 +532,109 @@ int cCursesWindow::CalculatePrint(cString* string) {
 		return 0;
 }
 
+cString* cCursesWindow::TranslateConfigVariables(const char* buffer, OnTranslateCallback call, void* data) {
+	cPlimLexer lexhex(buffer);
+	cPlimToken* token;
+	cString* result;
+	char sp[2] = { 0, 0 };
+	
+	if (!buffer)	return NULL;
+	
+	result = new cString();
+	
+	token = (cPlimToken*) lexhex.GetFirstNode();
+	
+	while (token) {
+
+		if ( token->GetTokenCase() == PLIM_L_CASE_FLAGS_MATH ) {
+			if ( token->GetTokenExCase() == PLIM_L_SYMBOL_MATH_PERCENT ) {
+				/* Ok get the next token */
+				token = (cPlimToken*) lexhex.GetNext(token);
+							
+				if (!token)	break;
+				
+				if ( token->GetTokenCase() == PLIM_L_IDENTIFIER ) {
+					/* Process. */
+					
+					if (!token->Compare( "b" )) {
+						/* Insert curses bold char */
+						sp[0] = PLIM_L_ATTR_BOLD;
+						result->Cat( &sp[0] );
+					}
+					else
+					if (!token->Compare( "u")) {
+						sp[0] = PLIM_L_ATTR_UNDERLINE;
+						/* Insert curses underline char */
+						result->Cat( &sp[0] );
+					}
+					else
+					if (!token->Compare( "c" )) {
+						sp[0] = PLIM_L_ATTR_COLOR;
+						result->Cat( &sp[0] );
+						
+						token = (cPlimToken*) lexhex.GetNext(token);
+						/* Expect a space */
+						if (token && token->GetTokenCase() == PLIM_L_BLANK) {
+						
+							token = (cPlimToken*) lexhex.GetNext(token);
+							
+							if (token) {
+								if ( token->GetTokenCase() == PLIM_L_DIGIT_INTEGER) {
+									result->Cat(token);
+								}
+
+								token = (cPlimToken*) lexhex.GetNext(token);
+								
+								if (token) {
+									if (token->GetTokenCase() == PLIM_L_CASE_FLAGS_SYMBOLS && token->GetTokenExCase() == PLIM_L_SYMBOL_COMMA) {
+										result->Cat(",");
+										
+										token = (cPlimToken*) lexhex.GetNext(token);
+
+										if (token) {
+											if (token->GetTokenCase() == PLIM_L_DIGIT_INTEGER) {
+												result->Cat(token);
+											}
+										}
+									}
+								}
+							}
+							
+						}
+					}
+					else
+					if (!token->Compare( "r" )) {
+						sp[0] = PLIM_L_ATTR_RESET;
+						result->Cat( &sp[0] );
+					}
+					else
+					{
+						if (call) {
+						
+							char* rb = (this->*(call)) ( token, data );
+						
+							if (rb) {
+								result->Cat(rb);
+								free(rb);
+							}
+						}
+					}
+					
+					
+				}
+			} else /* Cause we dont know if we will handle more symbols. */
+				result->Cat(token);
+		}
+		else
+			result->Cat(token);
+		
+	
+		token = (cPlimToken*) lexhex.GetNext(token);
+	}
+
+	return result;
+}
+
 void cCursesWindow::CreateFormattingNodes(void) {
 	if (!m_formatNodes) {
 		/* Should be allowed to read from config */
@@ -560,7 +663,7 @@ int cCursesWindow::UnregisterFormattingCallback( const char* identifier ) {
 	cHashNode* node;
 	CallbackPtr* ptr;
 
-	if (!identifier)
+	if (!identifier || !m_formatNodes)
 		return 0;
 
 	node = m_formatNodes->Get( identifier, strlen( identifier ) );
@@ -581,9 +684,9 @@ int cCursesWindow::UnregisterFormattingCallback( const char* identifier ) {
 CallbackPtr* cCursesWindow::GetFormattingCallback( const char* identifier ) {
 	cHashNode* node;
 
-	if (!identifier)
+	if (!identifier || !m_formatNodes)
 		return NULL;
-
+	
 	node = m_formatNodes->Get( identifier, strlen( identifier ) );
 
 	if ( node && node->GetPtr() ) {

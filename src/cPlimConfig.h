@@ -18,6 +18,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#ifndef __PLIM_CONFIG_H__
+#define __PLIM_CONFIG_H__
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -54,6 +57,7 @@ public:
 	void SetBuffer(const char* buffer) { m_buffer->Copy( buffer ); };
 	const char* GetVar(void) { return m_var->GetBuffer(); };
 	void SetVar(const char* buffer) { m_var->Copy(buffer); };
+	int CompareVar(const char* buffer) { if (m_var) return strcmp(m_var->GetBuffer(), buffer); else return -1; }
 	ConfigNodeType GetType(void) { return m_type; };
 	cPlimConfigNode* GetNextNode(void) { return (cPlimConfigNode*) cTreeNode::GetNextNode(); };
 	cPlimConfigNode* GetPrevNode(void) { return (cPlimConfigNode*) cTreeNode::GetPrevNode(); };
@@ -73,6 +77,7 @@ public:
 	int LoadConfig(const char* filename);
 	int SaveConfig(const char* filename);
 	cPlimConfigNode* GetConfigNodeByPath(const char* path);
+	const char* GetConfigVarByPath(const char* path);
 	cPlimConfigNode* GetConfigNode(const char* id);
 	cPlimConfigNode* GetConfigNode(cPlimConfigNode* node, const char* id);
 protected:
@@ -87,3 +92,5 @@ private:
 };
 
 };
+
+#endif

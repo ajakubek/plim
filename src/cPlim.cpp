@@ -20,13 +20,22 @@
 
 #include "cPlim.h"
 
+NSConfig::cPlimConfig* SharedConfiguration = NULL;
+
 namespace NSPlim {
 
 cPlim::cPlim(int argc, char** argv)
 :	cApplication(argc, argv),
-	cPlimReactor(),
 	m_root(NULL), m_infoBar(NULL), m_inputBar(NULL), m_statusBar(NULL), m_rosterBar(NULL), m_roomWindows(NULL),
-	m_activeRoom(NULL), m_activeNode(NULL) {
+	m_activeRoom(NULL), m_activeNode(NULL), m_config(NULL) {
+	
+	m_home = new cString( getenv("HOME") );
+	m_home->Cat( "/.plim/" );
+
+	m_homeConfig = new cString( m_home );
+	m_homeConfig->Cat( "config" );
+
+	if (LoadConfiguration( m_homeConfig->GetBuffer() ));
 
 	BuildInterface();
 	PreBuildInterface();
@@ -42,6 +51,72 @@ cPlim::cPlim(int argc, char** argv)
 
 cPlim::~cPlim(void) {
 	DestroyInterface();
+
+	if (m_home)			delete m_home;
+	if (m_homeConfig)	delete m_homeConfig;
+	if (m_config)		m_config = NULL;
+}
+
+int cPlim::LoopMsg(void) {
+	int reactor;
+	
+	if ( OnTerminalSizeChanged() );
+	
+	if (m_nuclearReactor) {
+		reactor = m_nuclearReactor->NuclearChainReaction();
+	}
+
+	if (reactor == -1 && CheckKeyClicked() > 0 ) {}
+	
+	return cApplication::LoopMsg();
+}
+
+int cPlim::LoadConfiguration(const char* filename) {
+	if (!filename)	return 0;
+
+	if (!SharedConfiguration) {
+		SharedConfiguration = new cPlimConfig();
+		m_config = SharedConfiguration;
+	}
+	
+	if (!m_config->LoadConfig( filename )) {
+		/* Assign conf to gui */
+		AssignConfiguration( m_config );
+		return 1;
+	}
+
+	return 0;
+}
+
+void cPlim::AssignConfiguration(cPlimConfig* config) {
+	cPlimConfigNode* node;
+	
+	if (!config)	return;
+	
+	/* Assign static configurations. */
+	
+	node = config->GetConfigNodeByPath( "plim.textbuffer.lines.use_msg_levels" );
+	
+	if (node) {
+		
+	}
+	else {
+		
+	}
+		
+}
+
+cPlimConfig* cPlim::GetSharedConfig( void ) {
+	return m_config;
+}
+
+void cPlim::SetNuclearReactor(cReactor* reactor) {
+	/* TODO: Add some unload and load props */
+	m_nuclearReactor = reactor;
+}
+
+cReactor* cPlim::GetNuclearReactor(void) {
+	return m_nuclearReactor;
 }
 
 void cPlim::BuildInterface(void) {
@@ -80,6 +155,12 @@ void cPlim::PreBuildInterface(void) {
 		m_statusBar->Add("status_nick")->SetCaption("IC0ffeeCup(+i)");
 		m_statusBar->Add("status_server")->SetCaption("2:warszawa/#gentoo.pl(+nst)");
 		m_statusBar->Add("status_active_window")->SetCaption("Act: 4");
+	}
+
+	/* Add debug window */
+	if (m_roomWindows) {
+		AddRoom( "DEBUGWINDOW" );
+		ShowRoom( "DEBUGWINDOW" );
 	}
 }
 
@@ -151,6 +232,11 @@ void cPlim::SignalBindingInput(cApplication* app, cString* command) {
 	/* Test case */
 	sprintf(&room[0], "proto:window%d", rand() );
 
+	if (!command->Compare("internal_app_quit")) {
+		Close();
+		return;
+	}
+	
 	if (!command->Compare("internal_window_new")) {
 		AddRoom(&room[0]);
 		ShowRoom(&room[0]);
@@ -203,7 +289,8 @@ cTextWindow* cPlim::AddRoom(const char* id) {
 	cTextWindow* w;
 	cTreeNode* node;
 	cString* str;
-
+	cPlimConfigNode* nodeconf;
+	
 	if (!id)
 		return NULL;
 
@@ -212,10 +299,32 @@ cTextWindow* cPlim::AddRoom(const char* id) {
 	w = new cTextWindow(this, m_root);
 
 	if (w) {
-		
+		if (m_config) {
+			nodeconf = m_config->GetConfigNodeByPath( "plim.textbuffer.lines.use_msg_levels" );
+
+			if (nodeconf && !nodeconf->CompareVar("true"))
+				w->SetSlibUse( 1 );
+
+			nodeconf = m_config->GetConfigNodeByPath( "plim.textbuffer.lines.first" );
+
+			if (nodeconf)
+				w->SetFirstText( nodeconf->GetVar() );
+				
+			nodeconf = m_config->GetConfigNodeByPath( "plim.textbuffer.lines.slib" );
+
+			if (nodeconf)
+				w->SetSlibText( nodeconf->GetVar() );
+
+			nodeconf = m_config->GetConfigNodeByPath( "plim.textbuffer.lines.last" );
+
+			if (nodeconf)
+				w->SetLastText( nodeconf->GetVar() );
+
+		}
+
 		/* TODO: Some preconfig for dynamic window placement */
 		w->SetWindowAlign(client);
-		w->SetNodeData(str);
+		w->SetNodeData( str );
 		w->SetVisible( FALSE );
 
 		new cTreeNode( m_roomWindows, NULL, w);

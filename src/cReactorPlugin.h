@@ -18,62 +18,57 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __PLIM_TREENODES_H__
-#define __PLIM_TREENODES_H__
+#ifndef __REACTOR_PLUGIN_H__
+#define __REACTOR_PLUGIN_H__
 
-#include "stdafx.h"
+#include <libplimgui/treenodes.h>
+#include <libplimgui/strings.h>
+#include <libplimgui/abstract.h>
 
-namespace NSTree {
+#include "cReactor.h"
 
-class cTreeNodes;
+/* TODO: 
+	Add sessions to plugins, wich will manage the connection to specified protocol, protocol parsing if any will be done in the plugin.
+	Add users and rooms to session, to easily interact between the reactor and GUI.
+	@IC0ffeeCup
+*/
 
-class cTreeNode {
+namespace NSReactor {
+
+using namespace NSAbstract;
+using namespace NSString;
+using namespace NSTree;
+
+class cReactorPlugin: public cTreeNode {
 public:
-	cTreeNode(cTreeNodes* nodes, cTreeNode* node, const void* ptr);
-	virtual ~cTreeNode(void);
-	/* TODO: Add future ptr check */
-	void SetNextNode(cTreeNode* node);
-	virtual cTreeNode* GetNextNode(void);
-	void SetPrevNode(cTreeNode* node);
-	virtual cTreeNode* GetPrevNode(void);
-	void SetParentNode(cTreeNode* node);
-	virtual cTreeNode* GetParentNode(void);
-	void SetFirstNode(cTreeNode* node);
-	virtual cTreeNode* GetFirstNode(void);
-	void SetLastNode(cTreeNode* node);
-	virtual cTreeNode* GetLastNode(void);
-	int GetLevelNode(void);
-	void SetNodeData(void* data);
-	void* GetNodeData(void);
-private:
-	void* m_ptr;
-	cTreeNodes* m_treeNodes;
-	cTreeNode* m_nodeNext;
-	cTreeNode* m_nodePrev;
-	cTreeNode* m_nodeParent;
-	cTreeNode* m_nodeFirst;
-	cTreeNode* m_nodeLast;
-};
+	cReactorPlugin(cReactor* reactor, const char* configPath);
+	virtual ~cReactorPlugin(void);
 
-class cTreeNodes {
-public:
-	cTreeNodes(void);
-	virtual ~cTreeNodes(void);
-	void SetFirstNode(cTreeNode* node);
-	virtual cTreeNode* GetFirstNode(void);
-	void SetLastNode(cTreeNode* node);
-	virtual cTreeNode* GetLastNode(void);
-	cTreeNode* AddNode(cTreeNode* node, cTreeNode* parent);
-	cTreeNode* RemoveNode(cTreeNode* node, int del = 0);
-	virtual cTreeNode* GetNext(cTreeNode* node);
-	virtual cTreeNode* GetPrev(cTreeNode* node);
-protected:
+	/* Absorb some sessions
+	*/
+	virtual int NuclearFission(fd_set *rfds, fd_set *wfds, fd_set *efds);
+	virtual int NuclearRelease(fd_set *rfds, fd_set *wfds, fd_set *efds);
+
+	/* Gets the node inside m_config 
+	*/
+	cPlimConfigNode* GetConfig(const char* config);
+
+	/* Accessors 
+	*/
+	void SetPluginName(const char* name);
+	const char* GetPluginName(void);
+
+	cReactorPlugin* GetNextNode(void) { return (cReactorPlugin*) cTreeNode::GetNextNode(); };
+	cReactorPlugin* GetPrevNode(void) { return (cReactorPlugin*) cTreeNode::GetPrevNode(); };
 	
+protected:
+
 private:
-	cTreeNode* m_nodeFirst;
-	cTreeNode* m_nodeLast;
+	cString m_pluginName;
+	cReactor* m_reactor;
+	cPlimConfigNode* m_config;
 };
- 
+
 };
 
 #endif

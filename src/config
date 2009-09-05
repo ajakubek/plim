@@ -1,33 +1,21 @@
-# sample configuration for plim
+#default plim configuration, warning PARSER of this configuration isn`t completed.
 
 plim {
+	textbuffer.lines {
+		use_msg_levels = "false"
+		first = "%time <%user>: "
+#if use_msg_levels = true
+		last = "%time <%user>: "
+		slib = "%time <%user>: "
+#endif
 
-	gui { 
-			  window_status_bar = "te adsf adsf as fsad sadf dasf st"
-				window_info_bar = "test"
-					window_textbuffer = "te/"st"
-					window_roster = "test"
-					xx { xx= "test" yy= "test" } 
 	}
-	test_1 {
-			  }
-	__ {
-			  supa.dupa {}
-			  }
-	_test123 {	
-			  
-			  }
-	___x____ {	
 
-			  }
-}
-
-plim.gui.test {
-	gated = "test"
-	plim.gui.ddd {
-		test= "test"
+	statusbar {
+		time = "%time"
+		nick = "%nick"
+		server = "%server"
+		windows = "%windows"
 	}
-}
-plim.gui.test2 {
 
 }

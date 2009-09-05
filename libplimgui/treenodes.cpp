@@ -48,6 +48,33 @@ cTreeNode* cTreeNodes::GetLastNode(void) {
 	return m_nodeLast;
 }
 
+cTreeNode* cTreeNodes::AddNode(cTreeNode* node, cTreeNode* parent) {
+	if (!parent) {
+		if (!GetFirstNode()) {
+			SetLastNode( node );
+			SetFirstNode( node );
+		}
+		else {
+			GetLastNode()->SetNextNode( node );
+			node->SetPrevNode( GetLastNode() );
+			SetLastNode( node );
+		}
+	} 
+	else {
+		/* Add the node to the node */
+		if (!parent->GetFirstNode()) {
+			parent->SetLastNode( node );
+			parent->SetFirstNode( node );
+		} else {
+			parent->GetLastNode()->SetNextNode( node );
+			node->SetPrevNode( parent->GetLastNode() );
+			parent->SetLastNode( node );
+		}
+	}
+
+	return node;
+}
+
 cTreeNode* cTreeNodes::RemoveNode(cTreeNode* node, int del) {
 	cTreeNode* rmnode;
 
