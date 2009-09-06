@@ -49,7 +49,7 @@ public:
 	virtual int NuclearFission(fd_set *rfds, fd_set *wfds, fd_set *efds);
 	virtual int NuclearRelease(fd_set *rfds, fd_set *wfds, fd_set *efds);
 
-	/* Gets the node inside m_config 
+	/* Gets the node inside m_config
 	*/
 	cPlimConfigNode* GetConfig(const char* config);
 

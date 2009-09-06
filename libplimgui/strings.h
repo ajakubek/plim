@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdarg.h>
 
 namespace NSString
 {
@@ -40,6 +41,7 @@ public:
 	int Copy(const char* source);
 	int Copy(const char* source, int len);
 	int Copy(cString* string) { return Copy(string->GetBuffer()); };
+	int Copy(const char* source, va_list args);
 	int Cat(const char* source);
 	int Cat(cString* string) { return Cat(string->GetBuffer()); };
 	int Delete(int index, int range, char* out);

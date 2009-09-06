@@ -21,6 +21,7 @@
 #ifndef __PLIM_TEXTVIEWER_H__
 #define __PLIM_TEXTVIEWER_H__
 
+#include <stdarg.h>
 #include <ncurses.h>
 #include "application.h"
 #include "windows.h"
@@ -39,6 +40,11 @@ using namespace NSApplication;
 using namespace NSString;
 using namespace NSAbstract;
 
+typedef enum _LineType { 
+	ltUserMessage,
+	ltCustomMessage
+} eLineType;
+
 class cTextLine: public cTreeNode, public cCursesString {
 public:
 	cTextLine(cTreeNodes* nodes, cTreeNode* node, const char* str);
@@ -47,19 +53,31 @@ public:
 	time_t* GetTime(void);
 	void SetUser(cAbstractUser* user);
 	cAbstractUser* GetUser(void);
+	void SetLineType(eLineType type);
+	eLineType GetLineType(void);
 private:
 	time_t m_time;
 	cAbstractUser* m_user;
+	eLineType m_lineType;
 };
-
 
 class cTextWindow: public cCursesWindow {
 public: 
 	cTextWindow(cApplication* app, cCursesWindow* parent);
 	virtual ~cTextWindow(void);
 
+	/* Add a new line, it handles self the slib text format */
+	cTextLine* AddLine(const char* buffer, cAbstractUser* user, ...);
+	cTextLine* AddLine(const char* buffer, cAbstractUser* user, va_list args);
+
+	cTextLine* AddDebugLine(const char* buffer, ...);
+	cTextLine* AddDebugLine(const char* buffer, va_list args);
+
+	/* TODO: Remove this, deprecated. @IC0ffeeCup */
 	cTextLine* NewLine(const char* buffer, unsigned int uid);
 	cTextLine* NewLine(cTextLine* line, const char* buffer, unsigned int uid);
+	/* End. */
+
 	void ScrollDown(int count);
 	void ScrollUp(int count);
 	void PageUp(void);
@@ -69,7 +87,7 @@ public:
 	/* Callback for translating config nodes 
 	*/
 	char* TranslateCallback( cPlimToken* token, void* data );
-	/* Sets the textviewer to skype conversation format 
+	/* Sets the textviewer to skype conversation format
 	*/
 	void SetSlibUse(int slib);
 	/* Assign the format of displaying the text in 1 <-> last text node

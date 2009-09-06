@@ -22,15 +22,16 @@
 
 namespace NSWindows {
 
-cTextLine::cTextLine(cTreeNodes* nodes, cTreeNode* node, const char* str)
-:	cTreeNode(nodes, node, NULL),
-	cCursesString(str),
-	m_user(NULL) {
+cTextLine::cTextLine( cTreeNodes* nodes, cTreeNode* node, const char* str )
+:	cTreeNode( nodes, node, NULL ),
+	cCursesString( str ),
+	m_user( NULL ),
+	m_lineType( ltCustomMessage ) {
 	m_time = time(NULL);
 }
 
 cTextLine::~cTextLine(void) {
- 
+
 }
 
 time_t* cTextLine::GetTime(void) {
@@ -43,6 +44,14 @@ void cTextLine::SetUser(cAbstractUser* user) {
 
 cAbstractUser* cTextLine::GetUser(void) {
 	return m_user;
+}
+
+void cTextLine::SetLineType(eLineType type) {
+	m_lineType = type;
+}
+
+eLineType cTextLine::GetLineType(void) {
+	return m_lineType;
 }
 
 };

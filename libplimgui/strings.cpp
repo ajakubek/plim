@@ -70,6 +70,24 @@ int cString::Copy(const char* source, int len) {
 	return m_length;
 }
 
+int cString::Copy(const char* source, va_list args) {
+	int len;
+	char* buffer;
+
+	if (!source)	return 0;
+
+	len = strlen(source) * 3;
+	buffer = (char*) malloc(len);
+
+	vsprintf( buffer, source, args );
+
+	len = Copy( buffer );
+	
+	free( buffer );
+
+	return len;
+}
+
 int cString::Cat(const char* source)
 {
 	int newLength;

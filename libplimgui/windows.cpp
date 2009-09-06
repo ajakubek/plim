@@ -547,7 +547,7 @@ cString* cCursesWindow::TranslateConfigVariables(const char* buffer, OnTranslate
 	while (token) {
 
 		if ( token->GetTokenCase() == PLIM_L_CASE_FLAGS_MATH ) {
-			if ( token->GetTokenExCase() == PLIM_L_SYMBOL_MATH_PERCENT ) {
+			if ( token->GetTokenExCase() == PLIM_L_SYMBOL_MATH_SIGN_PLUS ) {
 				/* Ok get the next token */
 				token = (cPlimToken*) lexhex.GetNext(token);
 							
@@ -555,7 +555,6 @@ cString* cCursesWindow::TranslateConfigVariables(const char* buffer, OnTranslate
 				
 				if ( token->GetTokenCase() == PLIM_L_IDENTIFIER ) {
 					/* Process. */
-					
 					if (!token->Compare( "b" )) {
 						/* Insert curses bold char */
 						sp[0] = PLIM_L_ATTR_BOLD;

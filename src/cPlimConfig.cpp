@@ -58,7 +58,7 @@ int cPlimConfig::LoadConfig(const char* filename) {
 
 		fclose( fd );
 
-		cPlimConfigNode* node;
+/*		cPlimConfigNode* node;
 
 		node = (cPlimConfigNode*) m_configNodes->GetFirstNode();
 
@@ -78,7 +78,7 @@ int cPlimConfig::LoadConfig(const char* filename) {
 
 		if (node) {
 			printf("Node by path found (%s)\n", node->GetVar());
-		}
+		} */
 
 		return 0;
 	}

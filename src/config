@@ -3,19 +3,17 @@
 plim {
 	textbuffer.lines {
 		use_msg_levels = "false"
-		first = "%time <%user>: "
-#if use_msg_levels = true
-		last = "%time <%user>: "
-		slib = "%time <%user>: "
-#endif
 
+		first = "+c2,3 +u test +time +b<+user>:+r "
+		last = "+c 2,3+u+time test +b<+user>:+r "
+		slib = "+b+time+c 4,0 <Cloudcat>+r:  "
 	}
 
 	statusbar {
-		time = "%time"
-		nick = "%nick"
-		server = "%server"
-		windows = "%windows"
+		time = "+time"
+		nick = "+nick"
+		server = "+server"
+		windows = "+windows"
 	}
 
 }

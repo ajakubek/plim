@@ -18,6 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <stdarg.h>
+
 #include <libplimgui/application.h>
 #include <libplimgui/windows.h>
 #include <libplimgui/statusbar.h>
@@ -34,6 +36,8 @@
 extern NSConfig::cPlimConfig* SharedConfiguration;
 
 namespace NSPlim {
+
+#define PLIM_ROOM_DEBUG "PLIM_DEBUGWINDOW"
 
 using namespace NSApplication;
 using namespace NSWindows;
@@ -63,6 +67,10 @@ public:
 	*/
 	void SetNuclearReactor(cReactor* reactor);
 	cReactor* GetNuclearReactor(void);
+	/* Add some debug msg. 
+	*/
+	void AddDbgMsg(const char* msg, ...);
+
 	/* Public signals
 	*/
 protected:

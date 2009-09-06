@@ -24,41 +24,38 @@ cTextWindow::cTextWindow(cApplication* app, cCursesWindow* parent)
 	REGISTER_F_CALL( "mutable", OnCppKeyword );
 	REGISTER_F_CALL( "operator", OnCppKeyword );
 	REGISTER_F_CALL( "IC0ffeeCup", OnCppKeyword );
+
 }
 
-cTextWindow::~cTextWindow(void) {
-	DestroyFormattingNodes();
-	if (m_lineBuffer)
+cTextWindow::~cTextWindow( void ) {
+	DestroyFormattingNodes( );
+	if ( m_lineBuffer )
 		delete m_lineBuffer;
 }
 
-cTextLine* cTextWindow::NewLine(const char* buffer, unsigned int uid) {
-	cTextLine* line, *sub;
-	cString bufferOut;
+cTextLine* cTextWindow::AddLine( const char* buffer, cAbstractUser* user, ... ) {
+	cTextLine* line;
+	cString b;
 	int scrollby;
-	
-	/* TODO: add search for uid of the user */
-	if (!buffer)
-		return NULL;
+	va_list l;
+
+	if (!buffer)	return NULL;
+
+	va_start( l, user );
+	b.Copy( buffer, l );
+	va_end ( l );
 
 	if (m_useSlibText) {
-	
-		bufferOut.Copy( buffer );
+		
+	}
+	else {
+		line = new cTextLine( m_lineBuffer, NULL, b.GetBuffer() );
+		line->SetUser( user );
+		line->SetLineType( ltUserMessage );
 
-		line = new cTextLine( m_lineBuffer, NULL, bufferOut.GetBuffer() );
-		sub = new cTextLine( m_lineBuffer, line, buffer );
-		
-		scrollby = CalculatePrint( line ) + CalculatePrint( sub );
+		scrollby = CalculatePrint( &b );
 	}
-	else
-	{
-		bufferOut.Copy( buffer );
-		
-		line = new cTextLine( m_lineBuffer, NULL, bufferOut.GetBuffer() );
-		
-		scrollby = CalculatePrint( line );
-	}
-	
+
 	if ( m_linesDrawed >= GetHeight() ) {
 		ScrollDown( scrollby );
 	}
@@ -69,24 +66,81 @@ cTextLine* cTextWindow::NewLine(const char* buffer, unsigned int uid) {
 	return line;
 }
 
-cTextLine* cTextWindow::NewLine(cTextLine* line, const char* buffer, unsigned int uid) {
-	cTextLine* lineb;
-	cString bufferOut;
+cTextLine* cTextWindow::AddLine(const char* buffer, cAbstractUser* user, va_list args) {
+	cTextLine* line;
+	cString b;
+	int scrollby;
 
-	if (!buffer)
-		return NULL;
+	if (!buffer)	return NULL;
 
-	bufferOut.Copy( buffer );
+	b.Copy( buffer, args );
 
-	lineb = new cTextLine( m_lineBuffer, line, bufferOut.GetBuffer() );
+	if (m_useSlibText) {
+		
+	}
+	else {
+		line = new cTextLine( m_lineBuffer, NULL, b.GetBuffer() );
+		line->SetUser( user );
+		line->SetLineType( ltUserMessage );
+
+		scrollby = CalculatePrint( &b );
+	}
 
 	if ( m_linesDrawed >= GetHeight() ) {
-		ScrollDown( CalculatePrint( lineb ) );
+		ScrollDown( scrollby );
 	}
 
 	NeedPartialUpdate();
 	Update(); /* Draw it instant */
 
+	return line;
+}
+
+cTextLine* cTextWindow::AddDebugLine(const char* buffer, ...) {
+	cTextLine* line;
+	cString b;
+	int scrollby;
+	va_list l;
+
+	if (!buffer)	return NULL;
+
+	va_start( l, buffer );
+	b.Copy( buffer, l );
+	va_end ( l );
+
+	line = new cTextLine( m_lineBuffer, NULL, b.GetBuffer() );
+	scrollby = CalculatePrint( &b );
+
+	if ( m_linesDrawed >= GetHeight() ) {
+		ScrollDown( scrollby );
+	}
+
+	NeedPartialUpdate();
+	Update(); /* Draw it instant */
+
+	return line;
+}
+
+cTextLine* cTextWindow::AddDebugLine(const char* buffer, va_list args) {
+	cTextLine* line;
+	cString b;
+	int scrollby;
+
+	if (!buffer)	return NULL;
+
+	b.Copy( buffer, args );
+
+	line = new cTextLine( m_lineBuffer, NULL, b.GetBuffer() );
+	scrollby = CalculatePrint( &b );
+
+	if ( m_linesDrawed >= GetHeight() ) {
+		ScrollDown( scrollby );
+	}
+
+	NeedPartialUpdate();
+	Update(); /* Draw it instant */
+
+	return line;
 }
 
 void cTextWindow::ScrollDown(int count) {
@@ -170,7 +224,7 @@ void cTextWindow::PartialUpdate(void) {
 		/* TODO: Add translation of the config to buffer. */
 		
 		/* Skype like text. */
-		if (m_useSlibText) {
+		if ( m_useSlibText && line->GetLineType() == ltUserMessage ) {
 		
 			if ( line->GetParentNode() ) {
 				if ( m_slibText.GetBuffer() )
@@ -194,6 +248,7 @@ void cTextWindow::PartialUpdate(void) {
 			}
 
 			if ( line->GetParentNode() ) {
+
 				if ( line == line->GetParentNode()->GetLastNode() ) {
 					if ( m_lastText.GetLength() ) {
 						bufferLine.Copy(m_lastText.GetBuffer());
@@ -203,21 +258,31 @@ void cTextWindow::PartialUpdate(void) {
 						atdy += PrintLexer( &m_plimLexer, 0, atdy);
 					}
 				}
+
 			}
 		}
 		/* Normal styled text. */
 		else {
 			bufferLine.Clean();
 			
-			if (m_slibText.GetLength() ) {
-				cString* translated = TranslateConfigVariables( m_slibText.GetBuffer(), TRANSLATE_PTR(TranslateCallback), line );
-				
- 				bufferLine.Copy ( translated );
+			if ( line->GetLineType() == ltUserMessage ) {
 
- 				delete translated;
+				if (m_slibText.GetLength() ) {
+					cString* translated = TranslateConfigVariables( m_slibText.GetBuffer(), TRANSLATE_PTR(TranslateCallback), line );
+					
+ 					bufferLine.Copy ( translated );
+
+ 					delete translated;
+				}
+
+ 				bufferLine.Cat ( line->GetBuffer() );
+			} 
+			else {
+				cString* translated = TranslateConfigVariables( line->GetBuffer(), TRANSLATE_PTR(TranslateCallback), line );
+				bufferLine.Copy( translated );
+				delete translated;
 			}
 
- 			bufferLine.Cat ( line->GetBuffer() );
 
 			m_plimLexer.Refresh( bufferLine.GetBuffer() );
 			atdy += PrintLexer( &m_plimLexer, 0, atdy);

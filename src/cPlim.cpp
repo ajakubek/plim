@@ -35,12 +35,17 @@ cPlim::cPlim(int argc, char** argv)
 	m_homeConfig = new cString( m_home );
 	m_homeConfig->Cat( "config" );
 
-	if (LoadConfiguration( m_homeConfig->GetBuffer() ));
-
 	BuildInterface();
 	PreBuildInterface();
 	BindSignals();
 	BuildBindings();
+
+	if (LoadConfiguration( m_homeConfig->GetBuffer() )) {
+		AddDbgMsg( "+time +b-!-+r Configuration loaded from %s", m_homeConfig->GetBuffer());
+	}
+	else {
+		AddDbgMsg( "+time +b-!-+r Failed to load configuration from %s", m_homeConfig->GetBuffer());
+	}
 
 	switch( Loop() ) {
 		default:
@@ -119,6 +124,20 @@ cReactor* cPlim::GetNuclearReactor(void) {
 	return m_nuclearReactor;
 }
 
+void cPlim::AddDbgMsg(const char* msg, ...) {
+	cTextWindow* dbg;
+	va_list l;
+	va_start( l, msg);
+
+	dbg = GetRoom( PLIM_ROOM_DEBUG );
+
+	if (dbg) {
+		dbg->AddDebugLine( msg, l );
+	}
+
+	va_end( l );
+}
+
 void cPlim::BuildInterface(void) {
 	if (!m_root) {
 		m_root = new cCursesWindow( this, 0, 0, 0, 0, NULL);
@@ -159,8 +178,8 @@ void cPlim::PreBuildInterface(void) {
 
 	/* Add debug window */
 	if (m_roomWindows) {
-		AddRoom( "DEBUGWINDOW" );
-		ShowRoom( "DEBUGWINDOW" );
+		AddRoom( PLIM_ROOM_DEBUG );
+		ShowRoom( PLIM_ROOM_DEBUG );
 	}
 }
 
@@ -210,12 +229,8 @@ void cPlim::SignalEnterInput(const char* buffer) {
 		Close();
 	}
 
-	if (m_activeRoom) {
-		if (!m_activeRoom->GetLastLine()) {
-			m_activeRoom->NewLine( buffer, 0 );
-		}
-		else
-			m_activeRoom->NewLine( m_activeRoom->GetLastLine(), buffer, 0 );
+	if (m_activeRoom && m_activeRoom != GetRoom( PLIM_ROOM_DEBUG) ) {
+		m_activeRoom->AddLine( buffer, NULL );
 	}
 
 }
