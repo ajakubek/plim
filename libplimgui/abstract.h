@@ -34,6 +34,16 @@ class cAbstractProtocol {
 public:
 	cAbstractProtocol(void): m_socket(-1) {};
 	virtual ~cAbstractProtocol(void) {} ;
+	/* Connect, disco
+	*/
+	virtual int Connect(void) = 0;
+	virtual int Disconnect(void) = 0;
+	/* Protocol recv, send
+	*/
+	virtual int Fission(fd_set *rfds, fd_set *wfds, fd_set *efds) = 0;
+	virtual int Release(fd_set *rfds, fd_set *wfds, fd_set *efds) = 0;
+	/* Accessors
+	*/
 	void SetSocket(int s) { m_socket = s; };
 	int GetSocket(void) { return m_socket; };
 private:
@@ -44,6 +54,8 @@ class cAbstractSession: public cAbstractProtocol {
 public:
 	cAbstractSession(void): cAbstractProtocol() {};
 	virtual ~cAbstractSession(void) {};
+	/* Accessors
+	*/
 	void SetSessionName(const char* name) { m_sessionName.Copy( name ); };
 	const char* GetSessionName(void) { return m_sessionName.GetBuffer(); };
 private:
@@ -54,6 +66,8 @@ class cAbstractUser {
 public:
 	cAbstractUser(void) {};
 	virtual ~cAbstractUser(void) {};
+	/* Accessors
+	*/
 	void SetUserName(const char* name) { m_userName.Copy( name ); };
 	const char* GetUserName(void) { return m_userName.GetBuffer(); };
 private:
@@ -64,6 +78,8 @@ class cAbstractRoom {
 public:
 	cAbstractRoom(void) {};
 	virtual ~cAbstractRoom(void) {};
+	/* Accessors
+	*/
 	void SetRoomName(const char* name) { m_roomName.Copy( name ); };
 	const char* GetRoomName(void) { return m_roomName.GetBuffer(); };
 private:

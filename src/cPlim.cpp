@@ -47,6 +47,8 @@ cPlim::cPlim(int argc, char** argv)
 		AddDbgMsg( "+time +b-!-+r Failed to load configuration from %s", m_homeConfig->GetBuffer());
 	}
 
+	cApplication::LoopMsg();
+
 	switch( Loop() ) {
 		default:
 			break;

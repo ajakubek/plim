@@ -22,10 +22,19 @@
 #define __REACTOR_SESSION_H__
 
 #include <libplimgui/abstract.h>
+#include <libplimgui/treenodes.h>
 
 namespace NSReactor {
-	
-	
+
+using namespace NSAbstract;
+using namespace NSTree;
+
+class cReactorSession: public cAbstractSession, public cTreeNodes, public cTreeNode {
+public:
+	cReactorSession(cTreeNodes* nodes, const char* sessionName);
+	virtual ~cReactorSession(void);
+};
+
 };
 
 

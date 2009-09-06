@@ -22,9 +22,20 @@
 #define __REACTOR_USER_H__
 
 #include <libplimgui/abstract.h>
+#include <libplimgui/treenodes.h>
+
+#include "cReactorRoom.h"
 
 namespace NSReactor {
 
+using namespace NSTree;
+using namespace NSAbstract;
+
+class cReactorUser: public cAbstractUser, public cTreeNode {
+public:
+	cReactorUser(cReactorRoom* room);
+	virtual ~cReactorUser(void);
+};
 
 };
 

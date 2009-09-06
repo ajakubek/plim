@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2009 by Lukasz Marcin Borzecki   *
- *   lukasz.borzecki@gmail.com   *
+ *   Copyright (C) 2009 by Lukasz Marcin Borzecki                          *
+ *   lukasz.borzecki@gmail.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU Library General Public License as       *
@@ -18,25 +18,17 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __REACTOR_ROOM_H__
-#define __REACTOR_ROOM_H__
+#include "cIrcUser.h"
 
-#include <libplimgui/abstract.h>
-#include <libplimgui/treenodes.h>
+namespace NSInternalPluginIRC {
 
-#include "cReactorSession.h"
+cIrcUser::cIrcUser(cIrcRoom* room)
+:	cReactorUser(room) {
 
-namespace NSReactor {
+}
 
-using namespace NSAbstract;
-using namespace NSTree;
+cIrcUser::~cIrcUser(void) {
 
-class cReactorRoom: public cAbstractRoom, public cTreeNodes, public cTreeNode  {
-public:
-	cReactorRoom(cReactorSession* session);
-	virtual ~cReactorRoom(void);
-};
+}
 
 };
-
-#endif

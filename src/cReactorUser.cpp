@@ -22,4 +22,14 @@
 
 namespace NSReactor {
 
+cReactorUser::cReactorUser(cReactorRoom* room)
+:	cAbstractUser(),
+	cTreeNode(room, NULL, NULL) {
+	
+}
+
+cReactorUser::~cReactorUser(void) {
+	
+}
+
 };

@@ -26,6 +26,7 @@
 #include <libplimgui/abstract.h>
 
 #include "cReactor.h"
+#include "cReactorSession.h"
 
 /* TODO: 
 	Add sessions to plugins, wich will manage the connection to specified protocol, protocol parsing if any will be done in the plugin.
@@ -39,7 +40,7 @@ using namespace NSAbstract;
 using namespace NSString;
 using namespace NSTree;
 
-class cReactorPlugin: public cTreeNode {
+class cReactorPlugin: public cTreeNode, public cTreeNodes {
 public:
 	cReactorPlugin(cReactor* reactor, const char* configPath);
 	virtual ~cReactorPlugin(void);
@@ -53,6 +54,11 @@ public:
 	*/
 	cPlimConfigNode* GetConfig(const char* config);
 
+	cReactorSession* GetFirstSession(void) { return (cReactorSession*) cTreeNodes::GetFirstNode(); };
+	cReactorSession* GetLastSession(void) { return (cReactorSession*) cTreeNodes::GetLastNode(); };
+	cReactorSession* GetNextSession(cReactorSession* session) { return (cReactorSession*) cTreeNodes::GetNext(session); };
+	cReactorSession* GetPrevSession(cReactorSession* session) { return (cReactorSession*) cTreeNodes::GetPrev(session); };
+
 	/* Accessors 
 	*/
 	void SetPluginName(const char* name);
@@ -60,13 +66,14 @@ public:
 
 	cReactorPlugin* GetNextNode(void) { return (cReactorPlugin*) cTreeNode::GetNextNode(); };
 	cReactorPlugin* GetPrevNode(void) { return (cReactorPlugin*) cTreeNode::GetPrevNode(); };
-	
+
 protected:
 
 private:
 	cString m_pluginName;
 	cReactor* m_reactor;
 	cPlimConfigNode* m_config;
+	cTreeNodes* m_sessionNodes;
 };
 
 };

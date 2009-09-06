@@ -22,6 +22,13 @@
 
 namespace NSReactor {
 
+cReactorSession::cReactorSession(cTreeNodes* nodes, const char* sessionName)
+:	cAbstractSession(), cTreeNodes(), cTreeNode(nodes, NULL, NULL) {
 
+}
+
+cReactorSession::~cReactorSession(void) {
+
+}
 
 };

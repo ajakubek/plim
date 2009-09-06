@@ -23,7 +23,11 @@ ADD_EXECUTABLE(plim
 			   cReactorRoom.cpp
 			   cReactorUser.cpp
 			   cReactorSession.cpp
-			   plim.cpp)
+			   plim.cpp
+			   plugins/irc/cIrc.cpp
+			   plugins/irc/cIrcRoom.cpp
+			   plugins/irc/cIrcSession.cpp
+			   plugins/irc/cIrcUser.cpp)
 
 # this should be removed (GUI should be loaded dynamically)
 LINK_DIRECTORIES(libplimgui)
