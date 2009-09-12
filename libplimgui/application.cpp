@@ -76,9 +76,13 @@ int cApplication::OnKeyClicked( const int key ) {
 		return 0;
 	}
 
-	if ( OnTerminalSizeChanged() ) {
-		return 1;
+#ifdef KEY_RESIZE
+	if ( key == KEY_RESIZE ) {
+		return 0;
 	}
+#else
+
+#endif
 
 	OnKeyPress( key );
 
@@ -117,21 +121,29 @@ int cApplication::LoopMsg(void) {
 }
 
 int cApplication::OnTerminalSizeChanged(void) {
-	cCursesWindow* data;
+	cCursesWindow* data = (cCursesWindow*) GetFirstWindow();;
+	struct winsize ws;
 
-	wrefresh( m_rootWindow );
+	if (!ioctl(0, TIOCGWINSZ, &ws) ) {
+		if ( m_termWidth != ws.ws_col || m_termHeight != ws.ws_row ) {
+			m_termWidth = ws.ws_col;
+			m_termHeight = ws.ws_row;
 
-	if ( m_termWidth != getmaxx(stdscr) || m_termHeight != getmaxy(stdscr) ) {
-		m_termWidth = getmaxx(stdscr);
-		m_termHeight = getmaxy(stdscr);
+			resizeterm( m_termHeight, m_termWidth );
 
-		OnResize(m_termWidth, m_termHeight);
+			clear();
+			refresh();
 
-		LaunchResizeEvents();
-		
-		doupdate();
-		return 1;
+			OnResize(m_termWidth, m_termHeight);
+
+			LaunchResizeEvents();
+			cApplication::LoopMsg();
+
+			return 1;
+		}
 	}
+
+
 
 
 	return 0;

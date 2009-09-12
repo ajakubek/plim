@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include "cReactor.h"
+#include "cReactorPlugin.h"
 #include "cPlim.h"
 
 namespace NSReactor {
@@ -26,7 +27,7 @@ namespace NSReactor {
 cReactor::cReactor(cApplication* plimapp)
 :	cTreeNodes() {
 	NSPlim::cPlim* plim = (NSPlim::cPlim*) plimapp;
-	
+
 	if (plimapp) {
 		m_app = plimapp;
 		m_config = plim->GetSharedConfig();
@@ -42,10 +43,11 @@ cReactor::~cReactor(void) {
 }
 
 int cReactor::NuclearChainReaction(void) {
+	cReactorPlugin* plugin;
 	struct timeval val;
 	int fmaxd, selr, ret;
 	fd_set rfds, wfds, efds;
-
+	
 	fmaxd = 0;
 	ret = 0;
 	val.tv_sec = 1;
@@ -60,7 +62,12 @@ int cReactor::NuclearChainReaction(void) {
 		/* Add the stdin */
 		FD_SET(0, &rfds);
 		/* Add plugins descriptors if they have such. */
-		
+		plugin = (cReactorPlugin*) GetFirstNode();
+
+		while (plugin) {
+			fmaxd = MAX_FD( plugin->NuclearFission( &rfds, &wfds, &efds ), fmaxd );
+			plugin = (cReactorPlugin*) GetNext(plugin);
+		}
 		
 		/* Select */
 		selr = select(fmaxd + 1, &rfds, &wfds, &efds, &val);
@@ -68,8 +75,15 @@ int cReactor::NuclearChainReaction(void) {
 		if ( FD_ISSET(0, &rfds) ) {
 			ret = -1;
 		}
-
+		
 		/* Process plugins. */
+		plugin = (cReactorPlugin*) GetFirstNode();
+
+		while (plugin) {
+			plugin->NuclearRelease( &rfds, &wfds, &efds );
+			plugin = (cReactorPlugin*) GetNext(plugin);
+		}
+
 	}
 
 	return ret;

@@ -550,7 +550,7 @@ cString* cCursesWindow::TranslateConfigVariables(const char* buffer, OnTranslate
 			if ( token->GetTokenExCase() == PLIM_L_SYMBOL_MATH_SIGN_PLUS ) {
 				/* Ok get the next token */
 				token = (cPlimToken*) lexhex.GetNext(token);
-							
+
 				if (!token)	break;
 				
 				if ( token->GetTokenCase() == PLIM_L_IDENTIFIER ) {
@@ -700,6 +700,8 @@ int cCursesWindow::OnKeyPressed( const int key ) {
 }
 
 int cCursesWindow::OnResize(void) {
+	//NeedUpdate();
+	//NeedPartialUpdate();
 	return 0;
 }
 

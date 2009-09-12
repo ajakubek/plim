@@ -35,6 +35,10 @@ class cReactorRoom: public cAbstractRoom, public cTreeNodes, public cTreeNode  {
 public:
 	cReactorRoom(cReactorSession* session);
 	virtual ~cReactorRoom(void);
+	cAbstractUser* GetUser(const char* user);
+	cReactorSession* GetSession(void);
+private:
+	cReactorSession* m_session;
 };
 
 };

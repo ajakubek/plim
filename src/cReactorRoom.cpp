@@ -19,18 +19,35 @@
  ***************************************************************************/
 
 #include "cReactorRoom.h"
+#include "cReactorUser.h"
 
 namespace NSReactor {
 
 cReactorRoom::cReactorRoom(cReactorSession* session)
 :	cAbstractRoom(),
 	cTreeNodes(),
-	cTreeNode(session, NULL, NULL) {
+	cTreeNode(session, NULL, NULL),
+	m_session(session) {
 
 }
 
 cReactorRoom::~cReactorRoom(void) {
 	
+}
+
+cAbstractUser* cReactorRoom::GetUser(const char* user) {
+	cReactorUser* u = (cReactorUser*) cTreeNodes::GetFirstNode();
+
+	while ( u ) {
+		if (!strcmp(user, u->GetUserName()) )
+			return u;
+
+		u = (cReactorUser*) cTreeNodes::GetNext( u );
+	}
+}
+
+cReactorSession* cReactorRoom::GetSession(void) {
+	return m_session;
 }
 
 };

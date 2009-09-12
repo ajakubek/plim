@@ -45,6 +45,7 @@ public:
 	int GetLevelNode(void);
 	void SetNodeData(void* data);
 	void* GetNodeData(void);
+	cTreeNodes* GetOwner(void);
 private:
 	void* m_ptr;
 	cTreeNodes* m_treeNodes;

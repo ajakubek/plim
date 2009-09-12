@@ -25,7 +25,8 @@ namespace NSReactor {
 cReactorPlugin::cReactorPlugin(cReactor* reactor, const char* configPath)
 :	cTreeNode(reactor, NULL, NULL),
 	cTreeNodes(),
-	m_reactor( NULL ), m_config( NULL )
+	m_reactor( NULL ), 
+	m_config( NULL )
  {
 	if ( reactor ) {
 		m_reactor = reactor;
@@ -38,17 +39,32 @@ cReactorPlugin::~cReactorPlugin(void) {
 	
 }
 
-int cReactorPlugin::NuclearFission(fd_set *rfds, fd_set *wfds, fd_set *efds) {
+void cReactorPlugin::RegisterSessionReactors(void) {
 	cReactorSession* session;
-
+	
 	session = GetFirstSession();
 
 	while (session) {
+		session->RegisterReactorInstance( GetNuclearReactor() );
+		session = GetNextSession( session );
+	}
+
+}
+
+int cReactorPlugin::NuclearFission(fd_set *rfds, fd_set *wfds, fd_set *efds) {
+	cReactorSession* session;
+	int rd = 0;
+	
+	session = GetFirstSession();
+
+	while (session) {
+		rd = MAX_FD(session->GetSocket(), rd);
+
 		session->Fission(rfds, wfds, efds);
 		session = GetNextSession( session );
 	}
 
-	return 0;
+	return rd;
 }
 
 int cReactorPlugin::NuclearRelease(fd_set *rfds, fd_set *wfds, fd_set *efds) {

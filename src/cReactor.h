@@ -32,6 +32,8 @@
 
 namespace NSReactor {
 
+#define MAX_FD(x, y) (x > y ? x : y)
+
 using namespace NSTree;
 using namespace NSString;
 using namespace NSAbstract;
@@ -55,14 +57,20 @@ public:
 	cPlimConfig* GetConfig(void);
 
 	/* Signals from the UI */
-	sigc::signal <void, cString*, cAbstractUser*, cAbstractRoom*> OnGuiInputText;
+	sigc::signal <void, cString*, cAbstractUser*, cAbstractRoom*> OnSentMessage;
 	sigc::signal <void, cAbstractUser*, cAbstractRoom*> OnGuiRoomChange;
 	
 	/* Signals to the UI */
-	sigc::signal <void, cString*, cAbstractUser*, cAbstractRoom*> OnMsgRecv;
-	sigc::signal <void, cString*, cAbstractUser*, cAbstractRoom*> OnMsgSend;
-	sigc::signal <void, cAbstractUser*, cAbstractRoom*> OnUserStatusChange;
-	sigc::signal <void, cAbstractRoom*> OnOpenRoom;
+	sigc::signal <void, cAbstractSession*, cString*> OnDebugMsg;
+
+	sigc::signal <void, cAbstractRoom*, cAbstractUser*, cString*> OnUserMessage;
+
+	sigc::signal <void, cAbstractRoom*, cAbstractUser*> OnUserStatusChange;
+
+	sigc::signal <void, cAbstractRoom*> OnCreateRoom;
+	sigc::signal <void, cAbstractRoom*> OnDestroyRoom;
+	sigc::signal <void, cAbstractRoom*, cAbstractUser*> OnUserJoin;
+	sigc::signal <void, cAbstractRoom*, cAbstractUser*> OnUserPart;
 
 private:
 	cApplication* m_app;

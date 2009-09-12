@@ -128,4 +128,8 @@ void* cTreeNode::GetNodeData(void) {
 	return m_ptr;
 }
 
+cTreeNodes* cTreeNode::GetOwner(void) {
+	return m_treeNodes;
+}
+
 };

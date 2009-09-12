@@ -24,6 +24,8 @@
 #include <libplimgui/abstract.h>
 #include <libplimgui/treenodes.h>
 
+#include "cReactor.h"
+
 namespace NSReactor {
 
 using namespace NSAbstract;
@@ -33,6 +35,19 @@ class cReactorSession: public cAbstractSession, public cTreeNodes, public cTreeN
 public:
 	cReactorSession(cTreeNodes* nodes, const char* sessionName);
 	virtual ~cReactorSession(void);
+	virtual void RegisterReactorInstance(cReactor* reactor);
+	virtual int Connect(void) { return -1; };
+	virtual int Disconnect(void) { return -1; };
+	virtual int Fission(fd_set *rfds, fd_set *wfds, fd_set *efds) { return 0; }
+	virtual int Release(fd_set *rfds, fd_set *wfds, fd_set *efds) { return 0; }
+
+	virtual cAbstractUser* GetUser(void) { return NULL; };
+
+	cAbstractRoom* GetRoom(const char* room);
+
+	cReactor* GetNuclearReactor(void) { return m_reactor; };
+private:
+	cReactor* m_reactor;
 };
 
 };

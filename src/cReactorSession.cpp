@@ -19,15 +19,33 @@
  ***************************************************************************/
 
 #include "cReactorSession.h"
+#include "cReactorRoom.h"
 
 namespace NSReactor {
 
 cReactorSession::cReactorSession(cTreeNodes* nodes, const char* sessionName)
 :	cAbstractSession(), cTreeNodes(), cTreeNode(nodes, NULL, NULL) {
-
+	SetSocket( -1 );
+	SetSessionName( sessionName );
 }
 
 cReactorSession::~cReactorSession(void) {
+
+}
+
+void cReactorSession::RegisterReactorInstance(cReactor* reactor) {
+	m_reactor = reactor;
+}
+
+cAbstractRoom* cReactorSession::GetRoom(const char* room) {
+	cReactorRoom* rroom = (cReactorRoom*) cTreeNodes::GetFirstNode();
+
+	while ( rroom ) {
+		if (!strcmp(room, rroom->GetRoomName()) )
+			return rroom;
+
+		rroom = (cReactorRoom*) GetNext( rroom );
+	}
 
 }
 

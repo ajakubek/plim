@@ -28,6 +28,7 @@ ADD_LIBRARY(plimgui SHARED
 			textviewer.cpp
 			treenode.cpp
 			treenodes.cpp
+			stringlist.cpp
 			windows.cpp)
 
 # link with curses and libsigc++2

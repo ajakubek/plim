@@ -20,6 +20,7 @@
 
 #include <stdarg.h>
 
+#include <libplimgui/abstract.h>
 #include <libplimgui/application.h>
 #include <libplimgui/windows.h>
 #include <libplimgui/statusbar.h>
@@ -33,6 +34,10 @@
 #include "cReactor.h"
 #include "cPlimConfig.h"
 
+/* Test case */
+#include "plugins/irc/cIrc.h"
+#include "plugins/irc/cIrcSession.h"
+
 extern NSConfig::cPlimConfig* SharedConfiguration;
 
 namespace NSPlim {
@@ -45,6 +50,9 @@ using namespace NSString;
 using namespace NSTree;
 using namespace NSReactor;
 using namespace NSConfig;
+using namespace NSAbstract;
+
+using namespace NSInternalPluginIRC;
 
 class cPlim: public cApplication {
 public:
@@ -73,16 +81,27 @@ public:
 
 	/* Public signals
 	*/
+	
 protected:
 	void BuildInterface( void );
 	void PreBuildInterface( void );
 	void BindSignals( void );
 	void BuildBindings( void );
 	void DestroyInterface( void );
-	/* Signals method
+	/* Signals methods
 	*/
 	void SignalEnterInput(const char* buffer);
 	void SignalBindingInput(cApplication* app, cString* command);
+	
+	/* Signals from the reactor 
+	*/
+	void ReactorSignalDebugMsg(cAbstractSession* session, cString* message);
+	void ReactorSignalCreateRoom(cAbstractRoom* room);
+	void ReactorSignalDestroyRoom(cAbstractRoom* room);
+	void ReactorSignalUserMessage(cAbstractRoom* room, cAbstractUser* user, cString* message);
+	void ReactorSignalUserJoin(cAbstractRoom* room, cAbstractUser* user);
+	void ReactorSignalUserPart(cAbstractRoom* room, cAbstractUser* user);
+
 	/* Room windows
 	*/
 	cTextWindow* AddRoom(const char* id);
@@ -108,7 +127,9 @@ private:
 	cString* m_homeConfig;
 	/*! Nuclear Reactor */
 	cReactor* m_nuclearReactor;
-	
+	/*! Test case */
+	cIrc* m_irc;
+	cIrcSession* m_ircSession;
 };
 
 };

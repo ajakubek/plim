@@ -298,7 +298,7 @@ void cTextWindow::PartialUpdate(void) {
 
 	cCursesWindow::PartialUpdate();
 }
-
+/* Please note. Dont return a char* that is used somewhere cause it will be free`dup after the callback, thats why we allocated (char*) mal */
 char* cTextWindow::TranslateCallback( cPlimToken* token, void* data ) {
 	cTextLine* line = (cTextLine*) data;
 	char* mal = (char*) malloc(1024);
@@ -311,7 +311,13 @@ char* cTextWindow::TranslateCallback( cPlimToken* token, void* data ) {
 		strftime(mal, 1024, "%H:%M:%S", tm);
 
 	}
-	
+	else
+	if (!token->Compare("user")) {
+		if (line->GetUser()) {
+			sprintf(mal, "%s", line->GetUser()->GetUserName());
+		}
+	}
+
 	return mal;
 }
 

@@ -25,6 +25,7 @@ ADD_EXECUTABLE(plim
 			   cReactorSession.cpp
 			   plim.cpp
 			   plugins/irc/cIrc.cpp
+			   plugins/irc/cIrcProto.cpp
 			   plugins/irc/cIrcRoom.cpp
 			   plugins/irc/cIrcSession.cpp
 			   plugins/irc/cIrcUser.cpp)

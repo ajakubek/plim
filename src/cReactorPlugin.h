@@ -45,9 +45,13 @@ public:
 	cReactorPlugin(cReactor* reactor, const char* configPath);
 	virtual ~cReactorPlugin(void);
 
+	void RegisterSessionReactors(void);
+	
 	/* Absorb some sessions
 	*/
+	/* Fission should return the max fd */
 	virtual int NuclearFission(fd_set *rfds, fd_set *wfds, fd_set *efds);
+	/* Process the sets */
 	virtual int NuclearRelease(fd_set *rfds, fd_set *wfds, fd_set *efds);
 
 	/* Gets the node inside m_config
@@ -67,6 +71,7 @@ public:
 	cReactorPlugin* GetNextNode(void) { return (cReactorPlugin*) cTreeNode::GetNextNode(); };
 	cReactorPlugin* GetPrevNode(void) { return (cReactorPlugin*) cTreeNode::GetPrevNode(); };
 
+	cReactor* GetNuclearReactor(void) { return m_reactor; };
 protected:
 
 private:

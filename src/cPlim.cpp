@@ -34,7 +34,9 @@ cPlim::cPlim(int argc, char** argv)
 
 	m_homeConfig = new cString( m_home );
 	m_homeConfig->Cat( "config" );
-
+	
+	SetNuclearReactor( new cReactor( this ) );
+	
 	BuildInterface();
 	PreBuildInterface();
 	BindSignals();
@@ -47,6 +49,26 @@ cPlim::cPlim(int argc, char** argv)
 		AddDbgMsg( "+time +b-!-+r Failed to load configuration from %s", m_homeConfig->GetBuffer());
 	}
 
+
+	if ( GetNuclearReactor() ) {
+		AddDbgMsg( "+time +b-!-+r Nuclear Reactor was loaded successful" );
+
+		m_irc = new cIrc( GetNuclearReactor(), "reactor.irc" );
+		
+		if ( m_irc ) {
+			AddDbgMsg( "+time +b-!-+r Internal irc plugin was loaded successful" );
+			
+			m_ircSession = new cIrcSession( m_irc, "irc:proto" );
+			
+			if (m_ircSession) {
+				AddDbgMsg( "+time +b-!-+r Internal irc session was loaded successful" );
+			}
+			
+			m_irc->RegisterSessionReactors();
+		}
+	}
+
+	
 	cApplication::LoopMsg();
 
 	switch( Loop() ) {
@@ -191,6 +213,17 @@ void cPlim::BindSignals( void ) {
 	if (m_inputBar) {
 		m_inputBar->OnEnter.connect( sigc::mem_fun( this, &cPlim::SignalEnterInput ) );
 	}
+	
+	if ( m_nuclearReactor ) {
+
+		m_nuclearReactor->OnDebugMsg.connect ( sigc::mem_fun( this, &cPlim::ReactorSignalDebugMsg ) );
+		m_nuclearReactor->OnCreateRoom.connect ( sigc::mem_fun( this, &cPlim::ReactorSignalCreateRoom ) );
+		m_nuclearReactor->OnDestroyRoom.connect (sigc::mem_fun( this, &cPlim::ReactorSignalDestroyRoom ) );
+		m_nuclearReactor->OnUserJoin.connect( sigc::mem_fun( this, &cPlim::ReactorSignalUserJoin ) );
+		m_nuclearReactor->OnUserPart.connect( sigc::mem_fun( this, &cPlim::ReactorSignalUserPart ) );
+		m_nuclearReactor->OnUserMessage.connect( sigc::mem_fun( this, &cPlim::ReactorSignalUserMessage ) );
+
+	}
 }
 
 void cPlim::BuildBindings( void ) {
@@ -222,17 +255,63 @@ void cPlim::DestroyInterface( void ) {
 }
 
 void cPlim::SignalEnterInput(const char* buffer) {
+	cString s;
+	
 	if (!buffer)
 		return;
 
 	cTextLine* line;
-
+	
+	s.Copy( buffer );
+	
 	if (!strcmp(buffer, "/quit")) {
 		Close();
+		return;
 	}
 
+	if (!s.Compare("join gentoo") || !s.Compare("join worldchat")) {
+		m_nuclearReactor->OnSentMessage( &s, NULL, NULL);
+		return;
+	}
+
+	if (!s.Compare( "irc:connect" )) {
+		if (m_ircSession) {
+			
+			m_ircSession->SetBindIp( "192.168.1.45" );
+			m_ircSession->SetIp( "212.182.63.110" );
+			m_ircSession->SetPortNumber( 6667 );
+			
+			AddDbgMsg( "+time +b-!-+r Trying to connect to %s", m_ircSession->GetIp() );
+			
+			int r;
+			if ((r = m_ircSession->Connect()) > -1) {
+				AddDbgMsg( "+time +b-!-+r Internal irc session connected successfuly" );
+			} 
+			else {
+				AddDbgMsg( "+time +b-!-+r Internal irc session returned %d", r );
+			}
+				
+		}
+
+		return;
+	}
+	
+	/* DEBUG PURPOSE */
 	if (m_activeRoom && m_activeRoom != GetRoom( PLIM_ROOM_DEBUG) ) {
-		m_activeRoom->AddLine( buffer, NULL );
+
+		if (m_nuclearReactor)	{
+			if ( m_activeRoom ) {
+				cReactorRoom* room = (cReactorRoom*) m_activeRoom->GetRoom();
+				cReactorSession* session = (cReactorSession*) room->GetSession();
+				cReactorUser* user = (cReactorUser*) session->GetUser();
+
+
+				m_nuclearReactor->OnSentMessage( &s, user, room);
+				m_activeRoom->AddLine( buffer, user );
+			}
+		}
+
+
 	}
 
 }
@@ -256,7 +335,7 @@ void cPlim::SignalBindingInput(cApplication* app, cString* command) {
 	
 	if (!command->Compare("internal_window_new")) {
 		AddRoom(&room[0]);
-		ShowRoom(&room[0]);
+		//ShowRoom(&room[0]);
 	}
 
 	if (!command->Compare("internal_window_next")) {
@@ -296,9 +375,73 @@ void cPlim::SignalBindingInput(cApplication* app, cString* command) {
 
 		}
 	}
+	
 //	if (window && cmd) {
 		//window->NewLine( cmd->GetBuffer(), 0 );
 	//}
+
+}
+
+/* Reactor signals 
+*/
+void cPlim::ReactorSignalDebugMsg(cAbstractSession* session, cString* message) {
+	AddDbgMsg( "+time +b-!-+r Session (%s) recieved %s", session->GetSessionName(), message->GetBuffer());
+}
+
+void cPlim::ReactorSignalCreateRoom(cAbstractRoom* room) {
+	if (room) {
+		AddRoom( room->GetRoomName() )->SetRoom( room );
+	}
+}
+
+void cPlim::ReactorSignalDestroyRoom(cAbstractRoom* room) {
+	if (room) {
+		DeleteRoom( room->GetRoomName() );
+	}
+}
+
+void cPlim::ReactorSignalUserMessage(cAbstractRoom* room, cAbstractUser* user, cString* message) {
+	cTextWindow* win;
+
+	if ( room && user && message ) {
+		win = GetRoom( room->GetRoomName() );
+
+		if (win) {
+			win->AddLine( message->GetBuffer(), user );
+		}
+	}
+
+}
+
+void cPlim::ReactorSignalUserJoin(cAbstractRoom* room, cAbstractUser* user) {
+	cTextWindow* win;
+
+	if ( room && user ) {
+		win = GetRoom( room->GetRoomName() );
+
+		if (win) {
+			cString c( "User ");
+			c.Cat(user->GetUserName());
+			c.Cat(" joined to channel");
+			win->AddDebugLine( c.GetBuffer() );
+		}
+	}
+
+}
+
+void cPlim::ReactorSignalUserPart(cAbstractRoom* room, cAbstractUser* user) {
+	cTextWindow* win;
+
+	if ( room && user ) {
+		win = GetRoom( room->GetRoomName() );
+
+		if (win) {
+			cString c( "User ");
+			c.Cat(user->GetUserName());
+			c.Cat(" parted from channel");
+			win->AddDebugLine( c.GetBuffer() );
+		}
+	}
 
 }
 

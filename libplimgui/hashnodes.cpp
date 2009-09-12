@@ -65,9 +65,11 @@ cHashNode* cHashNodes::Get(const char* identifier, int len)
 	int index;
 	cHashNode* node;
 
-	if (!identifier)	return NULL;
+	if (!identifier || !len)	return NULL;
 	
 	index = HGenerateIndex(identifier, len);
+
+	if ( index < 0 )	return NULL;
 
 	if (m_hashNodes)
 	{

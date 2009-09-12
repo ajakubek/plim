@@ -76,7 +76,7 @@ int cString::Copy(const char* source, va_list args) {
 
 	if (!source)	return 0;
 
-	len = strlen(source) * 3;
+	len = strlen(source) * 100;
 	buffer = (char*) malloc(len);
 
 	vsprintf( buffer, source, args );

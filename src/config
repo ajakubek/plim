@@ -6,7 +6,7 @@ plim {
 
 		first = "+c2,3 +u test +time +b<+user>:+r "
 		last = "+c 2,3+u+time test +b<+user>:+r "
-		slib = "+b+time+c 4,0 <Cloudcat>+r:  "
+		slib = "+b+time+c 4,0 <+user>+r:  "
 	}
 
 	statusbar {

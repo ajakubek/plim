@@ -26,28 +26,84 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/time.h>
+#include <sys/socket.h>
+#include <sys/ioctl.h>
 #include <unistd.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <fcntl.h>
+
+#include <libplimgui/strings.h>
+#include <libplimgui/stringlist.h>
 
 #include "../../cReactorSession.h"
+#include "../../cReactorUser.h"
+
 #include "cIrc.h"
-//#include "cIrcUser.h"
 
 namespace NSInternalPluginIRC {
 
 using namespace NSReactor;
+using namespace NSString;
+
+class cIrcSession;
+
+class cIrcProto {
+public:
+	cIrcProto(cIrcSession* session);
+	virtual ~cIrcProto(void);
+	void ParserInput(cString* string);
+	int ParserIdentify(cPlimToken* token);
+	void ParserServerMsg(cPlimToken* token);
+	cPlimToken* ParserServerUserMsg(cPlimToken* token);
+	cPlimToken* AfterParserServerUserMsg(cPlimToken* token, cString* nick, cString* user, cString* host, cString* type);
+	void ServerCommand(cString* server, int command);
+	void ServerUserMsg(cString* nick, cString* user, cString* host, cString* channel, cString* msg);
+	void ServerJoinMsg(cString* nick, cString* user, cString* host, cString* channel);
+	void ServerPartMsg(cString* nick, cString* user, cString* host, cString* channel);
+private:
+	cIrcSession* m_session;
+	cPlimLexer lex;
+};
 
 class cIrcSession: public cReactorSession {
 public:
 	cIrcSession(cIrc* irc, const char* sessionName);
 	virtual ~cIrcSession(void);
+
+	void RegisterReactorInstance(cReactor* reactor);
 	
 	int Connect(void);
 	int Disconnect(void);
 
 	int Fission(fd_set *rfds, fd_set *wfds, fd_set *efds);
 	int Release(fd_set *rfds, fd_set *wfds, fd_set *efds);
+
+	/* Signals to UI
+	*/
+	void OnInputText(cString* buffer, cAbstractUser* user, cAbstractRoom* room);
+	
+	/* Accessors
+	*/
+	void SetUser(cReactorUser* user);
+	cAbstractUser* GetUser(void);
+	
+	void SetIp(const char* host);
+	const char* GetIp(void);
+	
+	void SetBindIp(const char* host);
+	const char* GetBindIp(void);
+	
+	void SetPortNumber(int port);
+	int GetPortNumber(void);
+
 private:
-//	cIrcUser* m_myUser;
+	cReactorUser* m_myUser;
+	cIrcProto* m_protoParser;
+	cString m_ip;
+	cString m_bindIp;
+	int m_portNumber;
 };
 
 };
