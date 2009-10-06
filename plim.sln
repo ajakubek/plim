@@ -1,0 +1,45 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 10
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "plim", "plim\plim.vcxproj", "{F75DB10D-343A-4D0E-9671-710A4E9C9A9F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C1BA0755-6AF4-4060-9C84-E80AFDD78E2E} = {C1BA0755-6AF4-4060-9C84-E80AFDD78E2E}
+		{2B0F98C4-588E-4084-868A-1E5A87FD631A} = {2B0F98C4-588E-4084-868A-1E5A87FD631A}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libplimgui_curses", "libplimgui\libplimgui.vcxproj", "{2B0F98C4-588E-4084-868A-1E5A87FD631A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C1BA0755-6AF4-4060-9C84-E80AFDD78E2E} = {C1BA0755-6AF4-4060-9C84-E80AFDD78E2E}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libplimuni", "libplimuni\libplimuni.vcxproj", "{C1BA0755-6AF4-4060-9C84-E80AFDD78E2E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libplimreactor", "libplimreactor\libplimreactor.vcxproj", "{C1EE84B8-87A4-4045-8184-782EEB240A3F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F75DB10D-343A-4D0E-9671-710A4E9C9A9F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F75DB10D-343A-4D0E-9671-710A4E9C9A9F}.Debug|Win32.Build.0 = Debug|Win32
+		{F75DB10D-343A-4D0E-9671-710A4E9C9A9F}.Release|Win32.ActiveCfg = Release|Win32
+		{F75DB10D-343A-4D0E-9671-710A4E9C9A9F}.Release|Win32.Build.0 = Release|Win32
+		{2B0F98C4-588E-4084-868A-1E5A87FD631A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2B0F98C4-588E-4084-868A-1E5A87FD631A}.Debug|Win32.Build.0 = Debug|Win32
+		{2B0F98C4-588E-4084-868A-1E5A87FD631A}.Release|Win32.ActiveCfg = Release|Win32
+		{2B0F98C4-588E-4084-868A-1E5A87FD631A}.Release|Win32.Build.0 = Release|Win32
+		{C1BA0755-6AF4-4060-9C84-E80AFDD78E2E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C1BA0755-6AF4-4060-9C84-E80AFDD78E2E}.Debug|Win32.Build.0 = Debug|Win32
+		{C1BA0755-6AF4-4060-9C84-E80AFDD78E2E}.Release|Win32.ActiveCfg = Release|Win32
+		{C1BA0755-6AF4-4060-9C84-E80AFDD78E2E}.Release|Win32.Build.0 = Release|Win32
+		{C1EE84B8-87A4-4045-8184-782EEB240A3F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C1EE84B8-87A4-4045-8184-782EEB240A3F}.Debug|Win32.Build.0 = Debug|Win32
+		{C1EE84B8-87A4-4045-8184-782EEB240A3F}.Release|Win32.ActiveCfg = Release|Win32
+		{C1EE84B8-87A4-4045-8184-782EEB240A3F}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
